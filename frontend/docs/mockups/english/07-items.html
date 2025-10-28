@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLIO LMS - Items Management</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="Search items, users, barcodes..."
+            style="padding-left: 2.5rem; padding-right: 2.5rem;"
+          />
+          <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en" selected>English</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">Staff User</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">Dashboard</a></li>
+        <li><a href="#" class="sidebar-nav-item">Users</a></li>
+        <li><a href="#" class="sidebar-nav-item">Circulation</a></li>
+        <li><a href="#" class="sidebar-nav-item">Inventory</a></li>
+        <li><a href="#" class="sidebar-nav-item">Holdings</a></li>
+        <li><a href="#" class="sidebar-nav-item active">Items</a></li>
+        <li><a href="#" class="sidebar-nav-item">Fees/Fines</a></li>
+        <li><a href="#" class="sidebar-nav-item">Reports</a></li>
+        <li><a href="#" class="sidebar-nav-item">Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="page-title">Items Management</h1>
+            <p class="page-subtitle">Manage physical items and barcodes</p>
+          </div>
+          <button class="btn btn-primary">+ New Item</button>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Search Items</h2>
+        <div style="display: grid; grid-template-columns: 1fr 180px 180px auto; gap: 1rem; align-items: end;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-input" placeholder="Search by barcode, title..." value="" />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Status</label>
+            <select class="form-select">
+              <option value="">All Statuses</option>
+              <option value="available">Available</option>
+              <option value="checked-out">Checked Out</option>
+              <option value="in-transit">In Transit</option>
+              <option value="missing">Missing</option>
+              <option value="withdrawn">Withdrawn</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Material Type</label>
+            <select class="form-select">
+              <option value="">All Types</option>
+              <option value="book">Book</option>
+              <option value="dvd">DVD</option>
+              <option value="cd">CD</option>
+              <option value="magazine">Magazine</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary">Search</button>
+            <button class="btn btn-secondary">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <div class="card" style="padding: 0;">
+        <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;">
+          <h2 style="font-size: 1.125rem; font-weight: 600;">Physical Items</h2>
+          <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+            Showing 1-10 of 342 items
+          </p>
+        </div>
+
+        <table class="table" style="margin-bottom: 0;">
+          <thead>
+            <tr>
+              <th>Barcode</th>
+              <th>Title</th>
+              <th>Material Type</th>
+              <th>Status</th>
+              <th>Location</th>
+              <th>Due Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ITM001234</strong></td>
+              <td>The Great Gatsby</td>
+              <td><span class="badge badge-blue">Book</span></td>
+              <td><span class="badge badge-yellow">Checked Out</span></td>
+              <td>Main Library</td>
+              <td>Nov 28, 2024</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>ITM001235</strong></td>
+              <td>1984</td>
+              <td><span class="badge badge-blue">Book</span></td>
+              <td><span class="badge badge-green">Available</span></td>
+              <td>Main Library</td>
+              <td>-</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>ITM001236</strong></td>
+              <td>1984</td>
+              <td><span class="badge badge-blue">Book</span></td>
+              <td><span class="badge badge-green">Available</span></td>
+              <td>Main Library</td>
+              <td>-</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>DVD000412</strong></td>
+              <td>The Shawshank Redemption</td>
+              <td><span class="badge" style="background-color: #fef3c7; color: #92400e;">DVD</span></td>
+              <td><span class="badge badge-green">Available</span></td>
+              <td>Media Center</td>
+              <td>-</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>ITM001237</strong></td>
+              <td>To Kill a Mockingbird</td>
+              <td><span class="badge badge-blue">Book</span></td>
+              <td><span class="badge badge-red">Missing</span></td>
+              <td>Reference Section</td>
+              <td>-</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 0.875rem; color: #6b7280;">
+            Page 1 of 35
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" disabled>Previous</button>
+            <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bulk Operations -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Bulk Operations</h2>
+        <div style="display: flex; gap: 1rem;">
+          <button class="btn btn-secondary">Bulk Edit Status</button>
+          <button class="btn btn-secondary">Bulk Update Location</button>
+          <button class="btn btn-secondary">Generate Barcodes</button>
+          <button class="btn btn-danger">Bulk Withdraw</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

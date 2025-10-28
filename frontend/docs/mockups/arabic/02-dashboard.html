@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المكتبة - لوحة التحكم</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="البحث عن مواد، مستخدمين، رموز شريطية..."
+            style="padding-right: 2.5rem; padding-left: 2.5rem;"
+          />
+          <span style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en">English</option>
+          <option value="ar" selected>العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">مستخدم مسؤول</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تسجيل الخروج</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item active">لوحة التحكم</a></li>
+        <li><a href="#" class="sidebar-nav-item">المستخدمون</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعارة والإرجاع</a></li>
+        <li><a href="#" class="sidebar-nav-item">المخزون</a></li>
+        <li><a href="#" class="sidebar-nav-item">النسخ</a></li>
+        <li><a href="#" class="sidebar-nav-item">المواد</a></li>
+        <li><a href="#" class="sidebar-nav-item">الرسوم والغرامات</a></li>
+        <li><a href="#" class="sidebar-nav-item">التقارير</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعدادات</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">لوحة التحكم</h1>
+        <p class="page-subtitle">نظرة عامة على نظام المكتبة</p>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-label">إجمالي المستخدمين</div>
+          <div class="stat-value">1,234</div>
+          <div style="font-size: 0.875rem; color: #10b981; margin-top: 0.5rem;">
+            ↑ 12% من الشهر الماضي
+          </div>
+        </div>
+
+        <div class="stat-card green">
+          <div class="stat-label">الإعارات النشطة</div>
+          <div class="stat-value">856</div>
+          <div style="font-size: 0.875rem; color: #10b981; margin-top: 0.5rem;">
+            ↑ 5% من الشهر الماضي
+          </div>
+        </div>
+
+        <div class="stat-card red">
+          <div class="stat-label">المواد المتأخرة</div>
+          <div class="stat-value">42</div>
+          <div style="font-size: 0.875rem; color: #ef4444; margin-top: 0.5rem;">
+            ↑ 8% من الشهر الماضي
+          </div>
+        </div>
+
+        <div class="stat-card purple">
+          <div class="stat-label">إجمالي المواد</div>
+          <div class="stat-value">15,678</div>
+          <div style="font-size: 0.875rem; color: #10b981; margin-top: 0.5rem;">
+            ↑ 3% من الشهر الماضي
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">الإجراءات السريعة</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <button class="btn btn-primary">
+            إعارة مادة
+          </button>
+          <button class="btn btn-success">
+            إرجاع مادة
+          </button>
+          <button class="btn btn-primary">
+            إضافة مستخدم جديد
+          </button>
+          <button class="btn btn-primary">
+            إضافة مادة جديدة
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">النشاط الأخير</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>الوقت</th>
+              <th>الإجراء</th>
+              <th>المستخدم</th>
+              <th>المادة</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>منذ دقيقتين</td>
+              <td>إعارة</td>
+              <td>جون سميث</td>
+              <td>غاتسبي العظيم</td>
+              <td><span class="badge badge-green">نجح</span></td>
+            </tr>
+            <tr>
+              <td>منذ 15 دقيقة</td>
+              <td>إرجاع</td>
+              <td>سارة جونسون</td>
+              <td>1984</td>
+              <td><span class="badge badge-green">نجح</span></td>
+            </tr>
+            <tr>
+              <td>منذ ساعة</td>
+              <td>تسجيل مستخدم</td>
+              <td>مايك ويلسون</td>
+              <td>-</td>
+              <td><span class="badge badge-blue">مكتمل</span></td>
+            </tr>
+            <tr>
+              <td>منذ ساعتين</td>
+              <td>دفع غرامة</td>
+              <td>إيما ديفيس</td>
+              <td>15.00 ريال</td>
+              <td><span class="badge badge-green">مدفوع</span></td>
+            </tr>
+            <tr>
+              <td>منذ 3 ساعات</td>
+              <td>إضافة مادة</td>
+              <td>مسؤول</td>
+              <td>قتل الطائر المحاكي</td>
+              <td><span class="badge badge-blue">مكتمل</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Overdue Items Alert -->
+      <div class="card" style="background-color: #fef3c7; border-right: 4px solid #f59e0b; border-left: none;">
+        <h3 style="color: #92400e; font-weight: 600; margin-bottom: 0.5rem;">
+          ⚠️ يتطلب اهتمامًا
+        </h3>
+        <p style="color: #92400e;">
+          لديك <strong>42 مادة متأخرة</strong> تتطلب إجراء متابعة.
+          <a href="#" style="color: #2563eb; text-decoration: underline;">عرض جميع المواد المتأخرة</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

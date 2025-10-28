@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المكتبة - التقارير</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="البحث عن مواد، مستخدمين، رموز شريطية..."
+            style="padding-right: 2.5rem; padding-left: 2.5rem;"
+          />
+          <span style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en">English</option>
+          <option value="ar" selected>العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">مستخدم مسؤول</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تسجيل الخروج</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">لوحة التحكم</a></li>
+        <li><a href="#" class="sidebar-nav-item">المستخدمون</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعارة والإرجاع</a></li>
+        <li><a href="#" class="sidebar-nav-item">المخزون</a></li>
+        <li><a href="#" class="sidebar-nav-item">النسخ</a></li>
+        <li><a href="#" class="sidebar-nav-item">المواد</a></li>
+        <li><a href="#" class="sidebar-nav-item">الرسوم والغرامات</a></li>
+        <li><a href="#" class="sidebar-nav-item active">التقارير</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعدادات</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">التقارير والتحليلات</h1>
+        <p class="page-subtitle">إنشاء وعرض تقارير النظام</p>
+      </div>
+
+      <!-- Report Categories -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">فئات التقارير</h2>
+
+        <!-- Circulation Reports -->
+        <div style="margin-bottom: 2rem;">
+          <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #2563eb;">
+            تقارير الإعارة
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#2563eb'; this.style.backgroundColor='#eff6ff';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">نشاط الإعارة</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                عرض إحصائيات الإعارة حسب نطاق التاريخ
+              </p>
+              <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">إنشاء</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#2563eb'; this.style.backgroundColor='#eff6ff';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">المواد المتأخرة</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                قائمة بجميع المواد المتأخرة والمستفيدين
+              </p>
+              <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">إنشاء</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#2563eb'; this.style.backgroundColor='#eff6ff';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">المواد الأكثر إعارة</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                المواد الأكثر تداولاً حسب الفترة
+              </p>
+              <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">إنشاء</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Reports -->
+        <div style="margin-bottom: 2rem;">
+          <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #10b981;">
+            تقارير المخزون
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#10b981'; this.style.backgroundColor='#f0fdf4';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">ملخص المجموعة</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                نظرة عامة على المجموعة بأكملها
+              </p>
+              <button class="btn btn-success" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">إنشاء</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#10b981'; this.style.backgroundColor='#f0fdf4';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">المواد المفقودة</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                قائمة بالمواد المحددة كمفقودة
+              </p>
+              <button class="btn btn-success" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">إنشاء</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#10b981'; this.style.backgroundColor='#f0fdf4';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">المقتنيات الجديدة</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                المواد المضافة حديثاً إلى المجموعة
+              </p>
+              <button class="btn btn-success" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">إنشاء</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Reports -->
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #f59e0b;">
+            التقارير المالية
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#f59e0b'; this.style.backgroundColor='#fffbeb';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">تحصيل الرسوم</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                ملخص الرسوم والغرامات المحصلة
+              </p>
+              <button class="btn" style="padding: 0.375rem 0.75rem; font-size: 0.875rem; background-color: #f59e0b; color: white;">إنشاء</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#f59e0b'; this.style.backgroundColor='#fffbeb';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">الغرامات المستحقة</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                قائمة بالغرامات غير المدفوعة حسب المستفيد
+              </p>
+              <button class="btn" style="padding: 0.375rem 0.75rem; font-size: 0.875rem; background-color: #f59e0b; color: white;">إنشاء</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#f59e0b'; this.style.backgroundColor='#fffbeb';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">الإيرادات الشهرية</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                تفصيل الإيرادات حسب الشهر
+              </p>
+              <button class="btn" style="padding: 0.375rem 0.75rem; font-size: 0.875rem; background-color: #f59e0b; color: white;">إنشاء</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Reports -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">التقارير المنشأة مؤخراً</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>اسم التقرير</th>
+              <th>النوع</th>
+              <th>أنشئ بواسطة</th>
+              <th>التاريخ</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>نشاط الإعارة - أكتوبر 2024</td>
+              <td><span class="badge badge-blue">إعارة</span></td>
+              <td>مستخدم مسؤول</td>
+              <td>28 أكتوبر 2024</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تنزيل</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">عرض</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>قائمة المواد المتأخرة</td>
+              <td><span class="badge badge-blue">إعارة</span></td>
+              <td>مستخدم موظف</td>
+              <td>27 أكتوبر 2024</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تنزيل</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">عرض</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>ملخص المجموعة 2024</td>
+              <td><span class="badge badge-green">مخزون</span></td>
+              <td>مستخدم مسؤول</td>
+              <td>25 أكتوبر 2024</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تنزيل</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">عرض</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Custom Report Builder -->
+      <div class="card" style="background-color: #eff6ff; border-right: 4px solid #2563eb; border-left: none;">
+        <h3 style="color: #1e40af; font-weight: 600; margin-bottom: 0.5rem;">
+          💡 منشئ التقارير المخصصة
+        </h3>
+        <p style="color: #1e40af; font-size: 0.875rem; margin-bottom: 1rem;">
+          هل تحتاج إلى تقرير محدد؟ استخدم منشئ التقارير المخصصة لإنشاء تقارير مخصصة لاحتياجاتك.
+        </p>
+        <button class="btn btn-primary">فتح منشئ التقارير</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

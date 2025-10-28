@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Hold Available - FOLIO LMS{% endblock %}
+
+{% block content %}
+<h2>Your Hold is Ready!</h2>
+
+<p>Dear {{ user_name }},</p>
+
+<div class="success">
+    <p><strong>✓ Good News!</strong></p>
+    <p>The item you requested is now available for pickup.</p>
+</div>
+
+<div class="item-list">
+    <h3>Available Item:</h3>
+    <div class="item">
+        <div class="item-title">{{ item_title }}</div>
+        <div>Pickup Location: <strong>{{ pickup_location }}</strong></div>
+        <div>Hold Expires: <strong>{{ expiration_date }}</strong></div>
+    </div>
+</div>
+
+<p>Please pick up your item by <strong>{{ expiration_date }}</strong>. After this date, the hold will be cancelled and the item will be made available to the next patron.</p>
+
+<p>You can pick up this item during regular library hours. Please bring your library card or a valid ID.</p>
+
+<p>Thank you for using our library!</p>
+
+<p>Best regards,<br>
+Your Library Team</p>
+{% endblock %}

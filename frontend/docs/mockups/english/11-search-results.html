@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLIO LMS - Search Results</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="Search items, users, barcodes..."
+            style="padding-left: 2.5rem; padding-right: 2.5rem;"
+            value="gatsby"
+          />
+          <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en" selected>English</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">Admin User</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">Dashboard</a></li>
+        <li><a href="#" class="sidebar-nav-item">Users</a></li>
+        <li><a href="#" class="sidebar-nav-item">Circulation</a></li>
+        <li><a href="#" class="sidebar-nav-item">Inventory</a></li>
+        <li><a href="#" class="sidebar-nav-item">Holdings</a></li>
+        <li><a href="#" class="sidebar-nav-item">Items</a></li>
+        <li><a href="#" class="sidebar-nav-item">Fees/Fines</a></li>
+        <li><a href="#" class="sidebar-nav-item">Reports</a></li>
+        <li><a href="#" class="sidebar-nav-item">Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">Search Results</h1>
+        <p class="page-subtitle">Found 3 results for "gatsby"</p>
+      </div>
+
+      <!-- Filter Options -->
+      <div class="card">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+          <span style="font-weight: 500;">Filter by:</span>
+          <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">All (3)</button>
+          <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Books (2)</button>
+          <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Items (5)</button>
+          <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Users (0)</button>
+        </div>
+      </div>
+
+      <!-- Search Results -->
+      <div>
+        <!-- Result 1 -->
+        <div class="card">
+          <div style="display: flex; gap: 1.5rem;">
+            <!-- Book Cover Placeholder -->
+            <div style="width: 120px; height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 0.5rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.875rem; text-align: center; padding: 1rem;">
+              BOOK<br>COVER
+            </div>
+
+            <!-- Book Details -->
+            <div style="flex: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="font-size: 1.5rem; font-weight: 600; color: #2563eb; margin-bottom: 0.5rem;">
+                    The Great Gatsby
+                  </h3>
+                  <p style="font-size: 1rem; color: #6b7280; margin-bottom: 0.5rem;">
+                    by <strong>F. Scott Fitzgerald</strong>
+                  </p>
+                  <span class="badge badge-blue">Fiction</span>
+                  <span class="badge badge-green">Classic Literature</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.5rem 1rem;">View Details</button>
+                  <button class="btn btn-success" style="padding: 0.5rem 1rem;">Check Out</button>
+                </div>
+              </div>
+
+              <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                  <div>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>ISBN:</strong> 978-0-7432-7356-5</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Publisher:</strong> Scribner</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Year:</strong> 2004</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Pages:</strong> 180</p>
+                  </div>
+                  <div>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Total Copies:</strong> 5</p>
+                    <p style="font-size: 0.875rem; color: #10b981; margin-bottom: 0.25rem;"><strong>Available:</strong> 3 copies</p>
+                    <p style="font-size: 0.875rem; color: #f59e0b; margin-bottom: 0.25rem;"><strong>Checked Out:</strong> 2 copies</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Location:</strong> Main Library - Fiction Section</p>
+                  </div>
+                </div>
+
+                <div style="margin-top: 1rem; padding: 0.75rem; background-color: #f9fafb; border-radius: 0.375rem;">
+                  <p style="font-size: 0.875rem; color: #374151; line-height: 1.6;">
+                    <strong>Description:</strong> Set in the Jazz Age on Long Island, the novel depicts narrator Nick Carraway's interactions with the mysterious millionaire Jay Gatsby and Gatsby's obsession to reunite with his former lover, Daisy Buchanan.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Result 2 -->
+        <div class="card">
+          <div style="display: flex; gap: 1.5rem;">
+            <!-- Book Cover Placeholder -->
+            <div style="width: 120px; height: 180px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 0.5rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.875rem; text-align: center; padding: 1rem;">
+              BOOK<br>COVER
+            </div>
+
+            <!-- Book Details -->
+            <div style="flex: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="font-size: 1.5rem; font-weight: 600; color: #2563eb; margin-bottom: 0.5rem;">
+                    Gatsby: The Cultural History
+                  </h3>
+                  <p style="font-size: 1rem; color: #6b7280; margin-bottom: 0.5rem;">
+                    by <strong>Bob Batchelor</strong>
+                  </p>
+                  <span class="badge badge-blue">Non-Fiction</span>
+                  <span class="badge badge-yellow">Literary Criticism</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.5rem 1rem;">View Details</button>
+                  <button class="btn btn-success" style="padding: 0.5rem 1rem;">Check Out</button>
+                </div>
+              </div>
+
+              <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                  <div>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>ISBN:</strong> 978-1-4422-3006-8</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Publisher:</strong> Rowman & Littlefield</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Year:</strong> 2014</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Pages:</strong> 256</p>
+                  </div>
+                  <div>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Total Copies:</strong> 2</p>
+                    <p style="font-size: 0.875rem; color: #10b981; margin-bottom: 0.25rem;"><strong>Available:</strong> 2 copies</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Checked Out:</strong> 0 copies</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Location:</strong> Main Library - Reference Section</p>
+                  </div>
+                </div>
+
+                <div style="margin-top: 1rem; padding: 0.75rem; background-color: #f9fafb; border-radius: 0.375rem;">
+                  <p style="font-size: 0.875rem; color: #374151; line-height: 1.6;">
+                    <strong>Description:</strong> A comprehensive cultural history of The Great Gatsby, exploring how it became one of the most influential novels in American literature and its impact on popular culture.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Result 3 - DVD -->
+        <div class="card">
+          <div style="display: flex; gap: 1.5rem;">
+            <!-- DVD Cover Placeholder -->
+            <div style="width: 120px; height: 180px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 0.5rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.875rem; text-align: center; padding: 1rem;">
+              DVD<br>COVER
+            </div>
+
+            <!-- DVD Details -->
+            <div style="flex: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="font-size: 1.5rem; font-weight: 600; color: #2563eb; margin-bottom: 0.5rem;">
+                    The Great Gatsby (2013 Film)
+                  </h3>
+                  <p style="font-size: 1rem; color: #6b7280; margin-bottom: 0.5rem;">
+                    Directed by <strong>Baz Luhrmann</strong>
+                  </p>
+                  <span class="badge" style="background-color: #fef3c7; color: #92400e;">DVD</span>
+                  <span class="badge badge-blue">Drama</span>
+                  <span class="badge badge-green">Romance</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.5rem 1rem;">View Details</button>
+                  <button class="btn btn-success" style="padding: 0.5rem 1rem;">Check Out</button>
+                </div>
+              </div>
+
+              <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                  <div>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Barcode:</strong> DVD-001234</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Format:</strong> DVD</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Runtime:</strong> 143 minutes</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Rating:</strong> PG-13</p>
+                  </div>
+                  <div>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Total Copies:</strong> 3</p>
+                    <p style="font-size: 0.875rem; color: #10b981; margin-bottom: 0.25rem;"><strong>Available:</strong> 1 copy</p>
+                    <p style="font-size: 0.875rem; color: #f59e0b; margin-bottom: 0.25rem;"><strong>Checked Out:</strong> 2 copies</p>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;"><strong>Location:</strong> Media Center</p>
+                  </div>
+                </div>
+
+                <div style="margin-top: 1rem; padding: 0.75rem; background-color: #f9fafb; border-radius: 0.375rem;">
+                  <p style="font-size: 0.875rem; color: #374151; line-height: 1.6;">
+                    <strong>Description:</strong> A writer and wall street trader, Nick, finds himself drawn to the past and lifestyle of his millionaire neighbor, Jay Gatsby. Starring Leonardo DiCaprio, Carey Mulligan, and Tobey Maguire.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 0.875rem; color: #6b7280;">
+          Showing results 1-3 of 3
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" disabled>Previous</button>
+          <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" disabled>Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

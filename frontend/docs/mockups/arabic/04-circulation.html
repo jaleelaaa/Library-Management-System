@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المكتبة - الإعارة والإرجاع</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="البحث عن مواد، مستخدمين، رموز شريطية..."
+            style="padding-right: 2.5rem; padding-left: 2.5rem;"
+          />
+          <span style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en">English</option>
+          <option value="ar" selected>العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">مستخدم موظف</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تسجيل الخروج</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">لوحة التحكم</a></li>
+        <li><a href="#" class="sidebar-nav-item">المستخدمون</a></li>
+        <li><a href="#" class="sidebar-nav-item active">الإعارة والإرجاع</a></li>
+        <li><a href="#" class="sidebar-nav-item">المخزون</a></li>
+        <li><a href="#" class="sidebar-nav-item">النسخ</a></li>
+        <li><a href="#" class="sidebar-nav-item">المواد</a></li>
+        <li><a href="#" class="sidebar-nav-item">الرسوم والغرامات</a></li>
+        <li><a href="#" class="sidebar-nav-item">التقارير</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعدادات</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">الإعارة والإرجاع</h1>
+        <p class="page-subtitle">إدارة عمليات الإعارة والإرجاع</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <ul class="tab-list">
+          <li class="tab active">إعارة مادة</li>
+          <li class="tab">إرجاع مادة</li>
+          <li class="tab">الإعارات النشطة</li>
+        </ul>
+      </div>
+
+      <!-- Check Out Section -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">إعارة مادة</h2>
+
+        <!-- Patron Lookup -->
+        <div style="background-color: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+          <h3 style="font-weight: 600; margin-bottom: 1rem; font-size: 1rem;">1. اختر المستفيد</h3>
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">رقم بطاقة المستفيد / المعرّف</label>
+              <input type="text" class="form-input" placeholder="امسح أو أدخل رقم بطاقة المستفيد" value="" />
+            </div>
+            <button class="btn btn-primary">بحث عن المستفيد</button>
+          </div>
+
+          <!-- Patron Info (shown after lookup) -->
+          <div style="margin-top: 1.5rem; padding: 1rem; background-color: white; border-radius: 0.375rem; border: 2px solid #10b981;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+              <div>
+                <h4 style="font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem;">
+                  جون سميث (jsmith)
+                </h4>
+                <p style="font-size: 0.875rem; color: #6b7280;">
+                  <strong>البريد الإلكتروني:</strong> john.smith@email.com<br>
+                  <strong>الحالة:</strong> <span class="badge badge-green">نشط</span><br>
+                  <strong>الإعارات الحالية:</strong> 3 مواد<br>
+                  <strong>الغرامات المستحقة:</strong> 0.00 ريال
+                </p>
+              </div>
+              <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">مسح</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item Lookup -->
+        <div style="background-color: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+          <h3 style="font-weight: 600; margin-bottom: 1rem; font-size: 1rem;">2. امسح الرمز الشريطي للمادة</h3>
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">الرمز الشريطي للمادة</label>
+              <input type="text" class="form-input" placeholder="امسح أو أدخل الرمز الشريطي للمادة" value="" />
+            </div>
+            <button class="btn btn-success">إعارة</button>
+          </div>
+        </div>
+
+        <!-- Active Session Items -->
+        <div>
+          <h3 style="font-weight: 600; margin-bottom: 1rem; font-size: 1rem;">المواد المعارة (الجلسة الحالية)</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>الرمز الشريطي</th>
+                <th>العنوان</th>
+                <th>تاريخ الاستحقاق</th>
+                <th>الحالة</th>
+                <th>الوقت</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ITM001234</strong></td>
+                <td>غاتسبي العظيم</td>
+                <td>28 نوفمبر 2024</td>
+                <td><span class="badge badge-green">معار</span></td>
+                <td>الآن</td>
+              </tr>
+              <tr>
+                <td><strong>ITM001235</strong></td>
+                <td>1984</td>
+                <td>28 نوفمبر 2024</td>
+                <td><span class="badge badge-green">معار</span></td>
+                <td>منذ دقيقتين</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+          <button class="btn btn-secondary">إنهاء الجلسة</button>
+          <button class="btn btn-primary">طباعة الإيصال</button>
+        </div>
+      </div>
+
+      <!-- Loan Policies Info -->
+      <div class="card" style="background-color: #eff6ff; border-right: 4px solid #2563eb; border-left: none;">
+        <h3 style="color: #1e40af; font-weight: 600; margin-bottom: 0.5rem;">
+          ℹ️ سياسة الإعارة النشطة
+        </h3>
+        <p style="color: #1e40af; font-size: 0.875rem;">
+          <strong>سياسة الإعارة القياسية:</strong> فترة إعارة 14 يومًا، تجديدان مسموح بهما، غرامة 0.50 ريال/يوم عند التأخير
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

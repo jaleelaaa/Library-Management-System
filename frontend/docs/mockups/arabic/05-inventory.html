@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المكتبة - إدارة المخزون</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="البحث عن مواد، مستخدمين، رموز شريطية..."
+            style="padding-right: 2.5rem; padding-left: 2.5rem;"
+          />
+          <span style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en">English</option>
+          <option value="ar" selected>العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">مستخدم موظف</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تسجيل الخروج</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">لوحة التحكم</a></li>
+        <li><a href="#" class="sidebar-nav-item">المستخدمون</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعارة والإرجاع</a></li>
+        <li><a href="#" class="sidebar-nav-item active">المخزون</a></li>
+        <li><a href="#" class="sidebar-nav-item">النسخ</a></li>
+        <li><a href="#" class="sidebar-nav-item">المواد</a></li>
+        <li><a href="#" class="sidebar-nav-item">الرسوم والغرامات</a></li>
+        <li><a href="#" class="sidebar-nav-item">التقارير</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعدادات</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="page-title">إدارة المخزون</h1>
+            <p class="page-subtitle">إدارة التسجيلات البيبليوغرافية والموارد</p>
+          </div>
+          <button class="btn btn-primary">+ تسجيلة جديدة</button>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">البحث في المخزون</h2>
+        <div style="display: grid; grid-template-columns: 1fr 200px 200px auto; gap: 1rem; align-items: end;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">استعلام البحث</label>
+            <input type="text" class="form-input" placeholder="ابحث بالعنوان، المؤلف، رقم ISBN..." value="" />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">نوع المورد</label>
+            <select class="form-select">
+              <option value="">جميع الأنواع</option>
+              <option value="book">كتاب</option>
+              <option value="journal">مجلة</option>
+              <option value="ebook">كتاب إلكتروني</option>
+              <option value="multimedia">وسائط متعددة</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">الحالة</label>
+            <select class="form-select">
+              <option value="">الكل</option>
+              <option value="available">متاح</option>
+              <option value="checked-out">معار</option>
+              <option value="missing">مفقود</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary">بحث</button>
+            <button class="btn btn-secondary">إعادة تعيين</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Results -->
+      <div class="card" style="padding: 0;">
+        <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;">
+          <h2 style="font-size: 1.125rem; font-weight: 600;">تسجيلات المخزون</h2>
+          <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+            عرض 1-8 من أصل 156 تسجيلة
+          </p>
+        </div>
+
+        <!-- Instance Cards -->
+        <div style="padding: 1.5rem;">
+          <!-- Instance 1 -->
+          <div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1rem;">
+            <div class="flex justify-between items-start">
+              <div style="flex: 1;">
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: #2563eb; margin-bottom: 0.5rem;">
+                  غاتسبي العظيم
+                </h3>
+                <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                  <strong>المؤلف:</strong> ف. سكوت فيتزجيرالد<br>
+                  <strong>ISBN:</strong> 978-0-7432-7356-5<br>
+                  <strong>الناشر:</strong> Scribner (2004)<br>
+                  <strong>نوع المورد:</strong> <span class="badge badge-blue">كتاب</span>
+                </p>
+                <div style="display: flex; gap: 1rem; font-size: 0.875rem;">
+                  <div>
+                    <strong>إجمالي النسخ:</strong> 5
+                  </div>
+                  <div>
+                    <strong>متاح:</strong> <span style="color: #10b981;">3</span>
+                  </div>
+                  <div>
+                    <strong>معار:</strong> <span style="color: #f59e0b;">2</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">عرض التفاصيل</button>
+                <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">تعديل</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instance 2 -->
+          <div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1rem;">
+            <div class="flex justify-between items-start">
+              <div style="flex: 1;">
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: #2563eb; margin-bottom: 0.5rem;">
+                  1984
+                </h3>
+                <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                  <strong>المؤلف:</strong> جورج أورويل<br>
+                  <strong>ISBN:</strong> 978-0-452-28423-4<br>
+                  <strong>الناشر:</strong> Penguin Books (1950)<br>
+                  <strong>نوع المورد:</strong> <span class="badge badge-blue">كتاب</span>
+                </p>
+                <div style="display: flex; gap: 1rem; font-size: 0.875rem;">
+                  <div>
+                    <strong>إجمالي النسخ:</strong> 8
+                  </div>
+                  <div>
+                    <strong>متاح:</strong> <span style="color: #10b981;">6</span>
+                  </div>
+                  <div>
+                    <strong>معار:</strong> <span style="color: #f59e0b;">2</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">عرض التفاصيل</button>
+                <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">تعديل</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instance 3 -->
+          <div style="padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1rem;">
+            <div class="flex justify-between items-start">
+              <div style="flex: 1;">
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: #2563eb; margin-bottom: 0.5rem;">
+                  قتل الطائر المحاكي
+                </h3>
+                <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                  <strong>المؤلف:</strong> هاربر لي<br>
+                  <strong>ISBN:</strong> 978-0-06-112008-4<br>
+                  <strong>الناشر:</strong> HarperCollins (1960)<br>
+                  <strong>نوع المورد:</strong> <span class="badge badge-blue">كتاب</span>
+                </p>
+                <div style="display: flex; gap: 1rem; font-size: 0.875rem;">
+                  <div>
+                    <strong>إجمالي النسخ:</strong> 4
+                  </div>
+                  <div>
+                    <strong>متاح:</strong> <span style="color: #10b981;">4</span>
+                  </div>
+                  <div>
+                    <strong>معار:</strong> <span style="color: #6b7280;">0</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">عرض التفاصيل</button>
+                <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">تعديل</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 0.875rem; color: #6b7280;">
+            صفحة 1 من 20
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" disabled>السابق</button>
+            <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">التالي</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

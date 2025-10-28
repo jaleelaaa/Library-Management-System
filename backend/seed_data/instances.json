@@ -1,0 +1,155 @@
+[
+  {
+    "id": "789e4567-e89b-12d3-a456-426614174000",
+    "title": "The Great Gatsby",
+    "subtitle": null,
+    "instance_type": "text",
+    "identifiers": [
+      {
+        "identifierTypeId": "8261054f-be78-422d-bd51-4ed9f33c3422",
+        "value": "9780743273565"
+      }
+    ],
+    "contributors": [
+      {
+        "name": "Fitzgerald, F. Scott",
+        "contributorTypeId": "author"
+      }
+    ],
+    "publication": [
+      {
+        "publisher": "Scribner",
+        "dateOfPublication": "2004",
+        "place": "New York"
+      }
+    ],
+    "classifications": [
+      {
+        "classificationNumber": "813.52",
+        "classificationTypeId": "dewey"
+      }
+    ],
+    "subjects": [
+      "American fiction",
+      "Jazz Age",
+      "Long Island (N.Y.)"
+    ],
+    "languages": ["eng"]
+  },
+  {
+    "id": "890e4567-e89b-12d3-a456-426614174000",
+    "title": "To Kill a Mockingbird",
+    "subtitle": null,
+    "instance_type": "text",
+    "identifiers": [
+      {
+        "value": "9780061120084"
+      }
+    ],
+    "contributors": [
+      {
+        "name": "Lee, Harper"
+      }
+    ],
+    "publication": [
+      {
+        "publisher": "Harper Perennial",
+        "dateOfPublication": "2006",
+        "place": "New York"
+      }
+    ],
+    "subjects": [
+      "Race relations",
+      "Alabama",
+      "Coming of age"
+    ],
+    "languages": ["eng"]
+  },
+  {
+    "id": "990e4567-e89b-12d3-a456-426614174000",
+    "title": "1984",
+    "subtitle": null,
+    "instance_type": "text",
+    "identifiers": [
+      {
+        "value": "9780451524935"
+      }
+    ],
+    "contributors": [
+      {
+        "name": "Orwell, George"
+      }
+    ],
+    "publication": [
+      {
+        "publisher": "Signet Classic",
+        "dateOfPublication": "1961",
+        "place": "New York"
+      }
+    ],
+    "subjects": [
+      "Dystopian fiction",
+      "Totalitarianism",
+      "Surveillance"
+    ],
+    "languages": ["eng"]
+  },
+  {
+    "id": "a90e4567-e89b-12d3-a456-426614174000",
+    "title": "Pride and Prejudice",
+    "subtitle": null,
+    "instance_type": "text",
+    "identifiers": [
+      {
+        "value": "9780141439518"
+      }
+    ],
+    "contributors": [
+      {
+        "name": "Austen, Jane"
+      }
+    ],
+    "publication": [
+      {
+        "publisher": "Penguin Classics",
+        "dateOfPublication": "2003",
+        "place": "London"
+      }
+    ],
+    "subjects": [
+      "Romance",
+      "Social class",
+      "England"
+    ],
+    "languages": ["eng"]
+  },
+  {
+    "id": "b90e4567-e89b-12d3-a456-426614174000",
+    "title": "The Catcher in the Rye",
+    "subtitle": null,
+    "instance_type": "text",
+    "identifiers": [
+      {
+        "value": "9780316769174"
+      }
+    ],
+    "contributors": [
+      {
+        "name": "Salinger, J.D."
+      }
+    ],
+    "publication": [
+      {
+        "publisher": "Little, Brown and Company",
+        "dateOfPublication": "1991",
+        "place": "Boston"
+      }
+    ],
+    "subjects": [
+      "Adolescence",
+      "Identity",
+      "New York"
+    ],
+    "languages": ["eng"]
+  }
+]

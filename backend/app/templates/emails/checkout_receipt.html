@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout Receipt - FOLIO LMS{% endblock %}
+
+{% block content %}
+<h2>Checkout Receipt</h2>
+
+<p>Dear {{ user_name }},</p>
+
+<p>Thank you for checking out items from the library. Here is your receipt:</p>
+
+<div class="item-list">
+    <h3>Checked Out Items ({{ total_items }}):</h3>
+    {% for item in items %}
+    <div class="item">
+        <div class="item-title">{{ item.title }}</div>
+        <div>Checkout Date: {{ item.checkout_date }}</div>
+        <div>Due Date: <strong>{{ item.due_date }}</strong></div>
+        {% if item.renewable %}
+        <div style="color: #28a745;">✓ Renewable online</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<p><strong>Important Reminders:</strong></p>
+<ul>
+    <li>Please return items by the due date to avoid late fees</li>
+    <li>You can renew eligible items online through your account</li>
+    <li>Late fees are $0.25 per day per item</li>
+    <li>Use our 24-hour book drop for convenient returns</li>
+</ul>
+
+<p>You can manage your account and renew items at any time through our online portal.</p>
+
+<p>Thank you for using our library!</p>
+
+<p>Best regards,<br>
+Your Library Team</p>
+{% endblock %}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Cache Clearer - FOLIO LMS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .status {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: white;
+            border: 2px solid #ddd;
+        }
+        .success { border-color: #4CAF50; background: #e8f5e9; }
+        .error { border-color: #f44336; background: #ffebee; }
+        .info { border-color: #2196F3; background: #e3f2fd; }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 10px 10px 0;
+        }
+        button:hover { background: #1976D2; }
+        #log {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 FOLIO LMS - Cache & Service Worker Cleaner</h1>
+
+    <div class="status info">
+        <h2>Step 1: Clear Everything</h2>
+        <p>Click the button below to clear all caches and unregister service workers.</p>
+        <button onclick="clearEverything()">Clear All Caches & Service Workers</button>
+    </div>
+
+    <div class="status info">
+        <h2>Step 2: After Clearing</h2>
+        <button onclick="goToApp()">Go to Main App</button>
+        <button onclick="location.reload()">Reload This Page</button>
+    </div>
+
+    <div class="status">
+        <h3>Debug Log:</h3>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const log = document.getElementById('log');
+
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            log.textContent += `[${timestamp}] ${message}\n`;
+            log.scrollTop = log.scrollHeight;
+            console.log(message);
+        }
+
+        async function clearEverything() {
+            addLog('🚀 Starting cleanup process...');
+
+            // 1. Unregister all service workers
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    addLog(`Found ${registrations.length} service worker(s)`);
+
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        addLog('✓ Unregistered service worker: ' + registration.scope);
+                    }
+                } catch (err) {
+                    addLog('✗ Error unregistering service workers: ' + err.message, 'error');
+                }
+            } else {
+                addLog('ℹ Service workers not supported');
+            }
+
+            // 2. Clear all caches
+            if ('caches' in window) {
+                try {
+                    const cacheNames = await caches.keys();
+                    addLog(`Found ${cacheNames.length} cache(s)`);
+
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        addLog('✓ Deleted cache: ' + cacheName);
+                    }
+                } catch (err) {
+                    addLog('✗ Error clearing caches: ' + err.message, 'error');
+                }
+            } else {
+                addLog('ℹ Cache API not supported');
+            }
+
+            // 3. Clear local storage
+            try {
+                localStorage.clear();
+                addLog('✓ Cleared localStorage');
+            } catch (err) {
+                addLog('✗ Error clearing localStorage: ' + err.message, 'error');
+            }
+
+            // 4. Clear session storage
+            try {
+                sessionStorage.clear();
+                addLog('✓ Cleared sessionStorage');
+            } catch (err) {
+                addLog('✗ Error clearing sessionStorage: ' + err.message, 'error');
+            }
+
+            addLog('');
+            addLog('✅ CLEANUP COMPLETE!');
+            addLog('');
+            addLog('👉 Now press Ctrl+Shift+R (or Cmd+Shift+R on Mac) to hard refresh');
+            addLog('👉 Or click "Go to Main App" button above');
+        }
+
+        function goToApp() {
+            addLog('Redirecting to main app...');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 500);
+        }
+
+        // Auto-run on load
+        addLog('Cache cleaner ready!');
+        addLog('Click "Clear All Caches & Service Workers" to begin');
+    </script>
+</body>
+</html>

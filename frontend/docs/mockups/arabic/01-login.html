@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المكتبة - تسجيل الدخول</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+  <style>
+    /* Additional styles for icons simulation */
+    .icon-placeholder {
+      display: inline-block;
+      width: 1.25rem;
+      height: 1.25rem;
+      background: currentColor;
+      border-radius: 50%;
+      margin-left: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <!-- Logo Section -->
+      <div class="login-logo">
+        <div style="font-size: 3rem; color: #2563eb; margin-bottom: 1rem;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto; display: block;">
+            <rect width="60" height="60" rx="12" fill="#2563eb"/>
+            <path d="M15 20h30v4H15z M15 28h30v4H15z M15 36h20v4H15z" fill="white"/>
+          </svg>
+        </div>
+        <h1 class="login-title">FOLIO LMS</h1>
+        <p class="login-subtitle">نظام إدارة المكتبة</p>
+      </div>
+
+      <!-- Login Form -->
+      <form>
+        <div class="form-group">
+          <label class="form-label" for="username">اسم المستخدم</label>
+          <input
+            type="text"
+            id="username"
+            class="form-input"
+            placeholder="أدخل اسم المستخدم"
+            value=""
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">كلمة المرور</label>
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="أدخل كلمة المرور"
+            value=""
+          />
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" id="remember" />
+          <label for="remember" style="margin: 0; font-weight: normal;">تذكرني</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full" style="margin-top: 0.5rem;">
+          تسجيل الدخول
+        </button>
+      </form>
+
+      <!-- Footer Links -->
+      <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem;">
+        <a href="#" style="color: #2563eb; text-decoration: none;">هل نسيت كلمة المرور؟</a>
+      </div>
+
+      <!-- Language Selector -->
+      <div style="margin-top: 2rem; text-align: center; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+        <label style="font-size: 0.875rem; color: #6b7280; margin-left: 0.5rem;">اللغة:</label>
+        <select class="form-select" style="width: auto; display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en">English (الإنجليزية)</option>
+          <option value="ar" selected>العربية</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Version Footer -->
+  <div style="position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); text-align: center; color: white; font-size: 0.75rem; opacity: 0.8;">
+    FOLIO LMS v1.0.0 &copy; 2024
+  </div>
+</body>
+</html>

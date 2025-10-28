@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المكتبة - الإعدادات</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="البحث عن مواد، مستخدمين، رموز شريطية..."
+            style="padding-right: 2.5rem; padding-left: 2.5rem;"
+          />
+          <span style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en">English</option>
+          <option value="ar" selected>العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">مستخدم مسؤول</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تسجيل الخروج</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">لوحة التحكم</a></li>
+        <li><a href="#" class="sidebar-nav-item">المستخدمون</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعارة والإرجاع</a></li>
+        <li><a href="#" class="sidebar-nav-item">المخزون</a></li>
+        <li><a href="#" class="sidebar-nav-item">النسخ</a></li>
+        <li><a href="#" class="sidebar-nav-item">المواد</a></li>
+        <li><a href="#" class="sidebar-nav-item">الرسوم والغرامات</a></li>
+        <li><a href="#" class="sidebar-nav-item">التقارير</a></li>
+        <li><a href="#" class="sidebar-nav-item active">الإعدادات</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">إعدادات النظام</h1>
+        <p class="page-subtitle">تكوين تفضيلات وسياسات النظام</p>
+      </div>
+
+      <!-- Settings Tabs -->
+      <div class="tabs">
+        <ul class="tab-list">
+          <li class="tab active">عام</li>
+          <li class="tab">الإعارة</li>
+          <li class="tab">معلومات المكتبة</li>
+          <li class="tab">المستخدمون والأدوار</li>
+        </ul>
+      </div>
+
+      <!-- General Settings -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">الإعدادات العامة</h2>
+
+        <div class="form-group">
+          <label class="form-label">اسم المكتبة</label>
+          <input type="text" class="form-input" value="المكتبة العامة المركزية" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">المنطقة الزمنية</label>
+          <select class="form-select">
+            <option>UTC</option>
+            <option>America/New_York</option>
+            <option>Europe/London</option>
+            <option selected>Asia/Riyadh</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">تنسيق التاريخ</label>
+          <select class="form-select">
+            <option>MM/DD/YYYY</option>
+            <option selected>DD/MM/YYYY</option>
+            <option>YYYY-MM-DD</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">اللغة الافتراضية</label>
+          <select class="form-select">
+            <option value="en">English (الإنجليزية)</option>
+            <option value="ar" selected>العربية</option>
+          </select>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <button class="btn btn-primary">حفظ التغييرات</button>
+          <button class="btn btn-secondary" style="margin-right: 0.5rem;">إلغاء</button>
+        </div>
+      </div>
+
+      <!-- Circulation Policies -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">سياسات الإعارة</h2>
+
+        <div class="form-group">
+          <label class="form-label">فترة الإعارة الافتراضية (أيام)</label>
+          <input type="number" class="form-input" value="14" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">الحد الأقصى للتجديدات</label>
+          <input type="number" class="form-input" value="2" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">غرامة التأخير لكل يوم</label>
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; align-items: center;">
+            <input type="number" class="form-input" value="0.50" step="0.01" />
+            <span>ريال</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">الحد الأقصى للمواد لكل مستفيد</label>
+          <input type="number" class="form-input" value="10" />
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0;">
+            <input type="checkbox" checked />
+            <span>السماح بالتجديدات مع وجود غرامات مستحقة</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0;">
+            <input type="checkbox" checked />
+            <span>إرسال إشعارات التأخير</span>
+          </label>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <button class="btn btn-primary">حفظ السياسات</button>
+          <button class="btn btn-secondary" style="margin-right: 0.5rem;">إعادة تعيين إلى الافتراضي</button>
+        </div>
+      </div>
+
+      <!-- Library Information -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">معلومات الاتصال بالمكتبة</h2>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">رقم الهاتف</label>
+            <input type="tel" class="form-input" value="123-4567 (555) 1+" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">البريد الإلكتروني</label>
+            <input type="email" class="form-input" value="info@library.com" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">العنوان</label>
+          <textarea class="form-input" rows="3">شارع المكتبة 123
+المدينة، الولاية 12345
+المملكة العربية السعودية</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ساعات العمل</label>
+          <textarea class="form-input" rows="4">الاثنين - الجمعة: 9:00 صباحاً - 8:00 مساءً
+السبت: 10:00 صباحاً - 6:00 مساءً
+الأحد: 12:00 ظهراً - 5:00 مساءً
+العطلات: مغلق</textarea>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <button class="btn btn-primary">حفظ معلومات الاتصال</button>
+        </div>
+      </div>
+
+      <!-- User Roles -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">أدوار المستخدمين والصلاحيات</h2>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>الدور</th>
+              <th>الوصف</th>
+              <th>المستخدمون</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>مسؤول</strong></td>
+              <td>وصول كامل إلى النظام والتكوين</td>
+              <td>3</td>
+              <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تعديل الصلاحيات</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>موظف</strong></td>
+              <td>إدارة الإعارة والمخزون</td>
+              <td>12</td>
+              <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تعديل الصلاحيات</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>مستفيد</strong></td>
+              <td>وصول مستخدم المكتبة الأساسي</td>
+              <td>234</td>
+              <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تعديل الصلاحيات</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top: 1rem;">
+          <button class="btn btn-primary">+ إضافة دور جديد</button>
+        </div>
+      </div>
+
+      <!-- System Info -->
+      <div class="card" style="background-color: #f9fafb; border-right: 4px solid #6b7280; border-left: none;">
+        <h3 style="font-weight: 600; margin-bottom: 0.5rem;">معلومات النظام</h3>
+        <p style="font-size: 0.875rem; color: #6b7280;">
+          <strong>إصدار FOLIO LMS:</strong> 1.0.0<br>
+          <strong>آخر تحديث:</strong> 28 أكتوبر 2024<br>
+          <strong>حالة قاعدة البيانات:</strong> <span class="badge badge-green">متصل</span><br>
+          <strong>صحة النظام:</strong> <span class="badge badge-green">سليم</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,275 @@
+/* RTL (Right-to-Left) Support for Arabic */
+
+/* Apply RTL globally when dir="rtl" */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Flip margins and paddings */
+[dir="rtl"] .ml-auto {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: 0 !important;
+  margin-left: auto !important;
+}
+
+/* Flip float directions */
+[dir="rtl"] .float-left {
+  float: right !important;
+}
+
+[dir="rtl"] .float-right {
+  float: left !important;
+}
+
+/* Flip text alignment */
+[dir="rtl"] .text-left {
+  text-align: right !important;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left !important;
+}
+
+/* Flip flex directions */
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+/* Flip border radius */
+[dir="rtl"] .rounded-l {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 0.375rem !important;
+  border-bottom-right-radius: 0.375rem !important;
+}
+
+[dir="rtl"] .rounded-r {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-top-left-radius: 0.375rem !important;
+  border-bottom-left-radius: 0.375rem !important;
+}
+
+/* Flip border left/right */
+[dir="rtl"] .border-l,
+[dir="rtl"] .border-l-2,
+[dir="rtl"] .border-l-4 {
+  border-left-width: 0 !important;
+  border-right-width: var(--tw-border-width, 1px) !important;
+}
+
+[dir="rtl"] .border-r,
+[dir="rtl"] .border-r-2,
+[dir="rtl"] .border-r-4 {
+  border-right-width: 0 !important;
+  border-left-width: var(--tw-border-width, 1px) !important;
+}
+
+/* Flip transform translate */
+[dir="rtl"] .translate-x-full {
+  transform: translateX(-100%) !important;
+}
+
+[dir="rtl"] .-translate-x-full {
+  transform: translateX(100%) !important;
+}
+
+/* Icons that should not flip */
+[dir="rtl"] .no-flip {
+  transform: scaleX(-1);
+}
+
+/* Sidebar RTL adjustments */
+[dir="rtl"] .folio-sidebar {
+  border-right: none;
+  border-left: 1px solid #e5e7eb;
+}
+
+/* Input icons RTL */
+[dir="rtl"] input[type="text"],
+[dir="rtl"] input[type="password"],
+[dir="rtl"] input[type="email"] {
+  text-align: right;
+}
+
+[dir="rtl"] .input-icon-left {
+  left: auto;
+  right: 1rem;
+}
+
+[dir="rtl"] .input-icon-right {
+  right: auto;
+  left: 1rem;
+}
+
+/* Dropdown menu positioning */
+[dir="rtl"] .dropdown-menu-right {
+  right: auto;
+  left: 0;
+}
+
+/* Card hover effects - maintain visual consistency */
+[dir="rtl"] .hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Charts and graphs - no flip needed */
+[dir="rtl"] .chart-container,
+[dir="rtl"] canvas {
+  direction: ltr;
+}
+
+/* Number formatting - always LTR */
+[dir="rtl"] .number-display {
+  direction: ltr;
+  unicode-bidi: bidi-override;
+}
+
+/* Progress bars - maintain direction */
+[dir="rtl"] .progress-bar {
+  direction: ltr;
+}
+
+/* Ensure proper font rendering for Arabic */
+[dir="rtl"] {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    'Arial', 'Noto Sans Arabic', 'Noto Kufi Arabic', sans-serif;
+}
+
+/* Arabic specific typography */
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6 {
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+/* Adjust line height for Arabic text */
+[dir="rtl"] p,
+[dir="rtl"] span,
+[dir="rtl"] div {
+  line-height: 1.8;
+}
+
+/* Form labels RTL */
+[dir="rtl"] label {
+  text-align: right;
+}
+
+/* Button icons RTL spacing */
+[dir="rtl"] button svg {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+[dir="rtl"] button svg:first-child {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+/* Table headers RTL */
+[dir="rtl"] th {
+  text-align: right;
+}
+
+/* Notification badges RTL */
+[dir="rtl"] .notification-badge::after {
+  right: auto;
+  left: 0;
+}
+
+/* Gradient text - maintain direction */
+[dir="rtl"] .gradient-text,
+[dir="rtl"] .gradient-blue {
+  direction: ltr;
+  display: inline-block;
+}
+
+/* Animations - mirror horizontal movements */
+[dir="rtl"] @keyframes slideInLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+[dir="rtl"] @keyframes slideInRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Modal positioning RTL */
+[dir="rtl"] .modal {
+  text-align: right;
+}
+
+/* Tooltip positioning RTL */
+[dir="rtl"] .tooltip-left {
+  right: 100%;
+  left: auto;
+}
+
+[dir="rtl"] .tooltip-right {
+  left: 100%;
+  right: auto;
+}
+
+/* Custom scrollbar RTL */
+[dir="rtl"]::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Loading spinner - no flip */
+[dir="rtl"] .spinner {
+  direction: ltr;
+}
+
+/* Ensure proper spacing between Arabic characters */
+[dir="rtl"] {
+  letter-spacing: 0;
+  word-spacing: 0;
+}
+
+/* Fix for flex items in RTL */
+[dir="rtl"] .flex {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .flex-col {
+  flex-direction: column;
+}
+
+/* Grid items maintain order in RTL */
+[dir="rtl"] .grid {
+  direction: rtl;
+}
+
+/* Stat cards should maintain visual hierarchy */
+[dir="rtl"] .stat-card {
+  direction: rtl;
+}
+
+/* Numbers and metrics - always LTR */
+[dir="rtl"] .metric-value,
+[dir="rtl"] .counter,
+[dir="rtl"] .percentage {
+  direction: ltr;
+  unicode-bidi: embed;
+  display: inline-block;
+}

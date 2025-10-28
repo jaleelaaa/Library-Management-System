@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Overdue Notice - FOLIO LMS{% endblock %}
+
+{% block content %}
+<h2>Overdue Notice</h2>
+
+<p>Dear {{ user_name }},</p>
+
+<p>This is a friendly reminder that you have <strong>{{ total_items }}</strong> overdue item(s) from the library.</p>
+
+<div class="warning">
+    <p><strong>⚠️ Action Required</strong></p>
+    <p>Please return these items as soon as possible to avoid additional fines.</p>
+</div>
+
+<div class="item-list">
+    <h3>Overdue Items:</h3>
+    {% for item in overdue_items %}
+    <div class="item">
+        <div class="item-title">{{ item.title }}</div>
+        <div>Due Date: <strong>{{ item.due_date }}</strong></div>
+        <div>Days Overdue: <strong style="color: #dc3545;">{{ item.days_overdue }}</strong></div>
+        {% if item.fine_amount %}
+        <div>Current Fine: <strong>${{ "%.2f"|format(item.fine_amount) }}</strong></div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<p>You can return these items during library hours or use our 24-hour book drop.</p>
+
+<p>If you have already returned these items, please disregard this notice.</p>
+
+<p>Thank you for using our library!</p>
+
+<p>Best regards,<br>
+Your Library Team</p>
+{% endblock %}

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLIO LMS - Settings</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="Search items, users, barcodes..."
+            style="padding-left: 2.5rem; padding-right: 2.5rem;"
+          />
+          <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en" selected>English</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">Admin User</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">Dashboard</a></li>
+        <li><a href="#" class="sidebar-nav-item">Users</a></li>
+        <li><a href="#" class="sidebar-nav-item">Circulation</a></li>
+        <li><a href="#" class="sidebar-nav-item">Inventory</a></li>
+        <li><a href="#" class="sidebar-nav-item">Holdings</a></li>
+        <li><a href="#" class="sidebar-nav-item">Items</a></li>
+        <li><a href="#" class="sidebar-nav-item">Fees/Fines</a></li>
+        <li><a href="#" class="sidebar-nav-item">Reports</a></li>
+        <li><a href="#" class="sidebar-nav-item active">Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">System Settings</h1>
+        <p class="page-subtitle">Configure system preferences and policies</p>
+      </div>
+
+      <!-- Settings Tabs -->
+      <div class="tabs">
+        <ul class="tab-list">
+          <li class="tab active">General</li>
+          <li class="tab">Circulation</li>
+          <li class="tab">Library Info</li>
+          <li class="tab">Users & Roles</li>
+        </ul>
+      </div>
+
+      <!-- General Settings -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">General Settings</h2>
+
+        <div class="form-group">
+          <label class="form-label">Library Name</label>
+          <input type="text" class="form-input" value="Central Public Library" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Time Zone</label>
+          <select class="form-select">
+            <option>UTC</option>
+            <option selected>America/New_York</option>
+            <option>Europe/London</option>
+            <option>Asia/Riyadh</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Date Format</label>
+          <select class="form-select">
+            <option>MM/DD/YYYY</option>
+            <option selected>DD/MM/YYYY</option>
+            <option>YYYY-MM-DD</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Default Language</label>
+          <select class="form-select">
+            <option value="en" selected>English</option>
+            <option value="ar">العربية (Arabic)</option>
+          </select>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <button class="btn btn-primary">Save Changes</button>
+          <button class="btn btn-secondary" style="margin-left: 0.5rem;">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Circulation Policies -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Circulation Policies</h2>
+
+        <div class="form-group">
+          <label class="form-label">Default Loan Period (Days)</label>
+          <input type="number" class="form-input" value="14" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Maximum Renewals</label>
+          <input type="number" class="form-input" value="2" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Overdue Fine per Day</label>
+          <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem; align-items: center;">
+            <span>$</span>
+            <input type="number" class="form-input" value="0.50" step="0.01" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Maximum Items per Patron</label>
+          <input type="number" class="form-input" value="10" />
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0;">
+            <input type="checkbox" checked />
+            <span>Allow renewals with outstanding fines</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0;">
+            <input type="checkbox" checked />
+            <span>Send overdue notifications</span>
+          </label>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <button class="btn btn-primary">Save Policies</button>
+          <button class="btn btn-secondary" style="margin-left: 0.5rem;">Reset to Default</button>
+        </div>
+      </div>
+
+      <!-- Library Information -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Library Contact Information</h2>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" value="+1 (555) 123-4567" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" value="info@library.com" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <textarea class="form-input" rows="3">123 Library Street
+City, State 12345
+United States</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Opening Hours</label>
+          <textarea class="form-input" rows="4">Monday - Friday: 9:00 AM - 8:00 PM
+Saturday: 10:00 AM - 6:00 PM
+Sunday: 12:00 PM - 5:00 PM
+Holidays: Closed</textarea>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <button class="btn btn-primary">Save Contact Info</button>
+        </div>
+      </div>
+
+      <!-- User Roles -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">User Roles & Permissions</h2>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Description</th>
+              <th>Users</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Administrator</strong></td>
+              <td>Full system access and configuration</td>
+              <td>3</td>
+              <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit Permissions</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Staff</strong></td>
+              <td>Circulation and inventory management</td>
+              <td>12</td>
+              <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit Permissions</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Patron</strong></td>
+              <td>Basic library user access</td>
+              <td>234</td>
+              <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit Permissions</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top: 1rem;">
+          <button class="btn btn-primary">+ Add New Role</button>
+        </div>
+      </div>
+
+      <!-- System Info -->
+      <div class="card" style="background-color: #f9fafb; border-left: 4px solid #6b7280;">
+        <h3 style="font-weight: 600; margin-bottom: 0.5rem;">System Information</h3>
+        <p style="font-size: 0.875rem; color: #6b7280;">
+          <strong>FOLIO LMS Version:</strong> 1.0.0<br>
+          <strong>Last Updated:</strong> October 28, 2024<br>
+          <strong>Database Status:</strong> <span class="badge badge-green">Connected</span><br>
+          <strong>System Health:</strong> <span class="badge badge-green">Healthy</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

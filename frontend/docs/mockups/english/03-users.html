@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLIO LMS - Users Management</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="Search items, users, barcodes..."
+            style="padding-left: 2.5rem; padding-right: 2.5rem;"
+          />
+          <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en" selected>English</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">Admin User</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">Dashboard</a></li>
+        <li><a href="#" class="sidebar-nav-item active">Users</a></li>
+        <li><a href="#" class="sidebar-nav-item">Circulation</a></li>
+        <li><a href="#" class="sidebar-nav-item">Inventory</a></li>
+        <li><a href="#" class="sidebar-nav-item">Holdings</a></li>
+        <li><a href="#" class="sidebar-nav-item">Items</a></li>
+        <li><a href="#" class="sidebar-nav-item">Fees/Fines</a></li>
+        <li><a href="#" class="sidebar-nav-item">Reports</a></li>
+        <li><a href="#" class="sidebar-nav-item">Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="page-title">Users Management</h1>
+            <p class="page-subtitle">Manage library patrons and staff members</p>
+          </div>
+          <button class="btn btn-primary">+ New User</button>
+        </div>
+      </div>
+
+      <!-- Filters Card -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Search & Filters</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: end;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-input" placeholder="Search by name, email, username..." value="" />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Status</label>
+            <select class="form-select">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">User Type</label>
+            <select class="form-select">
+              <option value="">All Types</option>
+              <option value="patron">Patron</option>
+              <option value="staff">Staff</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary">Search</button>
+            <button class="btn btn-secondary">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="card" style="padding: 0;">
+        <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;">
+          <h2 style="font-size: 1.125rem; font-weight: 600;">Users List</h2>
+          <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+            Showing 1-10 of 234 users
+          </p>
+        </div>
+
+        <table class="table" style="margin-bottom: 0;">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>User Type</th>
+              <th>Status</th>
+              <th>Active Loans</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>jsmith</strong></td>
+              <td>John Smith</td>
+              <td>john.smith@email.com</td>
+              <td><span class="badge badge-blue">Patron</span></td>
+              <td><span class="badge badge-green">Active</span></td>
+              <td>3</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>sjohnson</strong></td>
+              <td>Sarah Johnson</td>
+              <td>sarah.j@email.com</td>
+              <td><span class="badge badge-blue">Patron</span></td>
+              <td><span class="badge badge-green">Active</span></td>
+              <td>1</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>mwilson</strong></td>
+              <td>Mike Wilson</td>
+              <td>mike.w@email.com</td>
+              <td><span class="badge badge-yellow">Staff</span></td>
+              <td><span class="badge badge-green">Active</span></td>
+              <td>0</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>edavis</strong></td>
+              <td>Emma Davis</td>
+              <td>emma.d@email.com</td>
+              <td><span class="badge badge-blue">Patron</span></td>
+              <td><span class="badge badge-red">Suspended</span></td>
+              <td>0</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>admin</strong></td>
+              <td>Administrator</td>
+              <td>admin@library.com</td>
+              <td><span class="badge" style="background-color: #dbeafe; color: #7c3aed;">Admin</span></td>
+              <td><span class="badge badge-green">Active</span></td>
+              <td>-</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: between; align-items: center;">
+          <div style="font-size: 0.875rem; color: #6b7280;">
+            Page 1 of 24
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" disabled>Previous</button>
+            <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

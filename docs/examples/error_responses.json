@@ -1,0 +1,43 @@
+{
+  "validation_error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input data",
+    "details": {
+      "field": "email",
+      "issue": "Invalid email format"
+    }
+  },
+  "marc_import_error": {
+    "code": "MARC_IMPORT_ERROR",
+    "message": "Failed to import MARC record",
+    "details": {
+      "reason": "pymarc module not available",
+      "fallback": "Manual data entry required"
+    }
+  },
+  "permission_denied": {
+    "code": "PERMISSION_DENIED",
+    "message": "Insufficient permissions",
+    "details": {
+      "required_permission": "inventory.create",
+      "user_permissions": ["inventory.view"]
+    }
+  },
+  "item_unavailable": {
+    "code": "ITEM_UNAVAILABLE",
+    "message": "Item is not available for check-out",
+    "details": {
+      "item_id": "item-uuid",
+      "current_status": "checked_out",
+      "due_date": "2025-01-29T23:59:59Z"
+    }
+  },
+  "tenant_access_denied": {
+    "code": "TENANT_ACCESS_DENIED",
+    "message": "User does not have access to this tenant",
+    "details": {
+      "requested_tenant": "tenant-uuid",
+      "user_tenants": ["other-tenant-uuid"]
+    }
+  }
+}

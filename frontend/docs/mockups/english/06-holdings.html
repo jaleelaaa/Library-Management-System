@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLIO LMS - Holdings Management</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="Search items, users, barcodes..."
+            style="padding-left: 2.5rem; padding-right: 2.5rem;"
+          />
+          <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en" selected>English</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">Staff User</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">Dashboard</a></li>
+        <li><a href="#" class="sidebar-nav-item">Users</a></li>
+        <li><a href="#" class="sidebar-nav-item">Circulation</a></li>
+        <li><a href="#" class="sidebar-nav-item">Inventory</a></li>
+        <li><a href="#" class="sidebar-nav-item active">Holdings</a></li>
+        <li><a href="#" class="sidebar-nav-item">Items</a></li>
+        <li><a href="#" class="sidebar-nav-item">Fees/Fines</a></li>
+        <li><a href="#" class="sidebar-nav-item">Reports</a></li>
+        <li><a href="#" class="sidebar-nav-item">Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="page-title">Holdings Management</h1>
+            <p class="page-subtitle">Manage copy-level holdings records</p>
+          </div>
+          <button class="btn btn-primary">+ New Holding</button>
+        </div>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Search Holdings</h2>
+        <div style="display: grid; grid-template-columns: 1fr 200px auto; gap: 1rem; align-items: end;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-input" placeholder="Search by call number, location..." value="" />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Location</label>
+            <select class="form-select">
+              <option value="">All Locations</option>
+              <option value="main">Main Library</option>
+              <option value="reference">Reference Section</option>
+              <option value="archive">Archive</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary">Search</button>
+            <button class="btn btn-secondary">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Holdings Table -->
+      <div class="card" style="padding: 0;">
+        <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;">
+          <h2 style="font-size: 1.125rem; font-weight: 600;">Holdings Records</h2>
+          <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+            Showing 1-10 of 87 holdings
+          </p>
+        </div>
+
+        <table class="table" style="margin-bottom: 0;">
+          <thead>
+            <tr>
+              <th>Instance Title</th>
+              <th>Call Number</th>
+              <th>Location</th>
+              <th>Copy Number</th>
+              <th>Total Items</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">The Great Gatsby</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">F. Scott Fitzgerald</span>
+              </td>
+              <td><strong>FIC FIT</strong></td>
+              <td><span class="badge badge-blue">Main Library</span></td>
+              <td>Copy 1</td>
+              <td>5</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">1984</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">George Orwell</span>
+              </td>
+              <td><strong>FIC ORW</strong></td>
+              <td><span class="badge badge-blue">Main Library</span></td>
+              <td>Copy 1</td>
+              <td>8</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">To Kill a Mockingbird</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">Harper Lee</span>
+              </td>
+              <td><strong>FIC LEE</strong></td>
+              <td><span class="badge badge-green">Reference Section</span></td>
+              <td>Copy 1</td>
+              <td>4</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">Pride and Prejudice</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">Jane Austen</span>
+              </td>
+              <td><strong>FIC AUS</strong></td>
+              <td><span class="badge badge-blue">Main Library</span></td>
+              <td>Copy 1</td>
+              <td>6</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">The Catcher in the Rye</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">J.D. Salinger</span>
+              </td>
+              <td><strong>FIC SAL</strong></td>
+              <td><span class="badge badge-yellow">Archive</span></td>
+              <td>Copy 1</td>
+              <td>3</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 0.875rem; color: #6b7280;">
+            Page 1 of 9
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" disabled>Previous</button>
+            <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Card -->
+      <div class="card" style="background-color: #eff6ff; border-left: 4px solid #2563eb;">
+        <h3 style="color: #1e40af; font-weight: 600; margin-bottom: 0.5rem;">
+          ℹ️ About Holdings
+        </h3>
+        <p style="color: #1e40af; font-size: 0.875rem;">
+          Holdings represent copy-level information. Each holding is connected to an instance and contains one or more items (physical copies). Holdings include call number, location, and copy-level notes.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

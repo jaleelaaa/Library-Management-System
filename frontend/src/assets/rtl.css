@@ -1,0 +1,411 @@
+/* RTL (Right-to-Left) Styles for Arabic Language */
+
+/* Set direction for RTL */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Body and main container */
+[dir="rtl"] body {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Typography */
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6 {
+  text-align: right;
+}
+
+[dir="rtl"] p,
+[dir="rtl"] li,
+[dir="rtl"] td,
+[dir="rtl"] th,
+[dir="rtl"] label,
+[dir="rtl"] span {
+  text-align: right;
+}
+
+/* Forms */
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] input::placeholder,
+[dir="rtl"] textarea::placeholder {
+  text-align: right;
+}
+
+/* Buttons - keep icons on right side for RTL */
+[dir="rtl"] button {
+  direction: rtl;
+}
+
+/* Flex layouts */
+[dir="rtl"] .flex {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+/* Grid - no changes needed, grid is direction-agnostic */
+
+/* Margins and Padding - flip left/right */
+[dir="rtl"] .ml-auto {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: 0 !important;
+  margin-left: auto !important;
+}
+
+/* Text alignment */
+[dir="rtl"] .text-left {
+  text-align: right !important;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left !important;
+}
+
+/* Float */
+[dir="rtl"] .float-left {
+  float: right !important;
+}
+
+[dir="rtl"] .float-right {
+  float: left !important;
+}
+
+/* Borders */
+[dir="rtl"] .border-l {
+  border-left: none !important;
+  border-right: 1px solid !important;
+}
+
+[dir="rtl"] .border-r {
+  border-right: none !important;
+  border-left: 1px solid !important;
+}
+
+/* Navigation and Sidebar */
+[dir="rtl"] .sidebar {
+  right: 0;
+  left: auto;
+}
+
+[dir="rtl"] nav {
+  direction: rtl;
+}
+
+[dir="rtl"] .nav-item {
+  text-align: right;
+}
+
+/* Tables */
+[dir="rtl"] table {
+  direction: rtl;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+/* Lists */
+[dir="rtl"] ul,
+[dir="rtl"] ol {
+  padding-right: 1.5rem;
+  padding-left: 0;
+}
+
+/* Icons that should be flipped */
+[dir="rtl"] .icon-arrow-right::before {
+  content: "←";
+}
+
+[dir="rtl"] .icon-arrow-left::before {
+  content: "→";
+}
+
+/* Dropdown menus */
+[dir="rtl"] .dropdown-menu {
+  right: 0;
+  left: auto;
+  text-align: right;
+}
+
+/* Modal dialogs */
+[dir="rtl"] .modal {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .modal-header {
+  text-align: right;
+}
+
+[dir="rtl"] .modal-footer {
+  flex-direction: row-reverse;
+}
+
+/* Close button */
+[dir="rtl"] .close {
+  left: 0;
+  right: auto;
+}
+
+/* Cards */
+[dir="rtl"] .card {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Breadcrumbs */
+[dir="rtl"] .breadcrumb {
+  direction: rtl;
+}
+
+[dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
+  content: "\\";
+  padding-right: 0.5rem;
+  padding-left: 0;
+}
+
+/* Tooltips */
+[dir="rtl"] .tooltip {
+  text-align: right;
+}
+
+/* Pagination */
+[dir="rtl"] .pagination {
+  direction: rtl;
+}
+
+/* Form checkboxes and radio buttons */
+[dir="rtl"] input[type="checkbox"],
+[dir="rtl"] input[type="radio"] {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+/* Search inputs */
+[dir="rtl"] input[type="search"] {
+  background-position: left 0.5rem center;
+  padding-left: 2.5rem;
+  padding-right: 0.75rem;
+}
+
+/* Select dropdowns */
+[dir="rtl"] select {
+  background-position: left 0.5rem center;
+  padding-left: 2.5rem;
+  padding-right: 0.75rem;
+}
+
+/* Scrollbar (webkit browsers) */
+[dir="rtl"] ::-webkit-scrollbar {
+  width: 8px;
+}
+
+[dir="rtl"] .overflow-auto {
+  direction: rtl;
+}
+
+/* Badge */
+[dir="rtl"] .badge {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* Alert */
+[dir="rtl"] .alert {
+  text-align: right;
+}
+
+/* Progress bar */
+[dir="rtl"] .progress {
+  direction: rtl;
+}
+
+/* Tabs */
+[dir="rtl"] .nav-tabs {
+  direction: rtl;
+}
+
+/* Toast/Notification */
+[dir="rtl"] .toast {
+  text-align: right;
+}
+
+/* Dashboard stats cards */
+[dir="rtl"] .stat-card {
+  text-align: right;
+}
+
+/* Data table actions column */
+[dir="rtl"] .table-actions {
+  text-align: left;
+}
+
+/* Search bar */
+[dir="rtl"] .search-bar {
+  direction: rtl;
+}
+
+/* Filter panel */
+[dir="rtl"] .filter-panel {
+  text-align: right;
+}
+
+/* Book cards */
+[dir="rtl"] .book-card {
+  text-align: right;
+}
+
+/* Member cards */
+[dir="rtl"] .member-card {
+  text-align: right;
+}
+
+/* Form groups */
+[dir="rtl"] .form-group {
+  text-align: right;
+}
+
+[dir="rtl"] .form-label {
+  text-align: right;
+  display: block;
+}
+
+/* Error messages */
+[dir="rtl"] .error-message {
+  text-align: right;
+}
+
+/* Success messages */
+[dir="rtl"] .success-message {
+  text-align: right;
+}
+
+/* Arabic font improvements */
+[dir="rtl"] {
+  font-family: 'Segoe UI', 'Tahoma', 'Arabic Typesetting', 'Simplified Arabic', Arial, sans-serif;
+  line-height: 1.8;
+}
+
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3 {
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* Ensure proper spacing for Arabic text */
+[dir="rtl"] p {
+  line-height: 2;
+}
+
+/* Number inputs for RTL */
+[dir="rtl"] input[type="number"] {
+  text-align: right;
+}
+
+/* Date picker RTL support */
+[dir="rtl"] .date-picker {
+  direction: rtl;
+}
+
+/* Calendar widget */
+[dir="rtl"] .calendar {
+  direction: rtl;
+}
+
+/* Sidebar menu items */
+[dir="rtl"] .sidebar-menu li {
+  text-align: right;
+}
+
+[dir="rtl"] .sidebar-menu a {
+  text-align: right;
+}
+
+/* Header */
+[dir="rtl"] header {
+  direction: rtl;
+}
+
+/* Footer */
+[dir="rtl"] footer {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Dashboard grid */
+[dir="rtl"] .dashboard-grid {
+  direction: rtl;
+}
+
+/* Statistics widgets */
+[dir="rtl"] .stat-widget {
+  text-align: right;
+}
+
+/* Chart labels */
+[dir="rtl"] .chart-label {
+  text-align: right;
+}
+
+/* Loading spinner - no flip needed */
+[dir="rtl"] .spinner {
+  /* Spinners are direction-agnostic */
+}
+
+/* Profile avatar */
+[dir="rtl"] .avatar {
+  margin-left: 0.75rem;
+  margin-right: 0;
+}
+
+/* User menu dropdown */
+[dir="rtl"] .user-menu {
+  right: auto;
+  left: 0;
+}
+
+/* Notification bell */
+[dir="rtl"] .notification-bell {
+  margin-left: 1rem;
+  margin-right: 0;
+}
+
+/* Language switcher */
+[dir="rtl"] .language-switcher {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Responsive utilities for RTL */
+@media (max-width: 768px) {
+  [dir="rtl"] .mobile-menu {
+    right: auto;
+    left: 0;
+  }
+
+  [dir="rtl"] .mobile-sidebar {
+    right: 0;
+    left: auto;
+  }
+}

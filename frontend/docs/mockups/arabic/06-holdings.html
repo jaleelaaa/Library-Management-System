@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المكتبة - إدارة النسخ</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="البحث عن مواد، مستخدمين، رموز شريطية..."
+            style="padding-right: 2.5rem; padding-left: 2.5rem;"
+          />
+          <span style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en">English</option>
+          <option value="ar" selected>العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">مستخدم موظف</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تسجيل الخروج</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">لوحة التحكم</a></li>
+        <li><a href="#" class="sidebar-nav-item">المستخدمون</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعارة والإرجاع</a></li>
+        <li><a href="#" class="sidebar-nav-item">المخزون</a></li>
+        <li><a href="#" class="sidebar-nav-item active">النسخ</a></li>
+        <li><a href="#" class="sidebar-nav-item">المواد</a></li>
+        <li><a href="#" class="sidebar-nav-item">الرسوم والغرامات</a></li>
+        <li><a href="#" class="sidebar-nav-item">التقارير</a></li>
+        <li><a href="#" class="sidebar-nav-item">الإعدادات</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="page-title">إدارة النسخ</h1>
+            <p class="page-subtitle">إدارة سجلات نسخ الكتب</p>
+          </div>
+          <button class="btn btn-primary">+ نسخة جديدة</button>
+        </div>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">البحث في النسخ</h2>
+        <div style="display: grid; grid-template-columns: 1fr 200px auto; gap: 1rem; align-items: end;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">البحث</label>
+            <input type="text" class="form-input" placeholder="ابحث برقم التصنيف، الموقع..." value="" />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">الموقع</label>
+            <select class="form-select">
+              <option value="">جميع المواقع</option>
+              <option value="main">المكتبة الرئيسية</option>
+              <option value="reference">قسم المراجع</option>
+              <option value="archive">الأرشيف</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary">بحث</button>
+            <button class="btn btn-secondary">إعادة تعيين</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Holdings Table -->
+      <div class="card" style="padding: 0;">
+        <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;">
+          <h2 style="font-size: 1.125rem; font-weight: 600;">سجلات النسخ</h2>
+          <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+            عرض 1-10 من أصل 87 نسخة
+          </p>
+        </div>
+
+        <table class="table" style="margin-bottom: 0;">
+          <thead>
+            <tr>
+              <th>عنوان التسجيلة</th>
+              <th>رقم التصنيف</th>
+              <th>الموقع</th>
+              <th>رقم النسخة</th>
+              <th>إجمالي المواد</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">غاتسبي العظيم</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">ف. سكوت فيتزجيرالد</span>
+              </td>
+              <td><strong>FIC FIT</strong></td>
+              <td><span class="badge badge-blue">المكتبة الرئيسية</span></td>
+              <td>نسخة 1</td>
+              <td>5</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">عرض</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تعديل</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">1984</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">جورج أورويل</span>
+              </td>
+              <td><strong>FIC ORW</strong></td>
+              <td><span class="badge badge-blue">المكتبة الرئيسية</span></td>
+              <td>نسخة 1</td>
+              <td>8</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">عرض</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تعديل</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">قتل الطائر المحاكي</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">هاربر لي</span>
+              </td>
+              <td><strong>FIC LEE</strong></td>
+              <td><span class="badge badge-green">قسم المراجع</span></td>
+              <td>نسخة 1</td>
+              <td>4</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">عرض</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تعديل</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">كبرياء وتحامل</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">جين أوستن</span>
+              </td>
+              <td><strong>FIC AUS</strong></td>
+              <td><span class="badge badge-blue">المكتبة الرئيسية</span></td>
+              <td>نسخة 1</td>
+              <td>6</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">عرض</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تعديل</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong style="color: #2563eb;">الحارس في حقل الشوفان</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">ج.د. سالينجر</span>
+              </td>
+              <td><strong>FIC SAL</strong></td>
+              <td><span class="badge badge-yellow">الأرشيف</span></td>
+              <td>نسخة 1</td>
+              <td>3</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">عرض</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">تعديل</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 0.875rem; color: #6b7280;">
+            صفحة 1 من 9
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" disabled>السابق</button>
+            <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">التالي</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Card -->
+      <div class="card" style="background-color: #eff6ff; border-right: 4px solid #2563eb; border-left: none;">
+        <h3 style="color: #1e40af; font-weight: 600; margin-bottom: 0.5rem;">
+          ℹ️ عن النسخ
+        </h3>
+        <p style="color: #1e40af; font-size: 0.875rem;">
+          تمثل النسخ معلومات على مستوى النسخة. كل نسخة مرتبطة بتسجيلة وتحتوي على مادة واحدة أو أكثر (نسخ فعلية). تتضمن النسخ رقم التصنيف والموقع والملاحظات الخاصة بالنسخة.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLIO LMS - Fees & Fines Management</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="Search items, users, barcodes..."
+            style="padding-left: 2.5rem; padding-right: 2.5rem;"
+          />
+          <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en" selected>English</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">Staff User</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">Dashboard</a></li>
+        <li><a href="#" class="sidebar-nav-item">Users</a></li>
+        <li><a href="#" class="sidebar-nav-item">Circulation</a></li>
+        <li><a href="#" class="sidebar-nav-item">Inventory</a></li>
+        <li><a href="#" class="sidebar-nav-item">Holdings</a></li>
+        <li><a href="#" class="sidebar-nav-item">Items</a></li>
+        <li><a href="#" class="sidebar-nav-item active">Fees/Fines</a></li>
+        <li><a href="#" class="sidebar-nav-item">Reports</a></li>
+        <li><a href="#" class="sidebar-nav-item">Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="page-title">Fees & Fines Management</h1>
+            <p class="page-subtitle">Track and manage patron fees and fines</p>
+          </div>
+          <button class="btn btn-primary">+ Create Manual Fee</button>
+        </div>
+      </div>
+
+      <!-- Stats Summary -->
+      <div class="stats-grid">
+        <div class="stat-card red">
+          <div class="stat-label">Outstanding Fines</div>
+          <div class="stat-value">$2,345</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-label">Pending Payments</div>
+          <div class="stat-value">42</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Collected This Month</div>
+          <div class="stat-value">$1,250</div>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Search Fees/Fines</h2>
+        <div style="display: grid; grid-template-columns: 1fr 180px 180px auto; gap: 1rem; align-items: end;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-input" placeholder="Search by patron name, barcode..." value="" />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Status</label>
+            <select class="form-select">
+              <option value="">All Statuses</option>
+              <option value="outstanding">Outstanding</option>
+              <option value="paid">Paid</option>
+              <option value="waived">Waived</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Type</label>
+            <select class="form-select">
+              <option value="">All Types</option>
+              <option value="overdue">Overdue Fine</option>
+              <option value="lost">Lost Item Fee</option>
+              <option value="damaged">Damaged Item Fee</option>
+              <option value="processing">Processing Fee</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary">Search</button>
+            <button class="btn btn-secondary">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fees/Fines Table -->
+      <div class="card" style="padding: 0;">
+        <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;">
+          <h2 style="font-size: 1.125rem; font-weight: 600;">Fees & Fines Records</h2>
+          <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+            Showing 1-10 of 128 records
+          </p>
+        </div>
+
+        <table class="table" style="margin-bottom: 0;">
+          <thead>
+            <tr>
+              <th>Patron</th>
+              <th>Type</th>
+              <th>Item</th>
+              <th>Amount</th>
+              <th>Date Created</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>John Smith</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">jsmith</span>
+              </td>
+              <td><span class="badge badge-red">Overdue Fine</span></td>
+              <td>The Great Gatsby</td>
+              <td><strong>$5.50</strong></td>
+              <td>Oct 28, 2024</td>
+              <td><span class="badge badge-yellow">Outstanding</span></td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-success" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Pay</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Waive</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Sarah Johnson</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">sjohnson</span>
+              </td>
+              <td><span class="badge" style="background-color: #fee2e2; color: #991b1b;">Lost Item Fee</span></td>
+              <td>1984</td>
+              <td><strong>$25.00</strong></td>
+              <td>Oct 25, 2024</td>
+              <td><span class="badge badge-yellow">Outstanding</span></td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-success" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Pay</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Waive</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Mike Wilson</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">mwilson</span>
+              </td>
+              <td><span class="badge badge-red">Overdue Fine</span></td>
+              <td>Pride and Prejudice</td>
+              <td><strong>$3.00</strong></td>
+              <td>Oct 26, 2024</td>
+              <td><span class="badge badge-green">Paid</span></td>
+              <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View Receipt</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Emma Davis</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">edavis</span>
+              </td>
+              <td><span class="badge" style="background-color: #fef3c7; color: #92400e;">Processing Fee</span></td>
+              <td>-</td>
+              <td><strong>$10.00</strong></td>
+              <td>Oct 20, 2024</td>
+              <td><span class="badge" style="background-color: #e0e7ff; color: #3730a3;">Waived</span></td>
+              <td>
+                <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View Details</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Robert Brown</strong><br>
+                <span style="font-size: 0.75rem; color: #6b7280;">rbrown</span>
+              </td>
+              <td><span class="badge badge-red">Overdue Fine</span></td>
+              <td>To Kill a Mockingbird</td>
+              <td><strong>$7.00</strong></td>
+              <td>Oct 27, 2024</td>
+              <td><span class="badge badge-yellow">Outstanding</span></td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-success" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Pay</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Waive</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 0.875rem; color: #6b7280;">
+            Page 1 of 13
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" disabled>Previous</button>
+            <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Options -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Payment Methods</h2>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <button class="btn btn-success">Cash Payment</button>
+          <button class="btn btn-success">Card Payment</button>
+          <button class="btn btn-success">Online Payment</button>
+          <button class="btn btn-secondary">Print Invoice</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

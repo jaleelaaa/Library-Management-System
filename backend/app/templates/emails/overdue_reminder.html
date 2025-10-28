@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Overdue Item Reminder</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
+        .warning-box { background: #fef3c7; padding: 20px; border-left: 4px solid #f59e0b; margin: 20px 0; border-radius: 4px; }
+        .button { display: inline-block; padding: 12px 24px; background: #f59e0b; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Overdue Item Reminder</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ user_name }},</p>
+
+            <div class="warning-box">
+                <p><strong>You have an overdue item that requires your immediate attention.</strong></p>
+                <p><strong>Due Date:</strong> {{ due_date }}</p>
+                <p><strong>Days Overdue:</strong> {{ days_overdue }} days</p>
+            </div>
+
+            <p>Please return the item as soon as possible to avoid additional late fees.</p>
+
+            <p>If you have already returned this item, please disregard this notice.</p>
+
+            <a href="#" class="button">View My Account</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+/* Import custom animations */
+@import './animations.css';
+
+/* Import RTL support */
+@import './rtl.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans;
+  }
+
+  h1 {
+    @apply text-3xl font-bold;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold;
+  }
+
+  h3 {
+    @apply text-xl font-semibold;
+  }
+}
+
+@layer components {
+  /* FOLIO-inspired components */
+  .folio-header {
+    @apply bg-folio-primary text-white shadow-md;
+  }
+
+  .folio-sidebar {
+    @apply bg-white border-r border-gray-200 shadow-sm;
+  }
+
+  .folio-card {
+    @apply bg-white rounded-lg shadow p-6;
+  }
+
+  .folio-button-primary {
+    @apply bg-folio-primary text-white px-4 py-2 rounded hover:bg-opacity-90 transition-colors;
+  }
+
+  .folio-button-secondary {
+    @apply bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition-colors;
+  }
+
+  .folio-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-folio-primary;
+  }
+
+  .folio-table {
+    @apply min-w-full divide-y divide-gray-200;
+  }
+
+  .folio-table thead {
+    @apply bg-gray-50;
+  }
+
+  .folio-table th {
+    @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+
+  .folio-table td {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+  }
+
+  .folio-filter-pane {
+    @apply w-64 bg-white border-r border-gray-200 p-4 overflow-y-auto;
+  }
+
+  .folio-three-column {
+    @apply flex h-full;
+  }
+
+  .folio-results-pane {
+    @apply flex-1 p-6 overflow-y-auto;
+  }
+
+  .folio-detail-pane {
+    @apply w-96 bg-white border-l border-gray-200 p-6 overflow-y-auto;
+  }
+}

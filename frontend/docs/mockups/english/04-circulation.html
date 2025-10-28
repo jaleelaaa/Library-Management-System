@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLIO LMS - Circulation</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="Search items, users, barcodes..."
+            style="padding-left: 2.5rem; padding-right: 2.5rem;"
+          />
+          <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en" selected>English</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">Staff User</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">Dashboard</a></li>
+        <li><a href="#" class="sidebar-nav-item">Users</a></li>
+        <li><a href="#" class="sidebar-nav-item active">Circulation</a></li>
+        <li><a href="#" class="sidebar-nav-item">Inventory</a></li>
+        <li><a href="#" class="sidebar-nav-item">Holdings</a></li>
+        <li><a href="#" class="sidebar-nav-item">Items</a></li>
+        <li><a href="#" class="sidebar-nav-item">Fees/Fines</a></li>
+        <li><a href="#" class="sidebar-nav-item">Reports</a></li>
+        <li><a href="#" class="sidebar-nav-item">Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">Circulation</h1>
+        <p class="page-subtitle">Manage check-outs and check-ins</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <ul class="tab-list">
+          <li class="tab active">Check Out</li>
+          <li class="tab">Check In</li>
+          <li class="tab">Active Loans</li>
+        </ul>
+      </div>
+
+      <!-- Check Out Section -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Check Out Item</h2>
+
+        <!-- Patron Lookup -->
+        <div style="background-color: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+          <h3 style="font-weight: 600; margin-bottom: 1rem; font-size: 1rem;">1. Select Patron</h3>
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Patron Barcode / ID</label>
+              <input type="text" class="form-input" placeholder="Scan or enter patron barcode" value="" />
+            </div>
+            <button class="btn btn-primary">Lookup Patron</button>
+          </div>
+
+          <!-- Patron Info (shown after lookup) -->
+          <div style="margin-top: 1.5rem; padding: 1rem; background-color: white; border-radius: 0.375rem; border: 2px solid #10b981;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+              <div>
+                <h4 style="font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem;">
+                  John Smith (jsmith)
+                </h4>
+                <p style="font-size: 0.875rem; color: #6b7280;">
+                  <strong>Email:</strong> john.smith@email.com<br>
+                  <strong>Status:</strong> <span class="badge badge-green">Active</span><br>
+                  <strong>Current Loans:</strong> 3 items<br>
+                  <strong>Outstanding Fines:</strong> $0.00
+                </p>
+              </div>
+              <button class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item Lookup -->
+        <div style="background-color: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+          <h3 style="font-weight: 600; margin-bottom: 1rem; font-size: 1rem;">2. Scan Item Barcode</h3>
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Item Barcode</label>
+              <input type="text" class="form-input" placeholder="Scan or enter item barcode" value="" />
+            </div>
+            <button class="btn btn-success">Check Out</button>
+          </div>
+        </div>
+
+        <!-- Active Session Items -->
+        <div>
+          <h3 style="font-weight: 600; margin-bottom: 1rem; font-size: 1rem;">Items Checked Out (Current Session)</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Barcode</th>
+                <th>Title</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ITM001234</strong></td>
+                <td>The Great Gatsby</td>
+                <td>Nov 28, 2024</td>
+                <td><span class="badge badge-green">Checked Out</span></td>
+                <td>Just now</td>
+              </tr>
+              <tr>
+                <td><strong>ITM001235</strong></td>
+                <td>1984</td>
+                <td>Nov 28, 2024</td>
+                <td><span class="badge badge-green">Checked Out</span></td>
+                <td>2 minutes ago</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+          <button class="btn btn-secondary">End Session</button>
+          <button class="btn btn-primary">Print Receipt</button>
+        </div>
+      </div>
+
+      <!-- Loan Policies Info -->
+      <div class="card" style="background-color: #eff6ff; border-left: 4px solid #2563eb;">
+        <h3 style="color: #1e40af; font-weight: 600; margin-bottom: 0.5rem;">
+          ℹ️ Active Loan Policy
+        </h3>
+        <p style="color: #1e40af; font-size: 0.875rem;">
+          <strong>Standard Loan Policy:</strong> 14 days loan period, 2 renewals allowed, $0.50/day overdue fine
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

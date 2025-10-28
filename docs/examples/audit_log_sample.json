@@ -1,0 +1,18 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "timestamp": "2025-01-15T14:30:00Z",
+  "actor": "123e4567-e89b-12d3-a456-426614174000",
+  "action": "create",
+  "target": "instances/789e4567-e89b-12d3-a456-426614174000",
+  "resource_type": "instance",
+  "details": {
+    "title": "The Great Gatsby",
+    "instance_type": "text",
+    "method": "POST",
+    "endpoint": "/api/v1/inventory/instances",
+    "ip_address": "192.168.1.100",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  },
+  "status": "success",
+  "tenant_id": "default-tenant-uuid"
+}

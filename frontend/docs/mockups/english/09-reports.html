@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLIO LMS - Reports</title>
+  <link rel="stylesheet" href="../../assets/css/mockup-styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="container header-content">
+      <div class="logo">FOLIO LMS</div>
+      <!-- Global Search -->
+      <div style="flex: 1; max-width: 500px; margin: 0 2rem;">
+        <div style="position: relative;">
+          <input
+            type="text"
+            class="form-input"
+            placeholder="Search items, users, barcodes..."
+            style="padding-left: 2.5rem; padding-right: 2.5rem;"
+          />
+          <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">🔍</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <select class="form-select" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+          <option value="en" selected>English</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 500;">Admin User</span>
+          <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="#" class="sidebar-nav-item">Dashboard</a></li>
+        <li><a href="#" class="sidebar-nav-item">Users</a></li>
+        <li><a href="#" class="sidebar-nav-item">Circulation</a></li>
+        <li><a href="#" class="sidebar-nav-item">Inventory</a></li>
+        <li><a href="#" class="sidebar-nav-item">Holdings</a></li>
+        <li><a href="#" class="sidebar-nav-item">Items</a></li>
+        <li><a href="#" class="sidebar-nav-item">Fees/Fines</a></li>
+        <li><a href="#" class="sidebar-nav-item active">Reports</a></li>
+        <li><a href="#" class="sidebar-nav-item">Settings</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">Reports & Analytics</h1>
+        <p class="page-subtitle">Generate and view system reports</p>
+      </div>
+
+      <!-- Report Categories -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Report Categories</h2>
+
+        <!-- Circulation Reports -->
+        <div style="margin-bottom: 2rem;">
+          <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #2563eb;">
+            Circulation Reports
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#2563eb'; this.style.backgroundColor='#eff6ff';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Checkout Activity</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                View checkout statistics by date range
+              </p>
+              <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Generate</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#2563eb'; this.style.backgroundColor='#eff6ff';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Overdue Items</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                List of all overdue items and patrons
+              </p>
+              <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Generate</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#2563eb'; this.style.backgroundColor='#eff6ff';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Popular Items</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                Most circulated items by period
+              </p>
+              <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Generate</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Reports -->
+        <div style="margin-bottom: 2rem;">
+          <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #10b981;">
+            Inventory Reports
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#10b981'; this.style.backgroundColor='#f0fdf4';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Collection Summary</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                Overview of entire collection
+              </p>
+              <button class="btn btn-success" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Generate</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#10b981'; this.style.backgroundColor='#f0fdf4';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Missing Items</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                List of items marked as missing
+              </p>
+              <button class="btn btn-success" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Generate</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#10b981'; this.style.backgroundColor='#f0fdf4';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">New Acquisitions</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                Recently added items to collection
+              </p>
+              <button class="btn btn-success" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">Generate</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Reports -->
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #f59e0b;">
+            Financial Reports
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#f59e0b'; this.style.backgroundColor='#fffbeb';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Fee Collection</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                Summary of collected fees and fines
+              </p>
+              <button class="btn" style="padding: 0.375rem 0.75rem; font-size: 0.875rem; background-color: #f59e0b; color: white;">Generate</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#f59e0b'; this.style.backgroundColor='#fffbeb';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Outstanding Fines</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                List of unpaid fines by patron
+              </p>
+              <button class="btn" style="padding: 0.375rem 0.75rem; font-size: 0.875rem; background-color: #f59e0b; color: white;">Generate</button>
+            </div>
+
+            <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                 onmouseover="this.style.borderColor='#f59e0b'; this.style.backgroundColor='#fffbeb';"
+                 onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='white';">
+              <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Monthly Revenue</h4>
+              <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">
+                Revenue breakdown by month
+              </p>
+              <button class="btn" style="padding: 0.375rem 0.75rem; font-size: 0.875rem; background-color: #f59e0b; color: white;">Generate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Reports -->
+      <div class="card">
+        <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Recently Generated Reports</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Report Name</th>
+              <th>Type</th>
+              <th>Generated By</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Checkout Activity - October 2024</td>
+              <td><span class="badge badge-blue">Circulation</span></td>
+              <td>Admin User</td>
+              <td>Oct 28, 2024</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Download</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Overdue Items List</td>
+              <td><span class="badge badge-blue">Circulation</span></td>
+              <td>Staff User</td>
+              <td>Oct 27, 2024</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Download</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Collection Summary 2024</td>
+              <td><span class="badge badge-green">Inventory</span></td>
+              <td>Admin User</td>
+              <td>Oct 25, 2024</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Download</button>
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Custom Report Builder -->
+      <div class="card" style="background-color: #eff6ff; border-left: 4px solid #2563eb;">
+        <h3 style="color: #1e40af; font-weight: 600; margin-bottom: 0.5rem;">
+          💡 Custom Report Builder
+        </h3>
+        <p style="color: #1e40af; font-size: 0.875rem; margin-bottom: 1rem;">
+          Need a specific report? Use our custom report builder to create reports tailored to your needs.
+        </p>
+        <button class="btn btn-primary">Open Report Builder</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

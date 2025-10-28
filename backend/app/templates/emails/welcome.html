@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to FOLIO LMS{% endblock %}
+
+{% block content %}
+<h2>Welcome to Our Library!</h2>
+
+<p>Dear {{ user_name }},</p>
+
+<p>Welcome to the FOLIO Library Management System! We're excited to have you as a new patron.</p>
+
+<div class="success">
+    <p><strong>✓ Account Created Successfully</strong></p>
+    <p>Your library account is now active and ready to use.</p>
+</div>
+
+<div class="item-list">
+    <h3>Your Account Details:</h3>
+    <div class="item">
+        <div>Username: <strong>{{ username }}</strong></div>
+        <div>Name: {{ user_name }}</div>
+    </div>
+</div>
+
+<p><strong>Getting Started:</strong></p>
+<ul>
+    <li>Browse our catalog and reserve items online</li>
+    <li>Check out physical and digital materials</li>
+    <li>Manage your loans and renewals</li>
+    <li>Receive notifications about due dates and holds</li>
+    <li>Access your borrowing history</li>
+</ul>
+
+<p><strong>Library Hours:</strong></p>
+<ul>
+    <li>Monday - Friday: 9:00 AM - 8:00 PM</li>
+    <li>Saturday: 10:00 AM - 6:00 PM</li>
+    <li>Sunday: 12:00 PM - 5:00 PM</li>
+</ul>
+
+<p>If you have any questions or need assistance, please don't hesitate to contact us or visit our help desk.</p>
+
+<p>Happy reading!</p>
+
+<p>Best regards,<br>
+Your Library Team</p>
+{% endblock %}

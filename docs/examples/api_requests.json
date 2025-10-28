@@ -1,0 +1,190 @@
+{
+  "authentication": {
+    "login": {
+      "method": "POST",
+      "endpoint": "/api/v1/auth/login",
+      "request": {
+        "username": "admin",
+        "password": "Admin@123"
+      },
+      "response": {
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+        "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+        "token_type": "bearer"
+      }
+    },
+    "refresh": {
+      "method": "POST",
+      "endpoint": "/api/v1/auth/refresh",
+      "request": {
+        "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+      },
+      "response": {
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+        "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+        "token_type": "bearer"
+      }
+    }
+  },
+  "inventory": {
+    "list_instances": {
+      "method": "GET",
+      "endpoint": "/api/v1/inventory/instances?page=1&page_size=10&q=gatsby",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGc...",
+        "X-Tenant-ID": "default"
+      },
+      "response": {
+        "data": [
+          {
+            "id": "789e4567-e89b-12d3-a456-426614174000",
+            "title": "The Great Gatsby",
+            "subtitle": null,
+            "instance_type": "text",
+            "contributors": [
+              {
+                "name": "Fitzgerald, F. Scott"
+              }
+            ],
+            "created_date": "2025-01-15T10:00:00Z"
+          }
+        ],
+        "meta": {
+          "page": 1,
+          "page_size": 10,
+          "total_items": 1,
+          "total_pages": 1
+        }
+      }
+    },
+    "create_instance": {
+      "method": "POST",
+      "endpoint": "/api/v1/inventory/instances",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGc...",
+        "X-Tenant-ID": "default",
+        "Content-Type": "application/json"
+      },
+      "request": {
+        "title": "New Book Title",
+        "instance_type": "text",
+        "contributors": [
+          {
+            "name": "Author Name"
+          }
+        ],
+        "publication": [
+          {
+            "publisher": "Publisher Name",
+            "dateOfPublication": "2025",
+            "place": "New York"
+          }
+        ],
+        "identifiers": [
+          {
+            "value": "9781234567890"
+          }
+        ]
+      },
+      "response": {
+        "id": "new-uuid",
+        "title": "New Book Title",
+        "instance_type": "text",
+        "created_date": "2025-01-15T14:30:00Z"
+      }
+    },
+    "bulk_create": {
+      "method": "POST",
+      "endpoint": "/api/v1/inventory/instances/bulk",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGc...",
+        "X-Tenant-ID": "default"
+      },
+      "request": [
+        {
+          "title": "Book One",
+          "instance_type": "text"
+        },
+        {
+          "title": "Book Two",
+          "instance_type": "text"
+        }
+      ],
+      "response": [
+        {
+          "id": "uuid-1",
+          "title": "Book One",
+          "created_date": "2025-01-15T14:30:00Z"
+        },
+        {
+          "id": "uuid-2",
+          "title": "Book Two",
+          "created_date": "2025-01-15T14:30:00Z"
+        }
+      ]
+    }
+  },
+  "circulation": {
+    "check_out": {
+      "method": "POST",
+      "endpoint": "/api/v1/circulation/check-out",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGc...",
+        "X-Tenant-ID": "default"
+      },
+      "request": {
+        "user_barcode": "12345",
+        "item_barcode": "ITEM-001"
+      },
+      "response": {
+        "id": "loan-uuid",
+        "user_id": "user-uuid",
+        "item_id": "item-uuid",
+        "loan_date": "2025-01-15T14:30:00Z",
+        "due_date": "2025-01-29T23:59:59Z",
+        "status": "open"
+      }
+    }
+  },
+  "errors": {
+    "validation_error": {
+      "status_code": 400,
+      "response": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid input data",
+        "details": {
+          "field": "title",
+          "issue": "Title is required"
+        }
+      }
+    },
+    "not_found": {
+      "status_code": 404,
+      "response": {
+        "code": "NOT_FOUND",
+        "message": "Instance not found",
+        "details": {
+          "instance_id": "invalid-uuid"
+        }
+      }
+    },
+    "unauthorized": {
+      "status_code": 401,
+      "response": {
+        "code": "UNAUTHORIZED",
+        "message": "Could not validate credentials",
+        "details": null
+      }
+    },
+    "permission_denied": {
+      "status_code": 403,
+      "response": {
+        "code": "PERMISSION_DENIED",
+        "message": "Permission 'inventory.create' required",
+        "details": {
+          "required_permission": "inventory.create"
+        }
+      }
+    }
+  }
+}

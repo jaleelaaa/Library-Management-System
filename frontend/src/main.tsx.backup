@@ -1,0 +1,53 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import App from './App'
+import { store } from './store'
+import { LanguageProvider } from './contexts/LanguageContext'
+import ErrorBoundary from './components/common/ErrorBoundary'
+import './assets/styles/index.css'
+import * as serviceWorkerRegistration from './serviceWorkerRegistration'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+})
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <LanguageProvider>
+          <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+              <App />
+              <ToastContainer position="top-right" autoClose={3000} />
+            </BrowserRouter>
+          </QueryClientProvider>
+        </LanguageProvider>
+      </Provider>
+    </ErrorBoundary>
+  </React.StrictMode>,
+)
+
+// Register service worker for PWA functionality
+serviceWorkerRegistration.register({
+  onSuccess: () => {
+    console.log('Service worker registered successfully');
+  },
+  onUpdate: (registration) => {
+    console.log('New version available');
+    // Optionally show toast notification
+  },
+});
+
+// Setup install prompt
+serviceWorkerRegistration.setupInstallPrompt();
