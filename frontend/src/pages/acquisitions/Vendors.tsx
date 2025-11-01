@@ -3,9 +3,11 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { fetchVendors, createVendor, updateVendor, deleteVendor, setVendorsFilters } from '../../store/slices/acquisitionsSlice'
 import { FiPlus, FiEdit, FiTrash2, FiX, FiSearch } from 'react-icons/fi'
 import type { VendorCreate, VendorUpdate } from '../../types/acquisitions'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const Vendors = () => {
   const dispatch = useAppDispatch()
+  const { t } = useLanguage()
   const { vendors, loading, vendorsMeta, vendorsFilters } = useAppSelector(state => state.acquisitions)
 
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -79,7 +81,7 @@ const Vendors = () => {
   }
 
   const handleDelete = async (vendorId: string) => {
-    if (window.confirm('Are you sure you want to delete this vendor?')) {
+    if (window.confirm(t('acquisitions.vendors.deleteConfirm'))) {
       await dispatch(deleteVendor(vendorId))
     }
   }
@@ -104,12 +106,12 @@ const Vendors = () => {
     <div>
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Vendors</h2>
+        <h2 className="text-2xl font-semibold">{t('acquisitions.vendors.title')}</h2>
         <button
           onClick={() => setShowCreateModal(true)}
           className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
         >
-          <FiPlus /> Create Vendor
+          <FiPlus /> {t('acquisitions.vendors.createVendor')}
         </button>
       </div>
 
@@ -121,14 +123,14 @@ const Vendors = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="Search by name, code, or description..."
+            placeholder={t('acquisitions.vendors.searchPlaceholder')}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
           />
           <button
             onClick={handleSearch}
             className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2"
           >
-            <FiSearch /> Search
+            <FiSearch /> {t('common.search')}
           </button>
         </div>
       </div>
@@ -138,12 +140,12 @@ const Vendors = () => {
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="mt-4 text-gray-600">Loading vendors...</p>
+            <p className="mt-4 text-gray-600">{t('acquisitions.vendors.loading')}</p>
           </div>
         ) : vendors.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
-            <p className="text-xl mb-2">No vendors found</p>
-            <p>Create your first vendor to get started</p>
+            <p className="text-xl mb-2">{t('acquisitions.vendors.noVendors')}</p>
+            <p>{t('acquisitions.vendors.noVendors.desc')}</p>
           </div>
         ) : (
           <>
@@ -151,12 +153,12 @@ const Vendors = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment Method</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.code')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.name')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.status')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.paymentMethod')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.type')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -170,14 +172,14 @@ const Vendors = () => {
                           vendor.vendor_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
-                          {vendor.vendor_status}
+                          {t(`acquisitions.vendors.status.${vendor.vendor_status}`)}
                         </span>
                       </td>
                       <td className="px-6 py-4">{vendor.payment_method || '-'}</td>
                       <td className="px-6 py-4">
-                        {vendor.is_vendor && vendor.is_customer ? 'Both' :
-                         vendor.is_vendor ? 'Vendor' :
-                         vendor.is_customer ? 'Customer' : '-'}
+                        {vendor.is_vendor && vendor.is_customer ? t('acquisitions.vendors.type.both') :
+                         vendor.is_vendor ? t('acquisitions.vendors.type.vendor') :
+                         vendor.is_customer ? t('acquisitions.vendors.type.customer') : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex gap-2">
@@ -205,7 +207,7 @@ const Vendors = () => {
             {vendorsMeta && vendorsMeta.total_pages > 1 && (
               <div className="flex items-center justify-between px-6 py-4 border-t">
                 <div className="text-sm text-gray-700">
-                  Showing page {vendorsMeta.page} of {vendorsMeta.total_pages} ({vendorsMeta.total_items} total vendors)
+                  {t('common.showing')} {t('common.page')} {vendorsMeta.page} {t('common.of')} {vendorsMeta.total_pages} ({vendorsMeta.total_items} {t('acquisitions.vendors.totalVendors')})
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -213,14 +215,14 @@ const Vendors = () => {
                     disabled={vendorsMeta.page === 1}
                     className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                   >
-                    Previous
+                    {t('common.previous')}
                   </button>
                   <button
                     onClick={() => handlePageChange(vendorsMeta.page + 1)}
                     disabled={vendorsMeta.page === vendorsMeta.total_pages}
                     className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                   >
-                    Next
+                    {t('common.next')}
                   </button>
                 </div>
               </div>
@@ -234,7 +236,7 @@ const Vendors = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Create Vendor</h3>
+              <h3 className="text-xl font-semibold">{t('acquisitions.vendors.modal.create')}</h3>
               <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-gray-600">
                 <FiX size={24} />
               </button>
@@ -242,7 +244,7 @@ const Vendors = () => {
 
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Code *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.code')} *</label>
                 <input
                   type="text"
                   required
@@ -253,7 +255,7 @@ const Vendors = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.name')} *</label>
                 <input
                   type="text"
                   required
@@ -264,7 +266,7 @@ const Vendors = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.description')}</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -274,20 +276,20 @@ const Vendors = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.status')}</label>
                 <select
                   value={formData.vendor_status}
                   onChange={(e) => setFormData({ ...formData, vendor_status: e.target.value as any })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
                 >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="pending">Pending</option>
+                  <option value="active">{t('acquisitions.vendors.status.active')}</option>
+                  <option value="inactive">{t('acquisitions.vendors.status.inactive')}</option>
+                  <option value="pending">{t('acquisitions.vendors.status.pending')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.paymentMethod')}</label>
                 <input
                   type="text"
                   value={formData.payment_method}
@@ -302,14 +304,14 @@ const Vendors = () => {
                   onClick={() => setShowCreateModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
                   className="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md disabled:opacity-50"
                 >
-                  {loading ? 'Creating...' : 'Create'}
+                  {loading ? t('acquisitions.vendors.creating') : t('common.create')}
                 </button>
               </div>
             </form>
@@ -322,7 +324,7 @@ const Vendors = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Edit Vendor</h3>
+              <h3 className="text-xl font-semibold">{t('acquisitions.vendors.modal.edit')}</h3>
               <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600">
                 <FiX size={24} />
               </button>
@@ -330,7 +332,7 @@ const Vendors = () => {
 
             <form onSubmit={handleEdit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Code</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.code')}</label>
                 <input
                   type="text"
                   disabled
@@ -340,7 +342,7 @@ const Vendors = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.name')} *</label>
                 <input
                   type="text"
                   required
@@ -351,7 +353,7 @@ const Vendors = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.description')}</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -361,20 +363,20 @@ const Vendors = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.status')}</label>
                 <select
                   value={formData.vendor_status}
                   onChange={(e) => setFormData({ ...formData, vendor_status: e.target.value as any })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
                 >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="pending">Pending</option>
+                  <option value="active">{t('acquisitions.vendors.status.active')}</option>
+                  <option value="inactive">{t('acquisitions.vendors.status.inactive')}</option>
+                  <option value="pending">{t('acquisitions.vendors.status.pending')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('acquisitions.vendors.paymentMethod')}</label>
                 <input
                   type="text"
                   value={formData.payment_method}
@@ -389,14 +391,14 @@ const Vendors = () => {
                   onClick={() => setShowEditModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
                   className="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md disabled:opacity-50"
                 >
-                  {loading ? 'Updating...' : 'Update'}
+                  {loading ? t('acquisitions.vendors.updating') : t('common.update')}
                 </button>
               </div>
             </form>

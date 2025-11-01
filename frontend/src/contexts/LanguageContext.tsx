@@ -609,6 +609,10 @@ const enTranslations: Translations = {
   'acquisitions.vendors.noVendors': 'No vendors found',
   'acquisitions.vendors.noVendors.desc': 'Create your first vendor to get started',
   'acquisitions.vendors.searchPlaceholder': 'Search by name, code, or description...',
+  'acquisitions.vendors.loading': 'Loading vendors...',
+  'acquisitions.vendors.creating': 'Creating...',
+  'acquisitions.vendors.updating': 'Updating...',
+  'acquisitions.vendors.totalVendors': 'total vendors',
 
   // Vendor Fields
   'acquisitions.vendors.code': 'Code',
@@ -1892,6 +1896,10 @@ const arTranslations: Translations = {
   'acquisitions.vendors.noVendors': 'لم يتم العثور على موردين',
   'acquisitions.vendors.noVendors.desc': 'أنشئ أول مورد للبدء',
   'acquisitions.vendors.searchPlaceholder': 'البحث بالاسم أو الرمز أو الوصف...',
+  'acquisitions.vendors.loading': 'جاري تحميل الموردين...',
+  'acquisitions.vendors.creating': 'جاري الإنشاء...',
+  'acquisitions.vendors.updating': 'جاري التحديث...',
+  'acquisitions.vendors.totalVendors': 'إجمالي الموردين',
 
   // Vendor Fields
   'acquisitions.vendors.code': 'الرمز',
