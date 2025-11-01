@@ -1036,6 +1036,53 @@ const enTranslations: Translations = {
   'fees.button.recordPayment': 'Record Payment',
   'fees.button.waiveForgive': 'Waive/Forgive',
 
+  // Search Module
+  'search.title': 'Advanced Search',
+  'search.subtitle': 'Search across the entire catalog with advanced filters',
+  'search.placeholder': 'Search by title, author, subject...',
+
+  // Search - Buttons
+  'search.button.search': 'Search',
+  'search.button.showFilters': 'Show Filters',
+  'search.button.hideFilters': 'Hide Filters',
+
+  // Search - Filters
+  'search.filters.title': 'Filters',
+  'search.filters.clearAll': 'Clear All',
+  'search.filters.publicationYear': 'Publication Year',
+  'search.filters.from': 'From',
+  'search.filters.to': 'To',
+  'search.filters.instanceType': 'Instance Type',
+  'search.filters.language': 'Language',
+  'search.filters.subject': 'Subject',
+  'search.filters.applyFilters': 'Apply Filters',
+
+  // Search - Results
+  'search.results.showing': 'Showing',
+  'search.results.to': 'to',
+  'search.results.of': 'of',
+  'search.results.results': 'results',
+  'search.results.for': 'for',
+  'search.results.authors': 'Author(s)',
+  'search.results.edition': 'Edition',
+  'search.results.year': 'Year',
+  'search.results.publisher': 'Publisher',
+  'search.results.languages': 'Languages',
+
+  // Search - No Results
+  'search.noResults.title': 'No results found',
+  'search.noResults.withQuery': 'No items match your search for',
+  'search.noResults.enterQuery': 'Enter a search query to find items in the catalog',
+
+  // Search - Pagination
+  'search.pagination.previous': 'Previous',
+  'search.pagination.next': 'Next',
+
+  // Search - Errors
+  'search.error.serviceUnavailable': 'Search Service Unavailable',
+  'search.error.serviceMessage': 'The Elasticsearch search service is currently unavailable. Please ensure Elasticsearch is running.',
+  'search.error.retryConnection': 'Retry Connection',
+
   // Books Module
   'books.catalog_title': 'Discover Your Next Great Read',
   'books.catalog_subtitle': 'Browse through thousands of books in our digital library',
@@ -2114,6 +2161,53 @@ const arTranslations: Translations = {
   'fees.button.createFee': 'إنشاء رسم',
   'fees.button.recordPayment': 'تسجيل دفعة',
   'fees.button.waiveForgive': 'إعفاء/إسقاط',
+
+  // Search Module (Arabic)
+  'search.title': 'بحث متقدم',
+  'search.subtitle': 'ابحث في الكتالوج بالكامل باستخدام الفلاتر المتقدمة',
+  'search.placeholder': 'ابحث بالعنوان أو المؤلف أو الموضوع...',
+
+  // Search - Buttons (Arabic)
+  'search.button.search': 'بحث',
+  'search.button.showFilters': 'إظهار الفلاتر',
+  'search.button.hideFilters': 'إخفاء الفلاتر',
+
+  // Search - Filters (Arabic)
+  'search.filters.title': 'الفلاتر',
+  'search.filters.clearAll': 'مسح الكل',
+  'search.filters.publicationYear': 'سنة النشر',
+  'search.filters.from': 'من',
+  'search.filters.to': 'إلى',
+  'search.filters.instanceType': 'نوع المصدر',
+  'search.filters.language': 'اللغة',
+  'search.filters.subject': 'الموضوع',
+  'search.filters.applyFilters': 'تطبيق الفلاتر',
+
+  // Search - Results (Arabic)
+  'search.results.showing': 'عرض',
+  'search.results.to': 'إلى',
+  'search.results.of': 'من',
+  'search.results.results': 'نتيجة',
+  'search.results.for': 'لـ',
+  'search.results.authors': 'المؤلف(ون)',
+  'search.results.edition': 'الطبعة',
+  'search.results.year': 'السنة',
+  'search.results.publisher': 'الناشر',
+  'search.results.languages': 'اللغات',
+
+  // Search - No Results (Arabic)
+  'search.noResults.title': 'لم يتم العثور على نتائج',
+  'search.noResults.withQuery': 'لا توجد عناصر تطابق بحثك عن',
+  'search.noResults.enterQuery': 'أدخل استعلام بحث للعثور على عناصر في الكتالوج',
+
+  // Search - Pagination (Arabic)
+  'search.pagination.previous': 'السابق',
+  'search.pagination.next': 'التالي',
+
+  // Search - Errors (Arabic)
+  'search.error.serviceUnavailable': 'خدمة البحث غير متوفرة',
+  'search.error.serviceMessage': 'خدمة Elasticsearch للبحث غير متوفرة حالياً. يرجى التأكد من تشغيل Elasticsearch.',
+  'search.error.retryConnection': 'إعادة المحاولة',
 
   // Books Module
   'books.catalog_title': 'اكتشف قراءتك القادمة الرائعة',

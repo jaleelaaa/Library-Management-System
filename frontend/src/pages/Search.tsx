@@ -10,15 +10,15 @@ import {
   getAutocompleteSuggestions,
   checkSearchHealth,
   setQuery,
-  updateFilter,
   clearFilters,
-  resetSearch,
   clearAutocomplete,
 } from '../store/slices/searchSlice'
 import { FiSearch, FiX, FiFilter, FiAlertCircle, FiRefreshCw } from 'react-icons/fi'
+import { useLanguage } from '../contexts/LanguageContext'
 
 const Search = () => {
   const dispatch = useAppDispatch()
+  const { t, isRTL } = useLanguage()
   const {
     results,
     facets,
@@ -160,7 +160,7 @@ const Search = () => {
           disabled={page === 1}
           className="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Previous
+          {t('search.pagination.previous')}
         </button>
         {pages}
         <button
@@ -168,7 +168,7 @@ const Search = () => {
           disabled={page === totalPages}
           className="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Next
+          {t('search.pagination.next')}
         </button>
       </div>
     )
@@ -216,16 +216,16 @@ const Search = () => {
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
           <FiAlertCircle className="text-yellow-600 mt-1 flex-shrink-0" size={20} />
           <div>
-            <h3 className="font-semibold text-yellow-800 mb-1">Search Service Unavailable</h3>
+            <h3 className="font-semibold text-yellow-800 mb-1">{t('search.error.serviceUnavailable')}</h3>
             <p className="text-sm text-yellow-700 mb-3">
-              The Elasticsearch search service is currently unavailable. Please ensure Elasticsearch is running.
+              {t('search.error.serviceMessage')}
             </p>
             <button
               onClick={() => dispatch(checkSearchHealth())}
               className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 text-sm flex items-center gap-2"
             >
               <FiRefreshCw size={16} />
-              Retry Connection
+              {t('search.error.retryConnection')}
             </button>
           </div>
         </div>
@@ -237,8 +237,8 @@ const Search = () => {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Advanced Search</h1>
-        <p className="text-gray-600 mt-1">Search across the entire catalog with advanced filters</p>
+        <h1 className="text-2xl font-bold text-gray-800">{t('search.title')}</h1>
+        <p className="text-gray-600 mt-1">{t('search.subtitle')}</p>
       </div>
 
       {/* Search Bar */}
@@ -254,7 +254,7 @@ const Search = () => {
                 onKeyPress={handleKeyPress}
                 onFocus={() => autocomplete.suggestions.length > 0 && setShowAutocomplete(true)}
                 onBlur={() => setTimeout(() => setShowAutocomplete(false), 200)}
-                placeholder="Search by title, author, subject..."
+                placeholder={t('search.placeholder')}
                 className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               {searchInput && (
@@ -294,7 +294,7 @@ const Search = () => {
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
           >
             <FiSearch size={20} />
-            Search
+            {t('search.button.search')}
           </button>
 
           <button
@@ -302,7 +302,7 @@ const Search = () => {
             className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2"
           >
             <FiFilter size={20} />
-            {showFilters ? 'Hide' : 'Show'} Filters
+            {showFilters ? t('search.button.hideFilters') : t('search.button.showFilters')}
           </button>
         </div>
       </div>
@@ -321,31 +321,31 @@ const Search = () => {
           <div className="lg:col-span-1">
             <div className="bg-white p-4 rounded-lg border border-gray-200 sticky top-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-800">Filters</h2>
+                <h2 className="text-lg font-semibold text-gray-800">{t('search.filters.title')}</h2>
                 {(selectedInstanceType || selectedLanguage || selectedSubject || yearFrom || yearTo) && (
                   <button
                     onClick={handleClearFilters}
                     className="text-sm text-blue-600 hover:underline"
                   >
-                    Clear All
+                    {t('search.filters.clearAll')}
                   </button>
                 )}
               </div>
 
               {/* Year Range Filter */}
               <div className="mb-6">
-                <h3 className="font-semibold text-gray-700 mb-2">Publication Year</h3>
+                <h3 className="font-semibold text-gray-700 mb-2">{t('search.filters.publicationYear')}</h3>
                 <div className="flex gap-2">
                   <input
                     type="number"
-                    placeholder="From"
+                    placeholder={t('search.filters.from')}
                     value={yearFrom}
                     onChange={(e) => setYearFrom(e.target.value)}
                     className="w-1/2 px-3 py-2 border border-gray-300 rounded text-sm"
                   />
                   <input
                     type="number"
-                    placeholder="To"
+                    placeholder={t('search.filters.to')}
                     value={yearTo}
                     onChange={(e) => setYearTo(e.target.value)}
                     className="w-1/2 px-3 py-2 border border-gray-300 rounded text-sm"
@@ -356,9 +356,9 @@ const Search = () => {
               {/* Faceted Filters */}
               {facets && (
                 <>
-                  {renderFacet('Instance Type', facets.instance_types, setSelectedInstanceType, selectedInstanceType)}
-                  {renderFacet('Language', facets.languages, setSelectedLanguage, selectedLanguage)}
-                  {renderFacet('Subject', facets.subjects, setSelectedSubject, selectedSubject)}
+                  {renderFacet(t('search.filters.instanceType'), facets.instance_types, setSelectedInstanceType, selectedInstanceType)}
+                  {renderFacet(t('search.filters.language'), facets.languages, setSelectedLanguage, selectedLanguage)}
+                  {renderFacet(t('search.filters.subject'), facets.subjects, setSelectedSubject, selectedSubject)}
                 </>
               )}
 
@@ -366,7 +366,7 @@ const Search = () => {
                 onClick={() => handleSearch(1)}
                 className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
-                Apply Filters
+                {t('search.filters.applyFilters')}
               </button>
             </div>
           </div>
@@ -383,13 +383,13 @@ const Search = () => {
               {/* Results Header */}
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-gray-600">
-                  Showing <span className="font-semibold">{(page - 1) * pageSize + 1}</span> to{' '}
-                  <span className="font-semibold">{Math.min(page * pageSize, total)}</span> of{' '}
-                  <span className="font-semibold">{total}</span> results
+                  {t('search.results.showing')} <span className="font-semibold">{(page - 1) * pageSize + 1}</span> {t('search.results.to')}{' '}
+                  <span className="font-semibold">{Math.min(page * pageSize, total)}</span> {t('search.results.of')}{' '}
+                  <span className="font-semibold">{total}</span> {t('search.results.results')}
                   {query && (
                     <>
                       {' '}
-                      for "<span className="font-semibold">{query}</span>"
+                      {t('search.results.for')} "<span className="font-semibold">{query}</span>"
                     </>
                   )}
                 </p>
@@ -406,7 +406,7 @@ const Search = () => {
 
                     {result.contributors && result.contributors.length > 0 && (
                       <p className="text-sm text-gray-600 mb-2">
-                        <span className="font-medium">Author(s):</span>{' '}
+                        <span className="font-medium">{t('search.results.authors')}:</span>{' '}
                         {result.contributors.map((c) => c.name).join(', ')}
                       </p>
                     )}
@@ -414,17 +414,17 @@ const Search = () => {
                     <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
                       {result.edition && (
                         <span>
-                          <span className="font-medium">Edition:</span> {result.edition}
+                          <span className="font-medium">{t('search.results.edition')}:</span> {result.edition}
                         </span>
                       )}
                       {result.publication_year && (
                         <span>
-                          <span className="font-medium">Year:</span> {result.publication_year}
+                          <span className="font-medium">{t('search.results.year')}:</span> {result.publication_year}
                         </span>
                       )}
                       {result.publication && (
                         <span>
-                          <span className="font-medium">Publisher:</span> {result.publication}
+                          <span className="font-medium">{t('search.results.publisher')}:</span> {result.publication}
                         </span>
                       )}
                     </div>
@@ -444,7 +444,7 @@ const Search = () => {
 
                     {result.languages && result.languages.length > 0 && (
                       <div className="flex gap-2 text-xs text-gray-500">
-                        <span className="font-medium">Languages:</span>
+                        <span className="font-medium">{t('search.results.languages')}:</span>
                         <span>{result.languages.join(', ')}</span>
                       </div>
                     )}
@@ -458,11 +458,11 @@ const Search = () => {
           ) : (
             <div className="text-center py-12">
               <FiSearch className="mx-auto text-gray-400 mb-4" size={48} />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">No results found</h3>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">{t('search.noResults.title')}</h3>
               <p className="text-gray-500">
                 {query
-                  ? `No items match your search for "${query}"`
-                  : 'Enter a search query to find items in the catalog'}
+                  ? `${t('search.noResults.withQuery')} "${query}"`
+                  : t('search.noResults.enterQuery')}
               </p>
             </div>
           )}
