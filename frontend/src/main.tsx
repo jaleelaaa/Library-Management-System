@@ -7,7 +7,8 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import App from './App'
 import { store } from './store'
-import { LanguageProvider } from './contexts/LanguageContext'
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext'
+import { PermissionProvider } from './contexts/PermissionContext'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import './assets/styles/index.css'
 
@@ -20,18 +21,35 @@ const queryClient = new QueryClient({
   },
 })
 
+// Wrapper component to access LanguageContext for Toast positioning
+const RootApp = () => {
+  const { isRTL } = useLanguage()
+
+  return (
+    <>
+      <App />
+      <ToastContainer
+        position={isRTL ? "top-left" : "top-right"}
+        autoClose={3000}
+        rtl={isRTL}
+      />
+    </>
+  )
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
       <Provider store={store}>
-        <LanguageProvider>
-          <QueryClientProvider client={queryClient}>
-            <BrowserRouter>
-              <App />
-              <ToastContainer position="top-right" autoClose={3000} />
-            </BrowserRouter>
-          </QueryClientProvider>
-        </LanguageProvider>
+        <PermissionProvider>
+          <LanguageProvider>
+            <QueryClientProvider client={queryClient}>
+              <BrowserRouter>
+                <RootApp />
+              </BrowserRouter>
+            </QueryClientProvider>
+          </LanguageProvider>
+        </PermissionProvider>
       </Provider>
     </ErrorBoundary>
   </React.StrictMode>,
