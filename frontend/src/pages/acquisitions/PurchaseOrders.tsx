@@ -14,11 +14,13 @@ import {
   fetchVendors,
 } from '../../store/slices/acquisitionsSlice'
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiX, FiRefreshCw } from 'react-icons/fi'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 type ModalMode = 'create' | 'edit' | 'view' | null
 
 const PurchaseOrders = () => {
   const dispatch = useAppDispatch()
+  const { t } = useLanguage()
   const { purchaseOrders, selectedPurchaseOrder, vendors, loading } = useAppSelector(
     (state) => state.acquisitions
   )
@@ -34,7 +36,7 @@ const PurchaseOrders = () => {
   })
 
   useEffect(() => {
-    dispatch(fetchPurchaseOrders())
+    dispatch(fetchPurchaseOrders({}))
     dispatch(fetchVendors({ page: 1, page_size: 100 }))
   }, [dispatch])
 
@@ -94,7 +96,7 @@ const PurchaseOrders = () => {
   }
 
   const handleDelete = async (poId: string) => {
-    if (window.confirm('Are you sure you want to delete this purchase order?')) {
+    if (window.confirm(t('acquisitions.po.deleteConfirm'))) {
       await dispatch(deletePurchaseOrder(poId))
     }
   }
@@ -105,10 +107,10 @@ const PurchaseOrders = () => {
     const isViewMode = modalMode === 'view'
     const title =
       modalMode === 'create'
-        ? 'Create Purchase Order'
+        ? t('acquisitions.po.modal.create')
         : modalMode === 'edit'
-        ? 'Edit Purchase Order'
-        : 'Purchase Order Details'
+        ? t('acquisitions.po.modal.edit')
+        : t('acquisitions.po.modal.view')
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -128,7 +130,7 @@ const PurchaseOrders = () => {
               {/* PO Number */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  PO Number *
+                  {t('acquisitions.po.form.poNumber')} *
                 </label>
                 <input
                   type="text"
@@ -143,7 +145,7 @@ const PurchaseOrders = () => {
               {/* Vendor */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Vendor *
+                  {t('acquisitions.po.form.vendor')} *
                 </label>
                 <select
                   value={formData.vendor_id}
@@ -152,7 +154,7 @@ const PurchaseOrders = () => {
                   disabled={isViewMode}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
                 >
-                  <option value="">Select vendor...</option>
+                  <option value="">{t('acquisitions.po.form.selectVendor')}</option>
                   {vendors.map((vendor) => (
                     <option key={vendor.id} value={vendor.id}>
                       {vendor.name}
@@ -164,7 +166,7 @@ const PurchaseOrders = () => {
               {/* Order Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Order Type *
+                  {t('acquisitions.po.form.orderType')} *
                 </label>
                 <select
                   value={formData.order_type}
@@ -173,15 +175,15 @@ const PurchaseOrders = () => {
                   disabled={isViewMode}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
                 >
-                  <option value="one-time">One-Time</option>
-                  <option value="ongoing">Ongoing</option>
+                  <option value="one-time">{t('acquisitions.po.orderType.oneTime')}</option>
+                  <option value="ongoing">{t('acquisitions.po.orderType.ongoing')}</option>
                 </select>
               </div>
 
               {/* Workflow Status */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Status *
+                  {t('acquisitions.po.form.status')} *
                 </label>
                 <select
                   value={formData.workflow_status}
@@ -192,16 +194,16 @@ const PurchaseOrders = () => {
                   disabled={isViewMode}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
                 >
-                  <option value="pending">Pending</option>
-                  <option value="open">Open</option>
-                  <option value="closed">Closed</option>
+                  <option value="pending">{t('acquisitions.po.status.pending')}</option>
+                  <option value="open">{t('acquisitions.po.status.open')}</option>
+                  <option value="closed">{t('acquisitions.po.status.closed')}</option>
                 </select>
               </div>
 
               {/* Total Estimated Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Total Estimated Price *
+                  {t('acquisitions.po.form.totalPrice')} *
                 </label>
                 <input
                   type="number"
@@ -222,7 +224,9 @@ const PurchaseOrders = () => {
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('acquisitions.po.form.notes')}
+                </label>
                 <textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -240,14 +244,14 @@ const PurchaseOrders = () => {
                 onClick={handleCloseModal}
                 className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
               >
-                {isViewMode ? 'Close' : 'Cancel'}
+                {isViewMode ? t('common.close') : t('common.cancel')}
               </button>
               {!isViewMode && (
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
-                  {modalMode === 'create' ? 'Create' : 'Update'}
+                  {modalMode === 'create' ? t('common.create') : t('common.update')}
                 </button>
               )}
             </div>
@@ -260,19 +264,19 @@ const PurchaseOrders = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Purchase Orders</h2>
+        <h2 className="text-2xl font-semibold">{t('acquisitions.po.title')}</h2>
         <div className="flex gap-2">
           <button
-            onClick={() => dispatch(fetchPurchaseOrders())}
+            onClick={() => dispatch(fetchPurchaseOrders({}))}
             className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2"
           >
-            <FiRefreshCw /> Refresh
+            <FiRefreshCw /> {t('common.refresh')}
           </button>
           <button
             onClick={() => handleOpenModal('create')}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
           >
-            <FiPlus /> Create Purchase Order
+            <FiPlus /> {t('acquisitions.po.new')}
           </button>
         </div>
       </div>
@@ -284,7 +288,7 @@ const PurchaseOrders = () => {
           </div>
         ) : purchaseOrders.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
-            No purchase orders found. Create your first purchase order to get started.
+            {t('acquisitions.po.noPOs')}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -292,22 +296,22 @@ const PurchaseOrders = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    PO Number
+                    {t('acquisitions.po.table.poNumber')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Vendor
+                    {t('acquisitions.po.table.vendor')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Type
+                    {t('acquisitions.po.table.type')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Status
+                    {t('acquisitions.po.table.status')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Total
+                    {t('acquisitions.po.table.total')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Actions
+                    {t('acquisitions.po.table.actions')}
                   </th>
                 </tr>
               </thead>
@@ -316,7 +320,7 @@ const PurchaseOrders = () => {
                   <tr key={po.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap font-medium">{po.po_number}</td>
                     <td className="px-6 py-4">{po.vendor_name}</td>
-                    <td className="px-6 py-4 capitalize">{po.order_type}</td>
+                    <td className="px-6 py-4">{t(`acquisitions.po.orderType.${po.order_type === 'one-time' ? 'oneTime' : 'ongoing'}`)}</td>
                     <td className="px-6 py-4">
                       <span
                         className={`px-2 py-1 text-xs rounded-full ${
@@ -327,7 +331,7 @@ const PurchaseOrders = () => {
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        {po.workflow_status}
+                        {t(`acquisitions.po.status.${po.workflow_status}`)}
                       </span>
                     </td>
                     <td className="px-6 py-4">${po.total_estimated_price.toFixed(2)}</td>
@@ -336,21 +340,21 @@ const PurchaseOrders = () => {
                         <button
                           onClick={() => handleOpenModal('view', po.id)}
                           className="text-blue-600 hover:text-blue-900"
-                          title="View"
+                          title={t('common.view')}
                         >
                           <FiEye size={18} />
                         </button>
                         <button
                           onClick={() => handleOpenModal('edit', po.id)}
                           className="text-green-600 hover:text-green-900"
-                          title="Edit"
+                          title={t('common.edit')}
                         >
                           <FiEdit2 size={18} />
                         </button>
                         <button
                           onClick={() => handleDelete(po.id)}
                           className="text-red-600 hover:text-red-900"
-                          title="Delete"
+                          title={t('common.delete')}
                         >
                           <FiTrash2 size={18} />
                         </button>
