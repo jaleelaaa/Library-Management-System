@@ -62,6 +62,7 @@ class UserBase(BaseModel):
     custom_fields: Dict[str, Any] = {}
     tags: List[str] = []
     preferred_email_communication: List[str] = []
+    role_ids: List[UUID] = []
 
 
 class UserCreate(UserBase):
@@ -73,14 +74,22 @@ class UserCreate(UserBase):
     @classmethod
     def validate_password(cls, v):
         """Validate password strength."""
+        import re
+        errors = []
+
         if len(v) < 8:
-            raise ValueError('Password must be at least 8 characters')
+            errors.append('Password must be at least 8 characters')
         if not any(c.isupper() for c in v):
-            raise ValueError('Password must contain at least one uppercase letter')
+            errors.append('Password must contain at least one uppercase letter')
         if not any(c.islower() for c in v):
-            raise ValueError('Password must contain at least one lowercase letter')
+            errors.append('Password must contain at least one lowercase letter')
         if not any(c.isdigit() for c in v):
-            raise ValueError('Password must contain at least one digit')
+            errors.append('Password must contain at least one digit')
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-+=\[\]\\\/;'`~]", v):
+            errors.append('Password must contain at least one special character (!@#$%^&*(),.?\":{}|<>_-+=[]\\\/;\'`~)')
+
+        if errors:
+            raise ValueError('; '.join(errors))
         return v
 
 
@@ -98,6 +107,7 @@ class UserUpdate(BaseModel):
     custom_fields: Optional[Dict[str, Any]] = None
     tags: Optional[List[str]] = None
     preferred_email_communication: Optional[List[str]] = None
+    role_ids: Optional[List[UUID]] = None
     password: Optional[str] = Field(None, min_length=8)
 
     @field_validator('password')
@@ -106,15 +116,49 @@ class UserUpdate(BaseModel):
         """Validate password strength if provided."""
         if v is None:
             return v
+
+        import re
+        errors = []
+
         if len(v) < 8:
-            raise ValueError('Password must be at least 8 characters')
+            errors.append('Password must be at least 8 characters')
         if not any(c.isupper() for c in v):
-            raise ValueError('Password must contain at least one uppercase letter')
+            errors.append('Password must contain at least one uppercase letter')
         if not any(c.islower() for c in v):
-            raise ValueError('Password must contain at least one lowercase letter')
+            errors.append('Password must contain at least one lowercase letter')
         if not any(c.isdigit() for c in v):
-            raise ValueError('Password must contain at least one digit')
+            errors.append('Password must contain at least one digit')
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-+=\[\]\\\/;'`~]", v):
+            errors.append('Password must contain at least one special character (!@#$%^&*(),.?\":{}|<>_-+=[]\\\/;\'`~)')
+
+        if errors:
+            raise ValueError('; '.join(errors))
         return v
+
+
+class PermissionSimple(BaseModel):
+    """Simplified permission schema for nested responses."""
+    id: UUID
+    name: str
+    display_name: str
+    description: Optional[str] = None
+    resource: str
+    action: str
+
+    class Config:
+        from_attributes = True
+
+
+class RoleSimple(BaseModel):
+    """Simplified role schema for nested responses."""
+    id: UUID
+    name: str
+    display_name: str
+    description: Optional[str] = None
+    permissions: List['PermissionSimple'] = []
+
+    class Config:
+        from_attributes = True
 
 
 class UserResponse(UserBase):
@@ -125,6 +169,7 @@ class UserResponse(UserBase):
     tenant_id: UUID
     addresses: List[AddressResponse] = []
     patron_group_name: Optional[str] = None
+    roles: List[RoleSimple] = []
 
     class Config:
         from_attributes = True
@@ -141,6 +186,7 @@ class UserListItem(BaseModel):
     personal: PersonalInfo
     patron_group_id: Optional[UUID] = None
     patron_group_name: Optional[str] = None
+    roles: List[RoleSimple] = []
     created_date: datetime
 
     class Config:

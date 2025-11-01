@@ -10,14 +10,17 @@ import {
   setSelectedUser,
   setFilters
 } from '../store/slices/usersSlice'
+import { fetchRoles } from '../store/slices/rolesSlice'
 import { FiPlus, FiEdit2, FiTrash2, FiSearch, FiFilter, FiX, FiEye } from 'react-icons/fi'
 import type { User, UserCreate, PersonalInfo } from '../types/user'
 import { useLanguage } from '../contexts/LanguageContext'
+import PermissionGate from '../components/auth/PermissionGate'
 import { sanitizeSearchQuery } from '../utils/sanitize'
 
 const Users = () => {
   const dispatch = useAppDispatch()
   const { users, selectedUser, patronGroups, loading, meta, filters } = useAppSelector(state => state.users)
+  const { roles } = useAppSelector(state => state.roles)
   const { t } = useLanguage()
 
   const [showModal, setShowModal] = useState(false)
@@ -44,6 +47,7 @@ const Users = () => {
       mobilePhone: ''
     },
     addresses: [],
+    role_ids: [],
     tags: [],
     custom_fields: {}
   })
@@ -51,6 +55,7 @@ const Users = () => {
   useEffect(() => {
     dispatch(fetchUsers(filters))
     dispatch(fetchPatronGroups())
+    dispatch(fetchRoles())
   }, [dispatch])
 
   const handleSearch = () => {
@@ -90,6 +95,7 @@ const Users = () => {
         mobilePhone: ''
       },
       addresses: [],
+      role_ids: [],
       tags: [],
       custom_fields: {}
     })
@@ -106,10 +112,19 @@ const Users = () => {
       active: user.active,
       user_type: user.user_type,
       patron_group_id: user.patron_group_id || '',
-      personal: user.personal,
-      addresses: user.addresses,
-      tags: user.tags,
-      custom_fields: user.custom_fields
+      personal: user.personal || {
+        firstName: '',
+        lastName: '',
+        middleName: '',
+        preferredFirstName: '',
+        email: '',
+        phone: '',
+        mobilePhone: ''
+      },
+      addresses: user.addresses || [],
+      role_ids: user.roles?.map(r => r.id) || [],
+      tags: user.tags || [],
+      custom_fields: user.custom_fields || {}
     })
     setShowModal(true)
   }
@@ -124,19 +139,28 @@ const Users = () => {
   const handleDelete = async (userId: string) => {
     if (window.confirm(t('users.deleteConfirm'))) {
       await dispatch(deleteUser(userId))
+      await dispatch(fetchUsers(filters))
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (modalMode === 'create') {
-      await dispatch(createUser(formData as UserCreate))
-      setShowModal(false)
-    } else if (modalMode === 'edit' && selectedUser) {
-      const { password, ...updateData } = formData
-      await dispatch(updateUser({ userId: selectedUser.id, userData: updateData }))
-      setShowModal(false)
+    try {
+      if (modalMode === 'create') {
+        await dispatch(createUser(formData as UserCreate)).unwrap()
+        await dispatch(fetchUsers(filters))
+        setShowModal(false)
+      } else if (modalMode === 'edit' && selectedUser) {
+        const { password, ...updateData } = formData
+        await dispatch(updateUser({ userId: selectedUser.id, userData: updateData })).unwrap()
+        await dispatch(fetchUsers(filters))
+        setShowModal(false)
+      }
+    } catch (error) {
+      // Error is already displayed via toast in the slice
+      // Keep modal open so user can fix the issue
+      console.error('Failed to save user:', error)
     }
   }
 
@@ -155,12 +179,14 @@ const Users = () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900">{t('users.title')}</h1>
-        <button
-          onClick={openCreateModal}
-          className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition"
-        >
-          <FiPlus /> {t('users.newUser')}
-        </button>
+        <PermissionGate permission="users.create">
+          <button
+            onClick={openCreateModal}
+            className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition"
+          >
+            <FiPlus /> {t('users.newUser')}
+          </button>
+        </PermissionGate>
       </div>
 
       {/* Search and Filters */}
@@ -272,6 +298,9 @@ const Users = () => {
                       {t('users.patronGroup')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('users.roles')}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t('users.status')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -287,7 +316,7 @@ const Users = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-gray-900">
-                          {user.personal.firstName} {user.personal.lastName}
+                          {user.personal?.firstName || '-'} {user.personal?.lastName || ''}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-600">
@@ -298,6 +327,17 @@ const Users = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                         {user.patron_group_name || '-'}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {user.roles && Array.isArray(user.roles) && user.roles.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {user.roles.map(role => (
+                              <span key={role?.id || Math.random()} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                {role?.display_name || 'Unknown'}
+                              </span>
+                            ))}
+                          </div>
+                        ) : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs rounded-full ${
@@ -317,20 +357,24 @@ const Users = () => {
                           >
                             <FiEye size={18} />
                           </button>
-                          <button
-                            onClick={() => openEditModal(user)}
-                            className="text-yellow-600 hover:text-yellow-800"
-                            title="Edit"
-                          >
-                            <FiEdit2 size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user.id)}
-                            className="text-red-600 hover:text-red-800"
-                            title="Delete"
-                          >
-                            <FiTrash2 size={18} />
-                          </button>
+                          <PermissionGate permission="users.update">
+                            <button
+                              onClick={() => openEditModal(user)}
+                              className="text-yellow-600 hover:text-yellow-800"
+                              title="Edit"
+                            >
+                              <FiEdit2 size={18} />
+                            </button>
+                          </PermissionGate>
+                          <PermissionGate permission="users.delete">
+                            <button
+                              onClick={() => handleDelete(user.id)}
+                              className="text-red-600 hover:text-red-800"
+                              title="Delete"
+                            >
+                              <FiTrash2 size={18} />
+                            </button>
+                          </PermissionGate>
                         </div>
                       </td>
                     </tr>
@@ -405,19 +449,33 @@ const Users = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('users.form.firstName')}</label>
-                    <p className="text-gray-900">{selectedUser.personal.firstName}</p>
+                    <p className="text-gray-900">{selectedUser.personal?.firstName || '-'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('users.form.lastName')}</label>
-                    <p className="text-gray-900">{selectedUser.personal.lastName}</p>
+                    <p className="text-gray-900">{selectedUser.personal?.lastName || '-'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('users.phone')}</label>
-                    <p className="text-gray-900">{selectedUser.personal.phone || '-'}</p>
+                    <p className="text-gray-900">{selectedUser.personal?.phone || '-'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('users.patronGroup')}</label>
                     <p className="text-gray-900">{selectedUser.patron_group_name || '-'}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('users.roles')}</label>
+                    <div className="flex flex-wrap gap-1">
+                      {selectedUser.roles && Array.isArray(selectedUser.roles) && selectedUser.roles.length > 0 ? (
+                        selectedUser.roles.map(role => (
+                          <span key={role?.id || Math.random()} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                            {role?.display_name || 'Unknown'}
+                          </span>
+                        ))
+                      ) : (
+                        <p className="text-gray-900">{t('users.roles.none')}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 pt-4 border-t">
@@ -427,12 +485,14 @@ const Users = () => {
                   >
                     {t('common.close')}
                   </button>
-                  <button
-                    onClick={() => openEditModal(selectedUser)}
-                    className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md"
-                  >
-                    {t('users.button.editUser')}
-                  </button>
+                  <PermissionGate permission="users.update">
+                    <button
+                      onClick={() => openEditModal(selectedUser)}
+                      className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md"
+                    >
+                      {t('users.button.editUser')}
+                    </button>
+                  </PermissionGate>
                 </div>
               </div>
             ) : (
@@ -514,6 +574,25 @@ const Users = () => {
                         <option key={group.id} value={group.id}>{group.group_name}</option>
                       ))}
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('users.roles')}</label>
+                    <select
+                      multiple
+                      value={formData.role_ids}
+                      onChange={(e) => {
+                        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value)
+                        setFormData({ ...formData, role_ids: selectedOptions })
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                      style={{ minHeight: '100px' }}
+                    >
+                      {roles.map(role => (
+                        <option key={role.id} value={role.id}>{role.display_name}</option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">{t('users.roles.multiSelectHint')}</p>
                   </div>
 
                   <div className="flex items-center">
