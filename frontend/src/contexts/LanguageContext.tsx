@@ -1083,6 +1083,60 @@ const enTranslations: Translations = {
   'search.error.serviceMessage': 'The Elasticsearch search service is currently unavailable. Please ensure Elasticsearch is running.',
   'search.error.retryConnection': 'Retry Connection',
 
+  // Courses Module
+  'courses.title': 'Course Reserves',
+  'courses.subtitle': 'Manage courses and reserve materials',
+  'courses.newCourse': 'New Course',
+  'courses.searchPlaceholder': 'Search by course name, code, or description...',
+
+  // Courses - Filters
+  'courses.status': 'Status',
+  'courses.allCourses': 'All Courses',
+  'courses.activeOnly': 'Active Only',
+  'courses.inactiveOnly': 'Inactive Only',
+  'courses.term': 'Term',
+  'courses.termPlaceholder': 'e.g., Fall 2024, Spring 2025',
+
+  // Courses - Table
+  'courses.table.code': 'Code',
+  'courses.table.name': 'Name',
+  'courses.table.instructor': 'Instructor',
+  'courses.table.term': 'Term',
+  'courses.table.dates': 'Dates',
+  'courses.table.reserves': 'Reserves',
+  'courses.table.status': 'Status',
+  'courses.table.actions': 'Actions',
+
+  // Courses - Status
+  'courses.active': 'Active',
+  'courses.inactive': 'Inactive',
+
+  // Courses - Actions
+  'courses.view': 'View',
+  'courses.edit': 'Edit',
+  'courses.delete': 'Delete',
+
+  // Courses - Modal
+  'courses.modal.create': 'Create New Course',
+  'courses.modal.edit': 'Edit Course',
+  'courses.modal.view': 'Course Details',
+
+  // Courses - Form
+  'courses.form.code': 'Course Code',
+  'courses.form.name': 'Course Name',
+  'courses.form.description': 'Description',
+  'courses.form.instructor': 'Instructor',
+  'courses.form.term': 'Term',
+  'courses.form.startDate': 'Start Date',
+  'courses.form.endDate': 'End Date',
+  'courses.form.status': 'Status',
+  'courses.form.notes': 'Notes',
+
+  // Courses - Messages
+  'courses.noCourses': 'No courses found',
+  'courses.loading': 'Loading courses...',
+  'courses.deleteConfirm': 'Are you sure you want to delete this course?',
+
   // Books Module
   'books.catalog_title': 'Discover Your Next Great Read',
   'books.catalog_subtitle': 'Browse through thousands of books in our digital library',
@@ -2208,6 +2262,60 @@ const arTranslations: Translations = {
   'search.error.serviceUnavailable': 'خدمة البحث غير متوفرة',
   'search.error.serviceMessage': 'خدمة Elasticsearch للبحث غير متوفرة حالياً. يرجى التأكد من تشغيل Elasticsearch.',
   'search.error.retryConnection': 'إعادة المحاولة',
+
+  // Courses Module (Arabic)
+  'courses.title': 'الدورات الاحتياطية',
+  'courses.subtitle': 'إدارة الدورات والمواد الاحتياطية',
+  'courses.newCourse': 'دورة جديدة',
+  'courses.searchPlaceholder': 'ابحث بالاسم أو الرمز أو الوصف...',
+
+  // Courses - Filters (Arabic)
+  'courses.status': 'الحالة',
+  'courses.allCourses': 'جميع الدورات',
+  'courses.activeOnly': 'النشطة فقط',
+  'courses.inactiveOnly': 'غير النشطة فقط',
+  'courses.term': 'الفصل',
+  'courses.termPlaceholder': 'مثلاً: خريف 2024، ربيع 2025',
+
+  // Courses - Table (Arabic)
+  'courses.table.code': 'الرمز',
+  'courses.table.name': 'الاسم',
+  'courses.table.instructor': 'المدرس',
+  'courses.table.term': 'الفصل',
+  'courses.table.dates': 'التواريخ',
+  'courses.table.reserves': 'الاحتياطيات',
+  'courses.table.status': 'الحالة',
+  'courses.table.actions': 'الإجراءات',
+
+  // Courses - Status (Arabic)
+  'courses.active': 'نشط',
+  'courses.inactive': 'غير نشط',
+
+  // Courses - Actions (Arabic)
+  'courses.view': 'عرض',
+  'courses.edit': 'تعديل',
+  'courses.delete': 'حذف',
+
+  // Courses - Modal (Arabic)
+  'courses.modal.create': 'إنشاء دورة جديدة',
+  'courses.modal.edit': 'تعديل الدورة',
+  'courses.modal.view': 'تفاصيل الدورة',
+
+  // Courses - Form (Arabic)
+  'courses.form.code': 'رمز الدورة',
+  'courses.form.name': 'اسم الدورة',
+  'courses.form.description': 'الوصف',
+  'courses.form.instructor': 'المدرس',
+  'courses.form.term': 'الفصل',
+  'courses.form.startDate': 'تاريخ البدء',
+  'courses.form.endDate': 'تاريخ الانتهاء',
+  'courses.form.status': 'الحالة',
+  'courses.form.notes': 'ملاحظات',
+
+  // Courses - Messages (Arabic)
+  'courses.noCourses': 'لم يتم العثور على دورات',
+  'courses.loading': 'جاري تحميل الدورات...',
+  'courses.deleteConfirm': 'هل أنت متأكد من حذف هذه الدورة؟',
 
   // Books Module
   'books.catalog_title': 'اكتشف قراءتك القادمة الرائعة',
