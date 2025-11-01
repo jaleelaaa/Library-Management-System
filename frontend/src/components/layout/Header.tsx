@@ -5,6 +5,7 @@ import { FiMenu, FiUser, FiLogOut } from 'react-icons/fi'
 import { RootState } from '@/store'
 import { logout } from '@/store/slices/authSlice'
 import NotificationBell from './NotificationBell'
+import LanguageSwitcher from '../common/LanguageSwitcher'
 import websocketService from '../../services/websocketService'
 
 const Header = () => {
@@ -43,6 +44,9 @@ const Header = () => {
       </div>
 
       <div className="flex items-center space-x-4">
+        {/* Language Switcher */}
+        <LanguageSwitcher />
+
         {/* Notifications */}
         <div className="text-white">
           <NotificationBell />
