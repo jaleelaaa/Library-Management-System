@@ -5,7 +5,7 @@ export type Language = 'en' | 'ar'
 interface LanguageContextType {
   language: Language
   setLanguage: (lang: Language) => void
-  t: (key: string) => string
+  t: (key: string, params?: Record<string, any>) => string
   isRTL: boolean
 }
 
@@ -79,6 +79,8 @@ const enTranslations: Translations = {
   'login.signIn': 'Sign in',
   'login.signingIn': 'Signing in...',
   'login.defaultCreds': 'Default credentials',
+  'login.admin': 'Admin',
+  'login.patron': 'Patron',
   'login.security': 'Protected by industry-standard security',
   'login.welcome': 'Welcome back',
   'login.error.username': 'Username is required',
@@ -101,6 +103,7 @@ const enTranslations: Translations = {
   'common.import': 'Import',
   'common.close': 'Close',
   'common.back': 'Back',
+  'common.refresh': 'Refresh',
   'common.previous': 'Previous',
   'common.next': 'Next',
   'common.showing': 'Showing',
@@ -176,6 +179,71 @@ const enTranslations: Translations = {
   // Pagination
   'users.pagination.showing': 'Showing page',
   'users.pagination.totalUsers': 'total users',
+
+  // User Roles
+  'users.roles': 'Roles',
+  'users.roles.select': 'Select Roles',
+  'users.roles.multiSelectHint': 'Hold Ctrl/Cmd to select multiple roles',
+  'users.roles.none': 'No roles assigned',
+
+  // Roles & Permissions Module
+  'roles.title': 'Roles & Permissions',
+  'roles.subtitle': 'Manage user roles and their permissions',
+  'roles.addNew': 'Add New Role',
+  'roles.createRole': 'Create Role',
+  'roles.editRole': 'Edit Role',
+  'roles.viewRole': 'View Role',
+  'roles.deleteRole': 'Delete Role',
+  'roles.deleteConfirm': 'Are you sure you want to delete this role?',
+  'roles.noRoles': 'No roles found',
+  'roles.noRoles.desc': 'Create your first role to get started',
+  'roles.loading': 'Loading roles...',
+
+  // Role Fields
+  'roles.roleName': 'Role Name',
+  'roles.roleNameInternal': 'Role Name (Internal)',
+  'roles.roleNameInternalPlaceholder': 'e.g., librarian',
+  'roles.displayName': 'Display Name',
+  'roles.displayNamePlaceholder': 'e.g., Librarian',
+  'roles.description': 'Description',
+  'roles.descriptionPlaceholder': 'Brief description of this role',
+  'roles.permissions': 'Permissions',
+  'roles.permissionCount': '{count} permissions',
+  'roles.systemRole': 'System Role',
+  'roles.customRole': 'Custom',
+  'roles.system': 'System',
+  'roles.actions': 'Actions',
+
+  // Permission Management
+  'roles.selectAll': 'Select All',
+  'roles.deselectAll': 'Deselect All',
+  'roles.permissionCategories': 'Permission Categories',
+  'roles.assignPermissions': 'Assign Permissions',
+  'roles.updateRole': 'Update Role',
+
+  // Role Form
+  'roles.form.basicInfo': 'Role Information',
+  'roles.form.permissionSelection': 'Permission Selection',
+  'roles.form.roleNameInternal': 'Role Name (Internal)',
+  'roles.form.roleNamePlaceholder': 'e.g., librarian',
+  'roles.form.displayName': 'Display Name',
+  'roles.form.displayNamePlaceholder': 'e.g., Librarian',
+
+  // Role Actions
+  'roles.button.create': 'Create Role',
+  'roles.button.update': 'Update Role',
+  'roles.button.cancel': 'Cancel',
+  'roles.button.close': 'Close',
+
+  // Role Messages
+  'roles.success.created': 'Role created successfully',
+  'roles.success.updated': 'Role updated successfully',
+  'roles.success.deleted': 'Role deleted successfully',
+  'roles.error.create': 'Failed to create role',
+  'roles.error.update': 'Failed to update role',
+  'roles.error.delete': 'Failed to delete role',
+  'roles.error.systemRole': 'System roles cannot be modified',
+  'roles.error.systemRoleDelete': 'System roles cannot be deleted',
 
   // Patron Groups
   'patronGroups.title': 'Patron Groups',
@@ -399,6 +467,35 @@ const enTranslations: Translations = {
   'circulation.instructions.renew': 'Renew: Scan item barcode to extend due date',
   'circulation.instructions.recent': 'Recent transactions appear in the panel on the right',
 
+  // Loans
+  'loans.title': 'All Loans',
+  'loans.statusOpen': 'Open',
+  'loans.statusClosed': 'Closed',
+  'loans.statusOverdue': 'Overdue',
+  'loans.overdueOnly': 'Overdue Only',
+  'loans.allLoans': 'All Loans',
+  'loans.clearFilters': 'Clear Filters',
+  'loans.loading': 'Loading loans...',
+  'loans.noLoans': 'No loans found',
+  'loans.tryAdjusting': 'Try adjusting your filters',
+  'loans.renew': 'Renew',
+  'loans.filters': 'Filters',
+  'loans.status': 'Status',
+  'loans.item': 'Item',
+  'loans.user': 'User',
+  'loans.loanDate': 'Loan Date',
+  'loans.dueDate': 'Due Date',
+  'loans.renewals': 'Renewals',
+  'loans.actions': 'Actions',
+  'loans.barcode': 'Barcode',
+  'loans.unknownItem': 'Unknown Item',
+  'loans.unknownUser': 'Unknown User',
+  'loans.daysOverdue': '{days} days overdue',
+  'loans.dueToday': 'Due today',
+  'loans.dueTomorrow': 'Due tomorrow',
+  'loans.dueInDays': 'Due in {days} days',
+  'loans.showingPage': 'Showing page {page} of {total_pages} ({total_items} total loans)',
+
   // Reports Module
   'reports.title': 'Reports',
   'reports.subtitle': 'Generate and export library reports and analytics',
@@ -446,6 +543,45 @@ const enTranslations: Translations = {
   'reports.error.noData': 'No data available for the selected criteria',
   'reports.noReports': 'No reports generated yet',
   'reports.noReports.desc': 'Generate your first report to get started',
+
+  // Audit Logs Module
+  'auditLogs.title': 'Audit Logs',
+  'auditLogs.subtitle': 'View and monitor system activity and user actions',
+  'auditLogs.timestamp': 'Timestamp',
+  'auditLogs.user': 'User',
+  'auditLogs.action': 'Action',
+  'auditLogs.resourceType': 'Resource Type',
+  'auditLogs.resourceId': 'Resource ID',
+  'auditLogs.details': 'Details',
+  'auditLogs.status': 'Status',
+  'auditLogs.ipAddress': 'IP Address',
+  'auditLogs.userAgent': 'User Agent',
+  'auditLogs.filters': 'Filters',
+  'auditLogs.dateRange': 'Date Range',
+  'auditLogs.fromDate': 'From Date',
+  'auditLogs.toDate': 'To Date',
+  'auditLogs.actionType': 'Action Type',
+  'auditLogs.userFilter': 'User',
+  'auditLogs.resourceTypeFilter': 'Resource Type',
+  'auditLogs.searchById': 'Search by ID',
+  'auditLogs.searchPlaceholder': 'Search by resource ID or path...',
+  'auditLogs.export': 'Export',
+  'auditLogs.exportCSV': 'Export CSV',
+  'auditLogs.exportExcel': 'Export Excel',
+  'auditLogs.applyFilters': 'Apply Filters',
+  'auditLogs.clearFilters': 'Clear Filters',
+  'auditLogs.noLogs': 'No audit logs found',
+  'auditLogs.noLogsDesc': 'Try adjusting your filters or date range',
+  'auditLogs.loading': 'Loading audit logs...',
+  'auditLogs.showing': 'Showing page',
+  'auditLogs.totalLogs': 'total logs',
+  'auditLogs.actions': 'Actions',
+  'auditLogs.viewDetails': 'View Details',
+  'auditLogs.success.exported': 'Audit logs exported successfully',
+  'auditLogs.error.fetch': 'Failed to fetch audit logs',
+  'auditLogs.error.export': 'Failed to export audit logs',
+  'auditLogs.error.noPermission': 'Access Denied',
+  'auditLogs.error.noPermissionDesc': 'You do not have permission to view audit logs. Contact your administrator.',
 
   // Acquisitions Module
   'acquisitions.title': 'Acquisitions',
@@ -821,6 +957,85 @@ const enTranslations: Translations = {
   'fees.error.insufficientAmount': 'Payment amount exceeds remaining balance',
   'fees.error.invalidAmount': 'Please enter a valid amount',
 
+  // Fees - Tabs
+  'fees.tabs.fees': 'Fees',
+
+  // Fees - Filters
+  'fees.filters.allStatuses': 'All Statuses',
+  'fees.filters.allTypes': 'All Types',
+
+  // Fees - Table Headers
+  'fees.table.type': 'Type',
+  'fees.table.status': 'Status',
+  'fees.table.amount': 'Amount',
+  'fees.table.remaining': 'Remaining',
+  'fees.table.description': 'Description',
+  'fees.table.date': 'Date',
+
+  // Fees - Additional Status
+  'fees.autoGenerated': 'Auto-generated',
+  'fees.paid': 'Paid',
+  'fees.pay': 'Pay',
+  'fees.waive': 'Waive',
+
+  // Fees - Modal Titles
+  'fees.modal.createFee': 'Create Fee',
+  'fees.modal.recordPayment': 'Record Payment',
+  'fees.modal.waiveFee': 'Waive Fee',
+  'fees.modal.feeDetails': 'Fee Details',
+
+  // Fees - Modal Fields
+  'fees.modal.type': 'Type',
+  'fees.modal.status': 'Status',
+  'fees.modal.originalAmount': 'Original Amount',
+  'fees.modal.remaining': 'Remaining',
+  'fees.modal.paid': 'Paid',
+  'fees.modal.feeDate': 'Fee Date',
+  'fees.modal.description': 'Description',
+  'fees.modal.reason': 'Reason',
+  'fees.modal.paymentHistory': 'Payment History',
+  'fees.modal.noPayments': 'No payments recorded',
+  'fees.modal.ref': 'Ref',
+  'fees.modal.balance': 'Balance',
+
+  // Fees - Form Fields
+  'fees.form.userId': 'User ID',
+  'fees.form.userIdPlaceholder': 'Enter user ID',
+  'fees.form.userIdHint': 'Enter the ID of the user to charge this fee to',
+  'fees.form.feeType': 'Fee Type',
+  'fees.form.amount': 'Amount',
+  'fees.form.description': 'Description',
+  'fees.form.descriptionPlaceholder': 'Enter description',
+  'fees.form.reason': 'Reason',
+  'fees.form.reasonPlaceholder': 'Enter reason for this fee',
+  'fees.form.fee': 'Fee',
+  'fees.form.remainingBalance': 'Remaining Balance',
+  'fees.form.paymentMethod': 'Payment Method',
+  'fees.form.maximum': 'Maximum',
+  'fees.form.transactionInfo': 'Transaction Info',
+  'fees.form.transactionInfoPlaceholder': 'Enter transaction reference',
+  'fees.form.comments': 'Comments',
+  'fees.form.commentsPlaceholder': 'Enter any comments',
+  'fees.form.action': 'Action',
+  'fees.form.amountOptional': 'Amount (Optional)',
+  'fees.form.fullAmount': 'Full amount',
+  'fees.form.waiveReasonPlaceholder': 'Enter reason for waiving this fee',
+
+  // Fees - Payment Methods
+  'fees.paymentMethods.cash': 'Cash',
+  'fees.paymentMethods.check': 'Check',
+  'fees.paymentMethods.creditCard': 'Credit Card',
+  'fees.paymentMethods.transfer': 'Bank Transfer',
+
+  // Fees - Actions
+  'fees.actions.waive': 'Waive',
+  'fees.actions.forgive': 'Forgive',
+
+  // Fees - Buttons
+  'fees.button.createFee': 'Create Fee',
+  'fees.button.recordPayment': 'Record Payment',
+  'fees.button.waiveForgive': 'Waive/Forgive',
+
   // Books Module
   'books.catalog_title': 'Discover Your Next Great Read',
   'books.catalog_subtitle': 'Browse through thousands of books in our digital library',
@@ -934,7 +1149,7 @@ const arTranslations: Translations = {
   'system.response': 'الاستجابة',
 
   // Login
-  'login.title': 'نظام إدارة المكتبة FOLIO',
+  'login.title': 'نظام إدارة المكتبة فوليو',
   'login.subtitle': 'تسجيل الدخول لإدارة مكتبتك',
   'login.username': 'اسم المستخدم',
   'login.password': 'كلمة المرور',
@@ -943,6 +1158,8 @@ const arTranslations: Translations = {
   'login.signIn': 'تسجيل الدخول',
   'login.signingIn': 'جاري تسجيل الدخول...',
   'login.defaultCreds': 'بيانات الاعتماد الافتراضية',
+  'login.admin': 'مسؤول',
+  'login.patron': 'مستعير',
   'login.security': 'محمي بمعايير أمان صناعية',
   'login.welcome': 'مرحباً بعودتك',
   'login.error.username': 'اسم المستخدم مطلوب',
@@ -965,6 +1182,7 @@ const arTranslations: Translations = {
   'common.import': 'استيراد',
   'common.close': 'إغلاق',
   'common.back': 'رجوع',
+  'common.refresh': 'تحديث',
   'common.previous': 'السابق',
   'common.next': 'التالي',
   'common.showing': 'عرض',
@@ -1040,6 +1258,71 @@ const arTranslations: Translations = {
   // Pagination
   'users.pagination.showing': 'عرض صفحة',
   'users.pagination.totalUsers': 'إجمالي المستخدمين',
+
+  // User Roles
+  'users.roles': 'الأدوار',
+  'users.roles.select': 'اختر الأدوار',
+  'users.roles.multiSelectHint': 'اضغط Ctrl/Cmd لاختيار عدة أدوار',
+  'users.roles.none': 'لا توجد أدوار مخصصة',
+
+  // Roles & Permissions Module
+  'roles.title': 'الأدوار والصلاحيات',
+  'roles.subtitle': 'إدارة أدوار المستخدمين وصلاحياتهم',
+  'roles.addNew': 'إضافة دور جديد',
+  'roles.createRole': 'إنشاء دور',
+  'roles.editRole': 'تعديل الدور',
+  'roles.viewRole': 'عرض الدور',
+  'roles.deleteRole': 'حذف الدور',
+  'roles.deleteConfirm': 'هل أنت متأكد من حذف هذا الدور؟',
+  'roles.noRoles': 'لا توجد أدوار',
+  'roles.noRoles.desc': 'قم بإنشاء دور جديد للبدء',
+  'roles.loading': 'جاري تحميل الأدوار...',
+
+  // Role Fields
+  'roles.roleName': 'اسم الدور',
+  'roles.roleNameInternal': 'اسم الدور (داخلي)',
+  'roles.roleNameInternalPlaceholder': 'مثال: librarian',
+  'roles.displayName': 'الاسم المعروض',
+  'roles.displayNamePlaceholder': 'مثال: أمين مكتبة',
+  'roles.description': 'الوصف',
+  'roles.descriptionPlaceholder': 'وصف مختصر لهذا الدور',
+  'roles.permissions': 'الصلاحيات',
+  'roles.permissionCount': '{count} صلاحية',
+  'roles.systemRole': 'دور النظام',
+  'roles.customRole': 'مخصص',
+  'roles.system': 'نظام',
+  'roles.actions': 'الإجراءات',
+
+  // Permission Management
+  'roles.selectAll': 'اختيار الكل',
+  'roles.deselectAll': 'إلغاء اختيار الكل',
+  'roles.permissionCategories': 'فئات الصلاحيات',
+  'roles.assignPermissions': 'تعيين الصلاحيات',
+  'roles.updateRole': 'تحديث الدور',
+
+  // Role Form
+  'roles.form.basicInfo': 'معلومات الدور',
+  'roles.form.permissionSelection': 'اختيار الصلاحيات',
+  'roles.form.roleNameInternal': 'اسم الدور (داخلي)',
+  'roles.form.roleNamePlaceholder': 'مثال: librarian',
+  'roles.form.displayName': 'الاسم المعروض',
+  'roles.form.displayNamePlaceholder': 'مثال: أمين مكتبة',
+
+  // Role Actions
+  'roles.button.create': 'إنشاء دور',
+  'roles.button.update': 'تحديث الدور',
+  'roles.button.cancel': 'إلغاء',
+  'roles.button.close': 'إغلاق',
+
+  // Role Messages
+  'roles.success.created': 'تم إنشاء الدور بنجاح',
+  'roles.success.updated': 'تم تحديث الدور بنجاح',
+  'roles.success.deleted': 'تم حذف الدور بنجاح',
+  'roles.error.create': 'فشل إنشاء الدور',
+  'roles.error.update': 'فشل تحديث الدور',
+  'roles.error.delete': 'فشل حذف الدور',
+  'roles.error.systemRole': 'لا يمكن تعديل أدوار النظام',
+  'roles.error.systemRoleDelete': 'لا يمكن حذف أدوار النظام',
 
   // Patron Groups
   'patronGroups.title': 'مجموعات المستفيدين',
@@ -1263,6 +1546,35 @@ const arTranslations: Translations = {
   'circulation.instructions.renew': 'التجديد: امسح باركود العنصر لتمديد تاريخ الاستحقاق',
   'circulation.instructions.recent': 'تظهر العمليات الأخيرة في اللوحة على اليمين',
 
+  // Loans
+  'loans.title': 'جميع الإعارات',
+  'loans.statusOpen': 'مفتوح',
+  'loans.statusClosed': 'مغلق',
+  'loans.statusOverdue': 'متأخر',
+  'loans.overdueOnly': 'المتأخرة فقط',
+  'loans.allLoans': 'جميع الإعارات',
+  'loans.clearFilters': 'مسح التصفية',
+  'loans.loading': 'جاري تحميل الإعارات...',
+  'loans.noLoans': 'لا توجد إعارات',
+  'loans.tryAdjusting': 'حاول تعديل التصفية',
+  'loans.renew': 'تجديد',
+  'loans.filters': 'تصفية',
+  'loans.status': 'الحالة',
+  'loans.item': 'العنصر',
+  'loans.user': 'المستخدم',
+  'loans.loanDate': 'تاريخ الإعارة',
+  'loans.dueDate': 'تاريخ الاستحقاق',
+  'loans.renewals': 'التجديدات',
+  'loans.actions': 'الإجراءات',
+  'loans.barcode': 'الباركود',
+  'loans.unknownItem': 'عنصر غير معروف',
+  'loans.unknownUser': 'مستخدم غير معروف',
+  'loans.daysOverdue': '{days} أيام متأخرة',
+  'loans.dueToday': 'مستحق اليوم',
+  'loans.dueTomorrow': 'مستحق غداً',
+  'loans.dueInDays': 'مستحق خلال {days} أيام',
+  'loans.showingPage': 'عرض صفحة {page} من {total_pages} ({total_items} إعارة إجمالاً)',
+
   // Reports Module
   'reports.title': 'التقارير',
   'reports.subtitle': 'إنشاء وتصدير تقارير المكتبة والتحليلات',
@@ -1310,6 +1622,45 @@ const arTranslations: Translations = {
   'reports.error.noData': 'لا توجد بيانات متاحة للمعايير المحددة',
   'reports.noReports': 'لم يتم إنشاء تقارير بعد',
   'reports.noReports.desc': 'أنشئ أول تقرير للبدء',
+
+  // Audit Logs Module
+  'auditLogs.title': 'سجلات التدقيق',
+  'auditLogs.subtitle': 'عرض ومراقبة نشاط النظام وإجراءات المستخدمين',
+  'auditLogs.timestamp': 'الوقت والتاريخ',
+  'auditLogs.user': 'المستخدم',
+  'auditLogs.action': 'الإجراء',
+  'auditLogs.resourceType': 'نوع المورد',
+  'auditLogs.resourceId': 'معرف المورد',
+  'auditLogs.details': 'التفاصيل',
+  'auditLogs.status': 'الحالة',
+  'auditLogs.ipAddress': 'عنوان IP',
+  'auditLogs.userAgent': 'وكيل المستخدم',
+  'auditLogs.filters': 'الفلاتر',
+  'auditLogs.dateRange': 'نطاق التاريخ',
+  'auditLogs.fromDate': 'من تاريخ',
+  'auditLogs.toDate': 'إلى تاريخ',
+  'auditLogs.actionType': 'نوع الإجراء',
+  'auditLogs.userFilter': 'المستخدم',
+  'auditLogs.resourceTypeFilter': 'نوع المورد',
+  'auditLogs.searchById': 'البحث بالمعرف',
+  'auditLogs.searchPlaceholder': 'البحث بمعرف المورد أو المسار...',
+  'auditLogs.export': 'تصدير',
+  'auditLogs.exportCSV': 'تصدير CSV',
+  'auditLogs.exportExcel': 'تصدير Excel',
+  'auditLogs.applyFilters': 'تطبيق الفلاتر',
+  'auditLogs.clearFilters': 'مسح الفلاتر',
+  'auditLogs.noLogs': 'لم يتم العثور على سجلات تدقيق',
+  'auditLogs.noLogsDesc': 'حاول تعديل الفلاتر أو نطاق التاريخ',
+  'auditLogs.loading': 'جاري تحميل سجلات التدقيق...',
+  'auditLogs.showing': 'عرض صفحة',
+  'auditLogs.totalLogs': 'إجمالي السجلات',
+  'auditLogs.actions': 'الإجراءات',
+  'auditLogs.viewDetails': 'عرض التفاصيل',
+  'auditLogs.success.exported': 'تم تصدير سجلات التدقيق بنجاح',
+  'auditLogs.error.fetch': 'فشل في جلب سجلات التدقيق',
+  'auditLogs.error.export': 'فشل في تصدير سجلات التدقيق',
+  'auditLogs.error.noPermission': 'تم رفض الوصول',
+  'auditLogs.error.noPermissionDesc': 'ليس لديك إذن لعرض سجلات التدقيق. اتصل بالمسؤول.',
 
   // Acquisitions Module
   'acquisitions.title': 'المشتريات',
@@ -1684,6 +2035,85 @@ const arTranslations: Translations = {
   'fees.error.delete': 'فشل حذف الرسم',
   'fees.error.insufficientAmount': 'مبلغ الدفع يتجاوز الرصيد المتبقي',
   'fees.error.invalidAmount': 'الرجاء إدخال مبلغ صحيح',
+
+  // Fees - Tabs (Arabic)
+  'fees.tabs.fees': 'الرسوم',
+
+  // Fees - Filters (Arabic)
+  'fees.filters.allStatuses': 'جميع الحالات',
+  'fees.filters.allTypes': 'جميع الأنواع',
+
+  // Fees - Table Headers (Arabic)
+  'fees.table.type': 'النوع',
+  'fees.table.status': 'الحالة',
+  'fees.table.amount': 'المبلغ',
+  'fees.table.remaining': 'المتبقي',
+  'fees.table.description': 'الوصف',
+  'fees.table.date': 'التاريخ',
+
+  // Fees - Additional Status (Arabic)
+  'fees.autoGenerated': 'تم إنشاؤه تلقائياً',
+  'fees.paid': 'مدفوع',
+  'fees.pay': 'دفع',
+  'fees.waive': 'إعفاء',
+
+  // Fees - Modal Titles (Arabic)
+  'fees.modal.createFee': 'إنشاء رسم',
+  'fees.modal.recordPayment': 'تسجيل دفعة',
+  'fees.modal.waiveFee': 'إعفاء من الرسم',
+  'fees.modal.feeDetails': 'تفاصيل الرسم',
+
+  // Fees - Modal Fields (Arabic)
+  'fees.modal.type': 'النوع',
+  'fees.modal.status': 'الحالة',
+  'fees.modal.originalAmount': 'المبلغ الأصلي',
+  'fees.modal.remaining': 'المتبقي',
+  'fees.modal.paid': 'المدفوع',
+  'fees.modal.feeDate': 'تاريخ الرسم',
+  'fees.modal.description': 'الوصف',
+  'fees.modal.reason': 'السبب',
+  'fees.modal.paymentHistory': 'تاريخ المدفوعات',
+  'fees.modal.noPayments': 'لم يتم تسجيل أي مدفوعات',
+  'fees.modal.ref': 'مرجع',
+  'fees.modal.balance': 'الرصيد',
+
+  // Fees - Form Fields (Arabic)
+  'fees.form.userId': 'معرّف المستخدم',
+  'fees.form.userIdPlaceholder': 'أدخل معرّف المستخدم',
+  'fees.form.userIdHint': 'أدخل معرّف المستخدم الذي سيتم فرض الرسم عليه',
+  'fees.form.feeType': 'نوع الرسم',
+  'fees.form.amount': 'المبلغ',
+  'fees.form.description': 'الوصف',
+  'fees.form.descriptionPlaceholder': 'أدخل الوصف',
+  'fees.form.reason': 'السبب',
+  'fees.form.reasonPlaceholder': 'أدخل سبب هذا الرسم',
+  'fees.form.fee': 'الرسم',
+  'fees.form.remainingBalance': 'الرصيد المتبقي',
+  'fees.form.paymentMethod': 'طريقة الدفع',
+  'fees.form.maximum': 'الحد الأقصى',
+  'fees.form.transactionInfo': 'معلومات المعاملة',
+  'fees.form.transactionInfoPlaceholder': 'أدخل مرجع المعاملة',
+  'fees.form.comments': 'تعليقات',
+  'fees.form.commentsPlaceholder': 'أدخل أي تعليقات',
+  'fees.form.action': 'الإجراء',
+  'fees.form.amountOptional': 'المبلغ (اختياري)',
+  'fees.form.fullAmount': 'المبلغ الكامل',
+  'fees.form.waiveReasonPlaceholder': 'أدخل سبب الإعفاء من هذا الرسم',
+
+  // Fees - Payment Methods (Arabic)
+  'fees.paymentMethods.cash': 'نقداً',
+  'fees.paymentMethods.check': 'شيك',
+  'fees.paymentMethods.creditCard': 'بطاقة ائتمان',
+  'fees.paymentMethods.transfer': 'تحويل بنكي',
+
+  // Fees - Actions (Arabic)
+  'fees.actions.waive': 'إعفاء',
+  'fees.actions.forgive': 'إسقاط',
+
+  // Fees - Buttons (Arabic)
+  'fees.button.createFee': 'إنشاء رسم',
+  'fees.button.recordPayment': 'تسجيل دفعة',
+  'fees.button.waiveForgive': 'إعفاء/إسقاط',
 
   // Books Module
   'books.catalog_title': 'اكتشف قراءتك القادمة الرائعة',
