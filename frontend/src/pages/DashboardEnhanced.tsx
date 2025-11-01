@@ -287,7 +287,7 @@ const DashboardEnhanced = () => {
                           {loan.item_title || 'Unknown Item'}
                         </div>
                       </div>
-                      <span className="ml-2 text-xs px-3 py-1 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-semibold shadow-sm">
+                      <span className="ms-2 text-xs px-3 py-1 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-semibold shadow-sm">
                         Active
                       </span>
                     </div>

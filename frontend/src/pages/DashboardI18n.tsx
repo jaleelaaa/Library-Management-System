@@ -308,7 +308,7 @@ const DashboardI18n = () => {
                           {loan.item_title || 'Unknown Item'}
                         </div>
                       </div>
-                      <span className={`${isRTL ? 'mr-2' : 'ml-2'} text-xs px-3 py-1 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-semibold shadow-sm`}>
+                      <span className={`${isRTL ? 'me-2' : 'ms-2'} text-xs px-3 py-1 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-semibold shadow-sm`}>
                         {t('activity.active')}
                       </span>
                     </div>

@@ -149,7 +149,7 @@ const LoginEnhanced = () => {
                     setUsername(e.target.value)
                     if (errors.username) setErrors({ ...errors, username: '' })
                   }}
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none transition-all duration-200 ${
+                  className={`w-full ps-12 pe-4 py-3 border-2 rounded-xl focus:outline-none transition-all duration-200 ${
                     errors.username
                       ? 'border-red-300 focus:border-red-500'
                       : 'border-gray-200 focus:border-blue-500'
@@ -158,7 +158,7 @@ const LoginEnhanced = () => {
                 />
               </div>
               {errors.username && (
-                <p className="text-red-500 text-xs mt-1 ml-1 animate-fadeIn">{errors.username}</p>
+                <p className="text-red-500 text-xs mt-1 ms-1 animate-fadeIn">{errors.username}</p>
               )}
             </div>
 
@@ -184,7 +184,7 @@ const LoginEnhanced = () => {
                     setPassword(e.target.value)
                     if (errors.password) setErrors({ ...errors, password: '' })
                   }}
-                  className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl focus:outline-none transition-all duration-200 ${
+                  className={`w-full ps-12 pe-12 py-3 border-2 rounded-xl focus:outline-none transition-all duration-200 ${
                     errors.password
                       ? 'border-red-300 focus:border-red-500'
                       : 'border-gray-200 focus:border-blue-500'
@@ -200,7 +200,7 @@ const LoginEnhanced = () => {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1 ml-1 animate-fadeIn">{errors.password}</p>
+                <p className="text-red-500 text-xs mt-1 ms-1 animate-fadeIn">{errors.password}</p>
               )}
             </div>
 
@@ -226,7 +226,7 @@ const LoginEnhanced = () => {
                     )}
                   </div>
                 </div>
-                <span className="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+                <span className="ms-2 text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
                   Remember me
                 </span>
               </label>

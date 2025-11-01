@@ -295,7 +295,7 @@ const Reports: React.FC = () => {
                   onChange={(e) => setIncludeFines(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="includeFines" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="includeFines" className="ms-2 block text-sm text-gray-700">
                   {t('reports.form.includeFines')}
                 </label>
               </div>
@@ -311,7 +311,7 @@ const Reports: React.FC = () => {
                 onChange={(e) => setIncludeStatistics(e.target.checked)}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="includeStatistics" className="ml-2 block text-sm text-gray-700">
+              <label htmlFor="includeStatistics" className="ms-2 block text-sm text-gray-700">
                 {t('reports.form.includeStats')}
               </label>
             </div>
@@ -326,7 +326,7 @@ const Reports: React.FC = () => {
           >
             {loading ? (
               <>
-                <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                <svg className="animate-spin h-5 w-5 me-3" viewBox="0 0 24 24">
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -347,7 +347,7 @@ const Reports: React.FC = () => {
             ) : (
               <>
                 <svg
-                  className="h-5 w-5 mr-2"
+                  className="h-5 w-5 me-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

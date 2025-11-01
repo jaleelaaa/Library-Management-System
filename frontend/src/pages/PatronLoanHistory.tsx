@@ -265,7 +265,7 @@ const PatronLoanHistory = () => {
 
                       {/* Actions */}
                       {loan.status === 'open' && loan.item_barcode && (
-                        <div className="ml-4">
+                        <div className="ms-4">
                           <button
                             onClick={() => handleRenew(loan.item_barcode!)}
                             disabled={loan.renewal_count >= loan.max_renewals}

@@ -426,7 +426,7 @@ const Locations: React.FC = () => {
                     disabled={modalMode === 'view'}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
                   />
-                  <label className="ml-2 block text-sm text-gray-900">
+                  <label className="ms-2 block text-sm text-gray-900">
                     Active location
                   </label>
                 </div>

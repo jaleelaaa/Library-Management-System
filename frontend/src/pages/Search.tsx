@@ -255,7 +255,7 @@ const Search = () => {
                 onFocus={() => autocomplete.suggestions.length > 0 && setShowAutocomplete(true)}
                 onBlur={() => setTimeout(() => setShowAutocomplete(false), 200)}
                 placeholder={t('search.placeholder')}
-                className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full ps-10 pe-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               {searchInput && (
                 <button

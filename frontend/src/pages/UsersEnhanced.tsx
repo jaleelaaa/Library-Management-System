@@ -189,7 +189,7 @@ const UsersEnhanced = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className={`w-full ${isRTL ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
+              className={`w-full ${isRTL ? 'pe-10 ps-4' : 'ps-10 pe-4'} py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
             />
           </div>
           <button
@@ -565,7 +565,7 @@ const UsersEnhanced = () => {
                         onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                         className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                       />
-                      <span className="ml-3 text-sm font-medium text-gray-700">{t('common.active')}</span>
+                      <span className="ms-3 text-sm font-medium text-gray-700">{t('common.active')}</span>
                     </label>
                   </div>
 

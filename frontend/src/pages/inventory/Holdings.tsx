@@ -225,7 +225,7 @@ const Holdings: React.FC = () => {
           </button>
           <button
             onClick={fetchHoldings}
-            className="ml-2 px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+            className="ms-2 px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
           >
             {t('common.refresh')}
           </button>
@@ -494,7 +494,7 @@ const Holdings: React.FC = () => {
                     disabled={modalMode === 'view'}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
                   />
-                  <label className="ml-2 block text-sm text-gray-900">
+                  <label className="ms-2 block text-sm text-gray-900">
                     {t('holdings.form.suppressDiscovery')}
                   </label>
                 </div>

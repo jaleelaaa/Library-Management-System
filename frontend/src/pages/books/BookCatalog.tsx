@@ -248,7 +248,7 @@ export default function BookCatalog() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('books.search_placeholder')}
-                className={`w-full ${isRTL ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-4 text-lg rounded-xl border-0 focus:ring-4 focus:ring-blue-300 text-gray-900`}
+                className={`w-full ${isRTL ? 'pe-12 ps-4' : 'ps-12 pe-4'} py-4 text-lg rounded-xl border-0 focus:ring-4 focus:ring-blue-300 text-gray-900`}
               />
             </div>
           </motion.div>

@@ -200,7 +200,7 @@ const Users = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full ps-10 pe-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
           <button
@@ -603,7 +603,7 @@ const Users = () => {
                         onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                         className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                       />
-                      <span className="ml-2 text-sm text-gray-700">{t('common.active')}</span>
+                      <span className="ms-2 text-sm text-gray-700">{t('common.active')}</span>
                     </label>
                   </div>
 

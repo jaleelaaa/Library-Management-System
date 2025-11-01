@@ -283,7 +283,7 @@ const PatronGroupsEnhanced = () => {
                     onChange={(e) => setFormData({ ...formData, renewals_allowed: e.target.checked })}
                     className="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer"
                   />
-                  <span className="ml-3 text-sm font-medium text-gray-700">{t('patronGroups.allowRenewals')}</span>
+                  <span className="ms-3 text-sm font-medium text-gray-700">{t('patronGroups.allowRenewals')}</span>
                 </label>
               </div>
 
