@@ -184,7 +184,7 @@ const Inventory = () => {
             onClick={() => setShowFilters(!showFilters)}
             className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2 transition"
           >
-            <FiFilter /> {t('common.filters')}
+            <FiFilter /> {t('users.filters')}
           </button>
         </div>
 
@@ -201,13 +201,13 @@ const Inventory = () => {
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="mt-4 text-gray-600">{t('inventory.loadingInstances')}</p>
+            <p className="mt-4 text-gray-600">{t('inventory.loading')}</p>
           </div>
         ) : instances.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <FiBook className="mx-auto text-5xl mb-4 text-gray-400" />
-            <p className="text-xl mb-2">{t('inventory.noInstancesFound')}</p>
-            <p>{t('inventory.noInstancesHint')}</p>
+            <p className="text-xl mb-2">{t('inventory.noInstances')}</p>
+            <p>{t('inventory.noInstances.desc')}</p>
           </div>
         ) : (
           <>
@@ -216,19 +216,19 @@ const Inventory = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('inventory.table.title')}
+                      {t('inventory.title.field')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('inventory.table.contributors')}
+                      {t('inventory.contributors')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('inventory.table.edition')}
+                      {t('inventory.edition')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('inventory.table.type')}
+                      {t('inventory.type')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('inventory.table.actions')}
+                      {t('users.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -292,7 +292,7 @@ const Inventory = () => {
             {meta && meta.total_pages > 1 && (
               <div className="flex items-center justify-between px-6 py-4 border-t">
                 <div className="text-sm text-gray-700">
-                  {t('inventory.pagination', { page: meta.page, totalPages: meta.total_pages, totalItems: meta.total_items })}
+                  {t('inventory.pagination.page')} {meta.page} {t('inventory.pagination.of')} {meta.total_pages} ({meta.total_items} {t('inventory.pagination.totalInstances')})
                 </div>
                 <div className="flex gap-2">
                   <button
