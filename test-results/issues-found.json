@@ -1,0 +1,135 @@
+{
+  "test_session": {
+    "start_time": "2025-11-01T05:00:00Z",
+    "repository": "https://github.com/jaleelaaa/Library-Management-System",
+    "tested_by": "Claude Code Autonomous Testing",
+    "admin_credentials": "admin / Admin@123",
+    "languages_tested": ["English", "Arabic"]
+  },
+  "issues": [
+    {
+      "id": "ISSUE-001",
+      "severity": "HIGH",
+      "category": "Bilingual Support",
+      "title": "Language Switcher Missing from Dashboard Header",
+      "description": "The LanguageSwitcher component exists and is used on the Login page, but it is not included in the Header component which is used throughout the application after login. Users cannot switch languages while using the dashboard and other authenticated pages.",
+      "expected_behavior": "Language switcher should be accessible from the header on all pages, including dashboard, user management, inventory, etc., as per the bilingual requirement stated in the Administrator Manual.",
+      "actual_behavior": "Language switcher only appears on login page. No language selection option in dashboard header.",
+      "affected_files": [
+        "frontend/src/components/layout/Header.tsx"
+      ],
+      "fix_required": "Import and add LanguageSwitcher component to Header.tsx in the header bar",
+      "screenshots": [
+        "test-results/03-dashboard-logged-in-english.png"
+      ],
+      "manual_reference": "Administrator Manual Section 2.1 - Bilingual interface should be accessible throughout",
+      "status": "✅ FIXED",
+      "fix_commit": "4f21b75",
+      "verification_screenshot": "test-results/retesting/02-dashboard-language-switcher-visible.png"
+    },
+    {
+      "id": "ISSUE-002",
+      "severity": "HIGH",
+      "category": "User Management",
+      "title": "User Creation Fails with 422 Error - No Error Message Displayed",
+      "description": "When attempting to create a new user with valid data (username: testuser_claude, email: claude@test.com, password: Test@1234, first name: Claude, last name: TestUser), the backend returns a 422 Unprocessable Entity error. The modal closes without showing any error message to the user, leaving them unaware of what went wrong.",
+      "expected_behavior": "User should be created successfully, OR a clear error message should be displayed explaining why the creation failed (e.g., duplicate username, validation error, etc.).",
+      "actual_behavior": "Modal closes silently on error. No error feedback to user. Backend returns 422 error. Console shows: 'Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)'",
+      "affected_files": [
+        "frontend/src/pages/Users.tsx",
+        "backend/app/api/v1/users.py"
+      ],
+      "fix_required": "Add proper error handling in frontend to catch and display error messages from backend. Ensure backend returns descriptive error messages.",
+      "screenshots": [
+        "test-results/05-create-user-modal.png"
+      ],
+      "status": "✅ FIXED",
+      "fix_commit": "868940c",
+      "fix_details": "Added try-catch with .unwrap() in Users.tsx + Updated password validators in user.py schema to include special character requirement"
+    },
+    {
+      "id": "ISSUE-003",
+      "severity": "MEDIUM",
+      "category": "Internationalization",
+      "title": "Translation Keys Not Rendering in Inventory Table Headers",
+      "description": "The Inventory page table headers are showing translation keys (inventory.table.title, inventory.table.contributors, inventory.table.edition, inventory.table.type, inventory.table.actions) instead of the actual translated text.",
+      "expected_behavior": "Table headers should show translated text like 'Title', 'Contributors', 'Edition', 'Type', 'Actions' in English or equivalent in Arabic.",
+      "actual_behavior": "Raw translation keys are displayed: 'INVENTORY.TABLE.TITLE', 'INVENTORY.TABLE.CONTRIBUTORS', etc.",
+      "affected_files": [
+        "frontend/src/pages/InventoryEnhanced.tsx",
+        "frontend/src/contexts/LanguageContext.tsx"
+      ],
+      "fix_required": "Ensure translation function (t()) is being used correctly for table headers, and that translation keys exist in the language files.",
+      "screenshots": [
+        "test-results/06-inventory-page-translation-issues.png"
+      ],
+      "status": "✅ FIXED",
+      "fix_commit": "91bbcaa",
+      "verification_screenshot": "test-results/retesting/03-inventory-all-translations-fixed.png"
+    },
+    {
+      "id": "ISSUE-004",
+      "severity": "MEDIUM",
+      "category": "Internationalization",
+      "title": "Filters Button Showing Translation Key",
+      "description": "The 'Filters' button in the Inventory page is displaying 'common.filters' instead of the translated text.",
+      "expected_behavior": "Button should display 'Filters' in English or 'الفلاتر' in Arabic.",
+      "actual_behavior": "Button shows 'common.filters' translation key.",
+      "affected_files": [
+        "frontend/src/pages/InventoryEnhanced.tsx"
+      ],
+      "fix_required": "Use translation function for the filters button text.",
+      "screenshots": [
+        "test-results/06-inventory-page-translation-issues.png"
+      ],
+      "status": "✅ FIXED",
+      "fix_commit": "91bbcaa",
+      "verification_screenshot": "test-results/retesting/03-inventory-all-translations-fixed.png"
+    },
+    {
+      "id": "ISSUE-005",
+      "severity": "LOW",
+      "category": "Internationalization",
+      "title": "Pagination Text Showing Translation Key",
+      "description": "The pagination area shows 'inventory.pagination' instead of translated pagination text.",
+      "expected_behavior": "Should show pagination information like 'Showing 1-20 of 49' or equivalent translation.",
+      "actual_behavior": "Shows 'inventory.pagination' translation key.",
+      "affected_files": [
+        "frontend/src/pages/InventoryEnhanced.tsx"
+      ],
+      "fix_required": "Implement proper pagination text with translation support.",
+      "screenshots": [
+        "test-results/06-inventory-page-translation-issues.png"
+      ],
+      "status": "✅ FIXED",
+      "fix_commit": "91bbcaa",
+      "verification_screenshot": "test-results/retesting/03-inventory-all-translations-fixed.png"
+    }
+  ],
+  "summary": {
+    "total_issues": 5,
+    "total_fixed": 5,
+    "fix_rate": "100%",
+    "critical": 0,
+    "high": 2,
+    "medium": 2,
+    "low": 1,
+    "features_tested": [
+      "Login/Authentication",
+      "Dashboard",
+      "User Management",
+      "Inventory Management",
+      "Circulation",
+      "Roles & Permissions"
+    ],
+    "features_working": [
+      "Login with admin credentials",
+      "Dashboard statistics display",
+      "User list display with Arabic names",
+      "Inventory list with bilingual book titles",
+      "Circulation UI",
+      "Roles & Permissions display"
+    ],
+    "screenshots_captured": 8
+  }
+}
