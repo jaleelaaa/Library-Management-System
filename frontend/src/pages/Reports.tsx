@@ -418,7 +418,7 @@ const Reports: React.FC = () => {
                     {Object.keys(reportData.data[0]).map((key) => (
                       <th
                         key={key}
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
                         {key.replace(/_/g, ' ')}
                       </th>

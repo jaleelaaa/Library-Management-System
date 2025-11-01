@@ -5,11 +5,9 @@
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import searchService, {
-  SearchResponse,
   SearchResult,
   SearchFacets,
   SearchFilters,
-  AutocompleteResponse,
 } from '../../services/searchService'
 
 // ============================================================================

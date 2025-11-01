@@ -36,7 +36,7 @@ const initialState: NotificationsState = {
  */
 export const fetchNotifications = createAsyncThunk(
   'notifications/fetch',
-  async (params?: { skip?: number; limit?: number; unread_only?: boolean }, { rejectWithValue }) => {
+  async (params: { skip?: number; limit?: number; unread_only?: boolean } = {}, { rejectWithValue }) => {
     try {
       const response = await notificationsService.getNotifications(params)
       return response.data

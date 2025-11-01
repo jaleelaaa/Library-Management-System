@@ -36,14 +36,7 @@ interface Payment {
   balance: number;
 }
 
-interface UserSummary {
-  user_id: string;
-  total_fees: number;
-  open_fees: number;
-  total_owed: number;
-  total_paid: number;
-  oldest_fee_date?: string;
-}
+// Removed unused interface UserSummary
 
 type TabType = 'fees' | 'payments';
 
@@ -59,7 +52,6 @@ const Fees: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'pay' | 'waive' | 'view'>('view');
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [userFilter, setUserFilter] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<string>('');
 
@@ -173,7 +165,6 @@ const Fees: React.FC = () => {
   };
 
   const FEE_TYPES = ['overdue', 'lost_item', 'damaged_item', 'processing', 'replacement', 'lost_item_processing', 'manual'];
-  const PAYMENT_METHODS = ['cash', 'check', 'credit_card', 'transfer', 'waive', 'forgive'];
   const STATUSES = ['open', 'closed', 'suspended'];
 
   const getStatusColor = (status: string) => {
@@ -275,25 +266,25 @@ const Fees: React.FC = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t('fees.table.type')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t('fees.table.status')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t('fees.table.amount')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t('fees.table.remaining')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t('fees.table.description')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t('fees.table.date')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t('common.actions')}
                   </th>
                 </tr>

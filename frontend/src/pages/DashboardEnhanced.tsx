@@ -9,12 +9,11 @@ import {
   FiAlertCircle,
   FiTrendingUp,
   FiClock,
-  FiArrowUp,
-  FiArrowDown,
   FiCheckCircle,
   FiActivity,
   FiCalendar,
-  FiPackage
+  FiPackage,
+  FiArrowUp
 } from 'react-icons/fi'
 import AnimatedCounter from '../components/common/AnimatedCounter'
 import { SkeletonCard, SkeletonList } from '../components/common/SkeletonLoader'
@@ -61,7 +60,6 @@ const DashboardEnhanced = () => {
       bgColor: 'bg-blue-50',
       gradient: 'from-blue-500 to-blue-600',
       description: 'In catalog',
-      trend: { value: 12, isUp: true },
       link: '/inventory'
     },
     {
@@ -72,7 +70,6 @@ const DashboardEnhanced = () => {
       bgColor: 'bg-green-50',
       gradient: 'from-green-500 to-green-600',
       description: 'Currently checked out',
-      trend: { value: 8, isUp: true },
       link: '/circulation'
     },
     {
@@ -83,7 +80,6 @@ const DashboardEnhanced = () => {
       bgColor: 'bg-purple-50',
       gradient: 'from-purple-500 to-purple-600',
       description: 'Registered users',
-      trend: { value: 5, isUp: true },
       link: '/users'
     },
     {
@@ -94,7 +90,6 @@ const DashboardEnhanced = () => {
       bgColor: 'bg-red-50',
       gradient: 'from-red-500 to-red-600',
       description: 'Require attention',
-      trend: { value: 3, isUp: false },
       link: '/circulation'
     }
   ]
@@ -157,7 +152,7 @@ const DashboardEnhanced = () => {
 
       {/* Error Display */}
       {error && (
-        <div className="mb-8 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg text-red-800 animate-slideInLeft">
+        <div className="mb-8 p-4 bg-red-50 border-s-4 border-red-500 rounded-lg text-red-800 animate-slideInLeft">
           <div className="flex items-start gap-3">
             <FiAlertCircle className="flex-shrink-0 mt-0.5" size={20} />
             <div>
@@ -181,13 +176,12 @@ const DashboardEnhanced = () => {
         ) : (
           statCards.map((card, index) => {
             const Icon = card.icon
-            const TrendIcon = card.trend.isUp ? FiArrowUp : FiArrowDown
 
             return (
               <div
                 key={index}
                 onClick={() => navigate(card.link)}
-                className={`folio-card hover-lift cursor-pointer border-l-4 border-transparent hover:border-${card.color.split('-')[1]}-500 animate-fadeInUp stagger-${index + 1} relative overflow-hidden group`}
+                className={`folio-card hover-lift cursor-pointer border-s-4 border-transparent hover:border-${card.color.split('-')[1]}-500 animate-fadeInUp stagger-${index + 1} relative overflow-hidden group`}
               >
                 {/* Gradient overlay on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
@@ -199,15 +193,7 @@ const DashboardEnhanced = () => {
                       <div className={`text-4xl font-bold ${card.color} mb-2 flex items-baseline gap-2`}>
                         <AnimatedCounter end={card.value} duration={1500} />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <p className="text-xs text-gray-500">{card.description}</p>
-                        <div className={`flex items-center gap-1 text-xs font-semibold ${
-                          card.trend.isUp ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          <TrendIcon size={12} />
-                          <span>{card.trend.value}%</span>
-                        </div>
-                      </div>
+                      <p className="text-xs text-gray-500">{card.description}</p>
                     </div>
                     <div className={`p-4 rounded-xl ${card.bgColor} group-hover:scale-110 transition-transform duration-300`}>
                       <Icon className={card.color} size={28} />
@@ -369,30 +355,6 @@ const DashboardEnhanced = () => {
               )
             })}
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t-2">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">
-                  <AnimatedCounter end={24} />
-                  <span className="text-sm text-gray-500 font-normal">h</span>
-                </div>
-                <p className="text-xs text-gray-600 mt-1">Uptime</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">
-                  <AnimatedCounter end={98} />
-                  <span className="text-sm text-gray-500 font-normal">%</span>
-                </div>
-                <p className="text-xs text-gray-600 mt-1">Performance</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">
-                  <AnimatedCounter end={42} />
-                  <span className="text-sm text-gray-500 font-normal">ms</span>
-                </div>
-                <p className="text-xs text-gray-600 mt-1">Response</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

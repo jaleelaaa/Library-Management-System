@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { FiShoppingCart, FiDollarSign, FiFileText, FiUsers, FiTrendingUp } from 'react-icons/fi'
+import { FiShoppingCart, FiDollarSign, FiFileText, FiUsers } from 'react-icons/fi'
 import { useLanguage } from '../contexts/LanguageContext'
 import LanguageSwitcher from '../components/common/LanguageSwitcher'
 import Vendors from './acquisitions/Vendors'
@@ -18,13 +18,8 @@ const AcquisitionsEnhanced = () => {
     setTimeout(() => setIsVisible(true), 100)
   }, [])
 
-  // Mock statistics - in a real app, these would come from Redux state
-  const stats = {
-    totalSpent: 125000,
-    activeOrders: 24,
-    pendingInvoices: 12,
-    activeVendors: 18
-  }
+  // Note: Statistics will be fetched from backend in future updates
+  // For now, showing module navigation only
 
   const tabs = [
     { id: 'vendors' as Tab, label: t('acquisitions.tabs.vendors'), icon: FiUsers },
@@ -51,59 +46,8 @@ const AcquisitionsEnhanced = () => {
         <LanguageSwitcher />
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-        <div className="folio-card bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-teal-600">{t('acquisitions.totalSpent')}</p>
-              <p className="text-3xl font-bold text-teal-900 mt-1 number-display">${stats.totalSpent.toLocaleString()}</p>
-            </div>
-            <div className="p-3 bg-teal-200 rounded-lg">
-              <FiTrendingUp className="text-teal-700" size={24} />
-            </div>
-          </div>
-        </div>
-
-        <div className="folio-card bg-gradient-to-br from-cyan-50 to-cyan-100 border-cyan-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-cyan-600">{t('acquisitions.activeOrders')}</p>
-              <p className="text-3xl font-bold text-cyan-900 mt-1 number-display">{stats.activeOrders}</p>
-            </div>
-            <div className="p-3 bg-cyan-200 rounded-lg">
-              <FiShoppingCart className="text-cyan-700" size={24} />
-            </div>
-          </div>
-        </div>
-
-        <div className="folio-card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-blue-600">{t('acquisitions.pendingInvoices')}</p>
-              <p className="text-3xl font-bold text-blue-900 mt-1 number-display">{stats.pendingInvoices}</p>
-            </div>
-            <div className="p-3 bg-blue-200 rounded-lg">
-              <FiFileText className="text-blue-700" size={24} />
-            </div>
-          </div>
-        </div>
-
-        <div className="folio-card bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-emerald-600">{t('acquisitions.activeVendors')}</p>
-              <p className="text-3xl font-bold text-emerald-900 mt-1 number-display">{stats.activeVendors}</p>
-            </div>
-            <div className="p-3 bg-emerald-200 rounded-lg">
-              <FiUsers className="text-emerald-700" size={24} />
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Enhanced Tabs with Animation */}
-      <div className="border-b border-gray-200 mb-6 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+      <div className="border-b border-gray-200 mb-6 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
         <nav className={`-mb-px flex ${isRTL ? 'space-x-reverse' : ''} space-x-8`}>
           {tabs.map((tab) => {
             const Icon = tab.icon
@@ -129,7 +73,7 @@ const AcquisitionsEnhanced = () => {
       </div>
 
       {/* Tab Content with Fade Animation */}
-      <div className="tab-content animate-fadeIn" style={{ animationDelay: '0.3s' }}>
+      <div className="tab-content animate-fadeIn" style={{ animationDelay: '0.2s' }}>
         {activeTab === 'vendors' && <Vendors />}
         {activeTab === 'funds' && <Funds />}
         {activeTab === 'purchase-orders' && <PurchaseOrders />}

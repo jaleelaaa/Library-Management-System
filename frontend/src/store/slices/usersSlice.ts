@@ -57,11 +57,19 @@ export const fetchUserById = createAsyncThunk(
 
 export const createUser = createAsyncThunk(
   'users/createUser',
-  async (userData: any, { rejectWithValue, dispatch }) => {
+  async (userData: any, { rejectWithValue, dispatch, getState }) => {
     try {
       const user = await usersService.createUser(userData)
       toast.success('User created successfully')
-      dispatch(fetchUsers())
+      // Reset to page 1 and clear filters to show the newly created user
+      // (new users appear at top due to created_date DESC ordering)
+      const state = getState() as { users: UsersState }
+      const resetFilters = {
+        page: 1,
+        page_size: state.users.filters.page_size || 20
+      }
+      dispatch(setFilters(resetFilters))
+      dispatch(fetchUsers(resetFilters))
       return user
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to create user')
@@ -72,11 +80,13 @@ export const createUser = createAsyncThunk(
 
 export const updateUser = createAsyncThunk(
   'users/updateUser',
-  async ({ userId, userData }: { userId: string, userData: any }, { rejectWithValue, dispatch }) => {
+  async ({ userId, userData }: { userId: string, userData: any }, { rejectWithValue, dispatch, getState }) => {
     try {
       const user = await usersService.updateUser(userId, userData)
       toast.success('User updated successfully')
-      dispatch(fetchUsers())
+      // Preserve current filter state when refetching
+      const state = getState() as { users: UsersState }
+      dispatch(fetchUsers(state.users.filters))
       return user
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to update user')
@@ -87,11 +97,13 @@ export const updateUser = createAsyncThunk(
 
 export const deleteUser = createAsyncThunk(
   'users/deleteUser',
-  async (userId: string, { rejectWithValue, dispatch }) => {
+  async (userId: string, { rejectWithValue, dispatch, getState }) => {
     try {
       await usersService.deleteUser(userId)
       toast.success('User deleted successfully')
-      dispatch(fetchUsers())
+      // Preserve current filter state when refetching
+      const state = getState() as { users: UsersState }
+      dispatch(fetchUsers(state.users.filters))
       return userId
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to delete user')

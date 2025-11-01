@@ -20,12 +20,29 @@ const Login = () => {
     setLoading(true)
 
     try {
+      // Step 1: Login and get tokens
       const response = await authService.login({ username, password })
-      dispatch(setCredentials({ user: { username }, token: response.access_token }))
+
+      // Step 2: Store token in localStorage so API calls work
+      localStorage.setItem('token', response.access_token)
+      localStorage.setItem('refreshToken', response.refresh_token)
+
+      // Step 3: Fetch complete user profile
+      const userProfile = await authService.getUserProfile()
+
+      // Step 4: Store user and token in Redux
+      dispatch(setCredentials({
+        user: userProfile,
+        token: response.access_token
+      }))
+
       toast.success('Login successful!')
       navigate('/dashboard')
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Login failed')
+      // Clean up on error
+      localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
     } finally {
       setLoading(false)
     }
@@ -50,28 +67,28 @@ const Login = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className={`block text-sm font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 text-start">
                 {t('login.username')}
               </label>
               <input
                 id="username"
                 type="text"
                 required
-                className={`folio-input mt-1 ${isRTL ? 'text-right' : 'text-left'}`}
+                className="folio-input mt-1 text-start"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder={t('login.username')}
               />
             </div>
             <div>
-              <label htmlFor="password" className={`block text-sm font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 text-start">
                 {t('login.password')}
               </label>
               <input
                 id="password"
                 type="password"
                 required
-                className={`folio-input mt-1 ${isRTL ? 'text-right' : 'text-left'}`}
+                className="folio-input mt-1 text-start"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t('login.password')}
@@ -88,12 +105,12 @@ const Login = () => {
           </button>
 
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className={`text-sm font-semibold text-blue-900 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+            <p className="text-sm font-semibold text-blue-900 mb-2 text-start">
               {t('login.defaultCreds')}
             </p>
-            <div className={`space-y-1 text-sm text-blue-800 ${isRTL ? 'text-right' : 'text-left'}`}>
-              <p><strong>Admin:</strong> admin / Admin@123</p>
-              <p><strong>Patron:</strong> patron / Patron@123</p>
+            <div className="space-y-1 text-sm text-blue-800 text-start">
+              <p><strong>{t('login.admin')}:</strong> admin / Admin@123</p>
+              <p><strong>{t('login.patron')}:</strong> patron / Patron@123</p>
             </div>
           </div>
         </form>

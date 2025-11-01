@@ -24,7 +24,6 @@ const NotificationBell = () => {
   const { notifications, unreadCount, showDropdown, loading } = useAppSelector(
     (state) => state.notifications
   )
-  const { user } = useAppSelector((state) => state.auth)
 
   const dropdownRef = useRef<HTMLDivElement>(null)
 

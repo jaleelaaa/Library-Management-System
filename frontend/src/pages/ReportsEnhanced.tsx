@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
-import { FiBarChart2, FiTrendingUp, FiDollarSign, FiFileText, FiClock, FiDownload } from 'react-icons/fi'
+import { FiBarChart2, FiDownload } from 'react-icons/fi'
 import { useLanguage } from '../contexts/LanguageContext'
 import LanguageSwitcher from '../components/common/LanguageSwitcher'
+import reportsService from '../services/reportsService'
+import { toast } from 'react-toastify'
 
 type ReportType = 'circulation' | 'collection' | 'financial' | 'overdue'
 type ExportFormat = 'csv' | 'excel' | 'pdf' | 'json'
@@ -13,27 +15,93 @@ const ReportsEnhanced = () => {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [loading, setLoading] = useState(false)
-  const { t, isRTL } = useLanguage()
+  const { t } = useLanguage()
 
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100)
   }, [])
 
-  // Mock statistics - in a real app, these would come from the backend
-  const stats = {
-    totalReports: 156,
-    generatedToday: 8,
-    scheduled: 12,
-    totalCirculation: 3420
-  }
+  // Note: Report history tracking can be added in future
+  // For now, showing report generation interface only
 
-  const handleGenerateReport = () => {
+  const handleGenerateReport = async () => {
     setLoading(true)
-    // Simulate report generation
-    setTimeout(() => {
+    try {
+      // Prepare request based on report type
+      const filters: any = {}
+
+      // Add date range if provided
+      if (startDate || endDate) {
+        filters.date_range = {
+          start_date: startDate || undefined,
+          end_date: endDate || undefined
+        }
+      }
+
+      let response: Blob | any
+
+      // Call appropriate API endpoint based on report type
+      switch (reportType) {
+        case 'circulation':
+          response = await reportsService.generateCirculationReport({
+            report_type: 'circulation',
+            filters: Object.keys(filters).length > 0 ? filters : undefined,
+            export_format: exportFormat,
+            include_charts: exportFormat === 'pdf'
+          })
+          break
+
+        case 'collection':
+          response = await reportsService.generateCollectionReport({
+            report_type: 'collection',
+            filters: Object.keys(filters).length > 0 ? filters : undefined,
+            export_format: exportFormat,
+            include_statistics: true
+          })
+          break
+
+        case 'financial':
+          response = await reportsService.generateFinancialReport({
+            report_type: 'financial',
+            filters: Object.keys(filters).length > 0 ? filters : undefined,
+            export_format: exportFormat,
+            include_charts: exportFormat === 'pdf'
+          })
+          break
+
+        case 'overdue':
+          response = await reportsService.generateOverdueReport({
+            report_type: 'overdue',
+            filters: Object.keys(filters).length > 0 ? filters : undefined,
+            export_format: exportFormat,
+            min_days_overdue: 1,
+            include_fines: true
+          })
+          break
+
+        default:
+          throw new Error(`Unknown report type: ${reportType}`)
+      }
+
+      // If response is a Blob (file download), download it
+      if (response instanceof Blob) {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
+        const extension = exportFormat === 'excel' ? 'xlsx' : exportFormat
+        const filename = `${reportType}_report_${timestamp}.${extension}`
+        reportsService.downloadReport(response, filename)
+        toast.success(t('reports.success.generated') || 'Report generated successfully!')
+      } else {
+        // JSON response
+        console.log('Report data:', response)
+        toast.success(t('reports.success.generated') || 'Report generated successfully!')
+      }
+    } catch (error: any) {
+      console.error('Failed to generate report:', error)
+      const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to generate report'
+      toast.error(errorMessage)
+    } finally {
       setLoading(false)
-      alert(t('reports.success.generated'))
-    }, 1500)
+    }
   }
 
   return (
@@ -54,61 +122,10 @@ const ReportsEnhanced = () => {
         <LanguageSwitcher />
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-        <div className="folio-card bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">{t('reports.totalReports')}</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1 number-display">{stats.totalReports}</p>
-            </div>
-            <div className="p-3 bg-gray-200 rounded-lg">
-              <FiFileText className="text-gray-700" size={24} />
-            </div>
-          </div>
-        </div>
-
-        <div className="folio-card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-blue-600">{t('reports.generatedToday')}</p>
-              <p className="text-3xl font-bold text-blue-900 mt-1 number-display">{stats.generatedToday}</p>
-            </div>
-            <div className="p-3 bg-blue-200 rounded-lg">
-              <FiTrendingUp className="text-blue-700" size={24} />
-            </div>
-          </div>
-        </div>
-
-        <div className="folio-card bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-purple-600">{t('reports.scheduled')}</p>
-              <p className="text-3xl font-bold text-purple-900 mt-1 number-display">{stats.scheduled}</p>
-            </div>
-            <div className="p-3 bg-purple-200 rounded-lg">
-              <FiClock className="text-purple-700" size={24} />
-            </div>
-          </div>
-        </div>
-
-        <div className="folio-card bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-green-600">{t('reports.stats.totalCirculation')}</p>
-              <p className="text-3xl font-bold text-green-900 mt-1 number-display">{stats.totalCirculation}</p>
-            </div>
-            <div className="p-3 bg-green-200 rounded-lg">
-              <FiDollarSign className="text-green-700" size={24} />
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Report Generation Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+      <div className="grid grid-cols-1 gap-6 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
         {/* Configuration Panel */}
-        <div className="lg:col-span-2">
+        <div>
           <div className="folio-card">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">{t('reports.generate')}</h2>
 
@@ -235,34 +252,6 @@ const ReportsEnhanced = () => {
                 <FiDownload size={20} />
                 {loading ? t('reports.generating') : t('reports.generate')}
               </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Reports Panel */}
-        <div className="lg:col-span-1">
-          <div className="folio-card sticky top-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('reports.recentReports')}</h3>
-            <div className="space-y-3">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div
-                  key={i}
-                  className="p-3 border border-gray-200 rounded-lg hover:shadow-md transition-all cursor-pointer animate-fadeInUp"
-                  style={{ animationDelay: `${i * 0.05}s` }}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900 text-sm">{t(`reports.type.${['circulation', 'financial', 'collection', 'overdue'][i % 4] as ReportType}`)}</div>
-                      <div className="text-xs text-gray-500 mt-1 number-display">
-                        {new Date(Date.now() - i * 86400000).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                      {['CSV', 'PDF', 'Excel', 'PDF'][i % 4]}
-                    </span>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>

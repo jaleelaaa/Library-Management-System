@@ -54,11 +54,11 @@ const LanguageSwitcher = () => {
             <button
               onClick={() => handleLanguageChange('en')}
               className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors ${
-                language === 'en' ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                language === 'en' ? 'bg-blue-50 border-s-4 border-blue-500' : ''
               }`}
             >
               <span className="text-2xl">🇬🇧</span>
-              <div className={`flex-1 text-${isRTL ? 'right' : 'left'}`}>
+              <div className="flex-1 text-start">
                 <div className="font-semibold text-gray-900">English</div>
                 <div className="text-xs text-gray-500">English</div>
               </div>
@@ -77,11 +77,11 @@ const LanguageSwitcher = () => {
             <button
               onClick={() => handleLanguageChange('ar')}
               className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors border-t-2 border-gray-100 ${
-                language === 'ar' ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                language === 'ar' ? 'bg-blue-50 border-s-4 border-blue-500' : ''
               }`}
             >
               <span className="text-2xl">🇸🇦</span>
-              <div className={`flex-1 text-${isRTL ? 'right' : 'left'}`}>
+              <div className="flex-1 text-start">
                 <div className="font-semibold text-gray-900">العربية</div>
                 <div className="text-xs text-gray-500">Arabic</div>
               </div>

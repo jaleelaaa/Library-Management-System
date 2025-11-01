@@ -67,11 +67,12 @@ export const subscribeToPush = async (): Promise<PushSubscription | null> => {
 
     if (!subscription) {
       // Subscribe to push
+      const vapidKey = urlBase64ToUint8Array(
+        process.env.VITE_VAPID_PUBLIC_KEY || ''
+      );
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          process.env.VITE_VAPID_PUBLIC_KEY || ''
-        ),
+        applicationServerKey: vapidKey as BufferSource,
       });
 
       // Send subscription to backend
@@ -132,12 +133,12 @@ export const showNotification = async (
 
   try {
     const registration = await navigator.serviceWorker.ready;
-    await registration.showNotification(title, {
+    const notificationOptions: any = {
       icon: '/icons/icon-192x192.png',
       badge: '/icons/icon-72x72.png',
-      vibrate: [200, 100, 200],
       ...options,
-    });
+    };
+    await registration.showNotification(title, notificationOptions);
   } catch (error) {
     console.error('Error showing notification:', error);
   }

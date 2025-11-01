@@ -7,7 +7,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 const Dashboard = () => {
   const dispatch = useAppDispatch()
   const { stats, recentLoans, loading, error } = useAppSelector(state => state.dashboard)
-  const { t, isRTL } = useLanguage()
+  const { t } = useLanguage()
 
   useEffect(() => {
     // Fetch dashboard data on mount

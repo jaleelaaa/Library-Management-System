@@ -53,7 +53,7 @@ const CheckOutCheckIn = () => {
       })
 
       // Refresh loans list
-      dispatch(fetchLoans())
+      dispatch(fetchLoans({}))
     }
   }
 
@@ -76,7 +76,7 @@ const CheckOutCheckIn = () => {
       })
 
       // Refresh loans list
-      dispatch(fetchLoans())
+      dispatch(fetchLoans({}))
     }
   }
 
@@ -96,7 +96,7 @@ const CheckOutCheckIn = () => {
       setRenewForm({ item_barcode: '' })
 
       // Refresh loans list
-      dispatch(fetchLoans())
+      dispatch(fetchLoans({}))
     }
   }
 

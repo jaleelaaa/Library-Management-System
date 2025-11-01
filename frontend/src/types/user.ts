@@ -2,6 +2,8 @@
  * User-related TypeScript types matching backend Pydantic schemas
  */
 
+import { RoleSimple } from './role'
+
 export interface Address {
   id?: string
   user_id?: string
@@ -39,6 +41,8 @@ export interface User {
   patron_group_name?: string
   personal: PersonalInfo
   addresses: Address[]
+  roles: RoleSimple[]
+  role_ids: string[]
   enrollment_date?: string
   expiration_date?: string
   custom_fields: Record<string, any>
@@ -59,6 +63,7 @@ export interface UserCreate {
   patron_group_id?: string
   personal: PersonalInfo
   addresses: Address[]
+  role_ids?: string[]
   enrollment_date?: string
   expiration_date?: string
   custom_fields?: Record<string, any>
@@ -74,6 +79,7 @@ export interface UserUpdate {
   user_type?: string
   patron_group_id?: string
   personal?: PersonalInfo
+  role_ids?: string[]
   enrollment_date?: string
   expiration_date?: string
   custom_fields?: Record<string, any>

@@ -153,12 +153,12 @@ const Vendors = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.code')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.name')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.status')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.paymentMethod')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.type')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.actions')}</th>
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.code')}</th>
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.name')}</th>
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.status')}</th>
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.paymentMethod')}</th>
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.type')}</th>
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">{t('acquisitions.vendors.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">

@@ -57,6 +57,7 @@ const Requests = () => {
     const result = await dispatch(createRequest(requestData))
 
     if (createRequest.fulfilled.match(result)) {
+      await dispatch(fetchRequests(requestsFilters))
       setShowCreateModal(false)
       setCreateForm({
         item_barcode: '',
@@ -71,20 +72,19 @@ const Requests = () => {
   const handleCancelRequest = async (requestId: string) => {
     if (window.confirm('Are you sure you want to cancel this request?')) {
       await dispatch(cancelRequest(requestId))
+      await dispatch(fetchRequests(requestsFilters))
     }
   }
 
   const getStatusColor = (status: RequestStatus) => {
-    switch (status) {
-      case 'open':
-        return 'bg-green-100 text-green-800'
-      case 'closed':
-        return 'bg-gray-100 text-gray-800'
-      case 'cancelled':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
+    if (status.startsWith('open_')) {
+      return 'bg-green-100 text-green-800'
+    } else if (status === 'closed_cancelled') {
+      return 'bg-red-100 text-red-800'
+    } else if (status.startsWith('closed_')) {
+      return 'bg-gray-100 text-gray-800'
     }
+    return 'bg-gray-100 text-gray-800'
   }
 
   const getRequestTypeLabel = (type: RequestType) => {
@@ -139,9 +139,13 @@ const Requests = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
               >
                 <option value="all">All Requests</option>
-                <option value="open">Open</option>
-                <option value="closed">Closed</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="open_not_yet_filled">Open - Not Yet Filled</option>
+                <option value="open_awaiting_pickup">Open - Awaiting Pickup</option>
+                <option value="open_in_transit">Open - In Transit</option>
+                <option value="closed_filled">Closed - Filled</option>
+                <option value="closed_cancelled">Closed - Cancelled</option>
+                <option value="closed_unfilled">Closed - Unfilled</option>
+                <option value="closed_pickup_expired">Closed - Pickup Expired</option>
               </select>
             </div>
 
@@ -193,28 +197,28 @@ const Requests = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Position
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Item
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Type
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Request Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Expiration Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -254,17 +258,17 @@ const Requests = () => {
                         {new Date(request.request_date).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                        {request.expiration_date
-                          ? new Date(request.expiration_date).toLocaleDateString()
+                        {request.request_expiration_date
+                          ? new Date(request.request_expiration_date).toLocaleDateString()
                           : 'No expiration'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(request.status)}`}>
-                          {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                          {request.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {request.status === 'open' && (
+                        {request.status.startsWith('open_') && (
                           <button
                             onClick={() => handleCancelRequest(request.id)}
                             className="text-red-600 hover:text-red-800 flex items-center gap-1"

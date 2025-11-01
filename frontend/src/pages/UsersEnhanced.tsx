@@ -260,7 +260,7 @@ const UsersEnhanced = () => {
         {loading ? (
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
-              <SkeletonLoader key={i} variant="table-row" />
+              <SkeletonLoader key={i} variant="rectangle" height="3rem" />
             ))}
           </div>
         ) : users.length === 0 ? (

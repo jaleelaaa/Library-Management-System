@@ -144,6 +144,7 @@ export interface RequestsFilter {
   user_id?: string
   item_id?: string
   status?: RequestStatus
+  request_type?: RequestType
 }
 
 // Pagination

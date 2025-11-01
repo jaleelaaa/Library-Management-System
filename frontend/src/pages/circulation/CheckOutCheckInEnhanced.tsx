@@ -9,7 +9,7 @@ const DEFAULT_SERVICE_POINT = '00000000-0000-0000-0000-000000000000'
 const CheckOutCheckInEnhanced = () => {
   const dispatch = useAppDispatch()
   const { loading } = useAppSelector(state => state.circulation)
-  const { t, isRTL } = useLanguage()
+  const { t } = useLanguage()
 
   const [operation, setOperation] = useState<'checkout' | 'checkin' | 'renew'>('checkout')
 
@@ -40,7 +40,7 @@ const CheckOutCheckInEnhanced = () => {
         ...prev.slice(0, 9)
       ])
       setCheckoutForm({ ...checkoutForm, item_barcode: '', user_barcode: '' })
-      dispatch(fetchLoans())
+      dispatch(fetchLoans({}))
     }
   }
 
@@ -54,7 +54,7 @@ const CheckOutCheckInEnhanced = () => {
         ...prev.slice(0, 9)
       ])
       setCheckinForm({ ...checkinForm, item_barcode: '' })
-      dispatch(fetchLoans())
+      dispatch(fetchLoans({}))
     }
   }
 
@@ -68,7 +68,7 @@ const CheckOutCheckInEnhanced = () => {
         ...prev.slice(0, 9)
       ])
       setRenewForm({ item_barcode: '' })
-      dispatch(fetchLoans())
+      dispatch(fetchLoans({}))
     }
   }
 

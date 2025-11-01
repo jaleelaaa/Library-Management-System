@@ -12,7 +12,7 @@ import SkeletonLoader from '../components/common/SkeletonLoader'
 const PatronGroupsEnhanced = () => {
   const dispatch = useAppDispatch()
   const { patronGroups, loading } = useAppSelector(state => state.users)
-  const { t, isRTL } = useLanguage()
+  const { t } = useLanguage()
 
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
@@ -120,7 +120,7 @@ const PatronGroupsEnhanced = () => {
         {loading ? (
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
-              <SkeletonLoader key={i} variant="table-row" />
+              <SkeletonLoader key={i} variant="rectangle" height="3rem" />
             ))}
           </div>
         ) : patronGroups.length === 0 ? (

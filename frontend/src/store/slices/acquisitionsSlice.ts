@@ -115,7 +115,7 @@ export const createVendor = createAsyncThunk(
     try {
       const vendor = await acquisitionsService.createVendor(vendorData)
       toast.success('Vendor created successfully')
-      dispatch(fetchVendors())
+      dispatch(fetchVendors({}))
       return vendor
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to create vendor')
@@ -130,7 +130,7 @@ export const updateVendor = createAsyncThunk(
     try {
       const vendor = await acquisitionsService.updateVendor(vendorId, vendorData)
       toast.success('Vendor updated successfully')
-      dispatch(fetchVendors())
+      dispatch(fetchVendors({}))
       return vendor
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to update vendor')
@@ -145,7 +145,7 @@ export const deleteVendor = createAsyncThunk(
     try {
       await acquisitionsService.deleteVendor(vendorId)
       toast.success('Vendor deleted successfully')
-      dispatch(fetchVendors())
+      dispatch(fetchVendors({}))
       return vendorId
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to delete vendor')
@@ -176,7 +176,7 @@ export const createFund = createAsyncThunk(
     try {
       const fund = await acquisitionsService.createFund(fundData)
       toast.success('Fund created successfully')
-      dispatch(fetchFunds())
+      dispatch(fetchFunds({}))
       return fund
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to create fund')
@@ -191,7 +191,7 @@ export const updateFund = createAsyncThunk(
     try {
       const fund = await acquisitionsService.updateFund(fundId, fundData)
       toast.success('Fund updated successfully')
-      dispatch(fetchFunds())
+      dispatch(fetchFunds({}))
       return fund
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to update fund')
@@ -206,7 +206,7 @@ export const deleteFund = createAsyncThunk(
     try {
       await acquisitionsService.deleteFund(fundId)
       toast.success('Fund deleted successfully')
-      dispatch(fetchFunds())
+      dispatch(fetchFunds({}))
       return fundId
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to delete fund')
@@ -249,7 +249,7 @@ export const createPurchaseOrder = createAsyncThunk(
     try {
       const po = await acquisitionsService.createPurchaseOrder(poData)
       toast.success('Purchase order created successfully')
-      dispatch(fetchPurchaseOrders())
+      dispatch(fetchPurchaseOrders({}))
       return po
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to create purchase order')
@@ -264,7 +264,7 @@ export const updatePurchaseOrder = createAsyncThunk(
     try {
       const po = await acquisitionsService.updatePurchaseOrder(poId, poData)
       toast.success('Purchase order updated successfully')
-      dispatch(fetchPurchaseOrders())
+      dispatch(fetchPurchaseOrders({}))
       return po
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to update purchase order')
@@ -279,7 +279,7 @@ export const deletePurchaseOrder = createAsyncThunk(
     try {
       await acquisitionsService.deletePurchaseOrder(poId)
       toast.success('Purchase order deleted successfully')
-      dispatch(fetchPurchaseOrders())
+      dispatch(fetchPurchaseOrders({}))
       return poId
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to delete purchase order')
@@ -322,7 +322,7 @@ export const createInvoice = createAsyncThunk(
     try {
       const invoice = await acquisitionsService.createInvoice(invoiceData)
       toast.success('Invoice created successfully')
-      dispatch(fetchInvoices())
+      dispatch(fetchInvoices({}))
       return invoice
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to create invoice')
@@ -337,7 +337,7 @@ export const updateInvoice = createAsyncThunk(
     try {
       const invoice = await acquisitionsService.updateInvoice(invoiceId, invoiceData)
       toast.success('Invoice updated successfully')
-      dispatch(fetchInvoices())
+      dispatch(fetchInvoices({}))
       return invoice
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to update invoice')
@@ -352,7 +352,7 @@ export const deleteInvoice = createAsyncThunk(
     try {
       await acquisitionsService.deleteInvoice(invoiceId)
       toast.success('Invoice deleted successfully')
-      dispatch(fetchInvoices())
+      dispatch(fetchInvoices({}))
       return invoiceId
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to delete invoice')

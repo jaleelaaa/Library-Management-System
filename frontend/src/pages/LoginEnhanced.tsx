@@ -57,7 +57,7 @@ const LoginEnhanced = () => {
 
     try {
       const response = await authService.login({ username, password })
-      dispatch(setCredentials({ user: { username }, token: response.access_token }))
+      dispatch(setCredentials({ user: response.user, token: response.access_token }))
 
       if (rememberMe) {
         localStorage.setItem('rememberMe', 'true')

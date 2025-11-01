@@ -32,7 +32,7 @@ const RequestsEnhanced = () => {
 
   // Calculate statistics
   const totalRequests = requests.length
-  const openRequests = requests.filter(r => r.status === 'open').length
+  const openRequests = requests.filter(r => r.status.startsWith('open_')).length
   const requestsToday = requests.filter(r => {
     const today = new Date().toDateString()
     return new Date(r.request_date).toDateString() === today
@@ -99,27 +99,18 @@ const RequestsEnhanced = () => {
   }
 
   const getStatusColor = (status: RequestStatus) => {
-    switch (status) {
-      case 'open':
-        return 'bg-green-100 text-green-800'
-      case 'awaiting_pickup':
-        return 'bg-blue-100 text-blue-800'
-      case 'in_transit':
-        return 'bg-purple-100 text-purple-800'
-      case 'closed':
-        return 'bg-gray-100 text-gray-800'
-      case 'cancelled':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
+    if (status === 'open_not_yet_filled') {
+      return 'bg-green-100 text-green-800'
+    } else if (status === 'open_awaiting_pickup') {
+      return 'bg-blue-100 text-blue-800'
+    } else if (status === 'open_in_transit') {
+      return 'bg-purple-100 text-purple-800'
+    } else if (status === 'closed_cancelled') {
+      return 'bg-red-100 text-red-800'
+    } else if (status.startsWith('closed_')) {
+      return 'bg-gray-100 text-gray-800'
     }
-  }
-
-  const getQueuePositionBadge = (position: number) => {
-    if (position === 1) return t('holds.queue.first')
-    if (position === 2) return t('holds.queue.second')
-    if (position === 3) return t('holds.queue.third')
-    return `${position}${t('holds.queue.nth')}`
+    return 'bg-gray-100 text-gray-800'
   }
 
   return (
@@ -238,11 +229,13 @@ const RequestsEnhanced = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="all">{t('holds.status.all')}</option>
-                  <option value="open">{t('holds.status.open')}</option>
-                  <option value="awaiting_pickup">{t('holds.status.awaiting_pickup')}</option>
-                  <option value="in_transit">{t('holds.status.in_transit')}</option>
-                  <option value="closed">{t('holds.status.closed')}</option>
-                  <option value="cancelled">{t('holds.status.cancelled')}</option>
+                  <option value="open_not_yet_filled">Open - Not Yet Filled</option>
+                  <option value="open_awaiting_pickup">Open - Awaiting Pickup</option>
+                  <option value="open_in_transit">Open - In Transit</option>
+                  <option value="closed_filled">Closed - Filled</option>
+                  <option value="closed_cancelled">Closed - Cancelled</option>
+                  <option value="closed_unfilled">Closed - Unfilled</option>
+                  <option value="closed_pickup_expired">Closed - Pickup Expired</option>
                 </select>
               </div>
 
@@ -365,17 +358,17 @@ const RequestsEnhanced = () => {
                         {new Date(request.request_date).toLocaleDateString()}
                       </td>
                       <td className="py-3 px-4 text-gray-600 text-sm number-display">
-                        {request.expiration_date
-                          ? new Date(request.expiration_date).toLocaleDateString()
+                        {request.request_expiration_date
+                          ? new Date(request.request_expiration_date).toLocaleDateString()
                           : t('holds.noExpiration')}
                       </td>
                       <td className="py-3 px-4">
                         <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(request.status)}`}>
-                          {t(`holds.status.${request.status}`)}
+                          {request.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        {request.status === 'open' && (
+                        {request.status.startsWith('open_') && (
                           <button
                             onClick={() => handleCancelRequest(request.id)}
                             className="text-red-600 hover:text-red-800 flex items-center gap-1 text-sm hover:bg-red-50 px-2 py-1 rounded-lg transition-all"

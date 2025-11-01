@@ -131,7 +131,7 @@ export const createRequest = createAsyncThunk(
     try {
       const request = await circulationService.createRequest(data)
       toast.success('Request created successfully')
-      dispatch(fetchRequests())
+      dispatch(fetchRequests({}))
       return request
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to create request')
@@ -146,7 +146,7 @@ export const cancelRequest = createAsyncThunk(
     try {
       await circulationService.cancelRequest(requestId)
       toast.success('Request cancelled successfully')
-      dispatch(fetchRequests())
+      dispatch(fetchRequests({}))
       return requestId
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Failed to cancel request')
