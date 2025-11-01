@@ -108,6 +108,7 @@ const enTranslations: Translations = {
   'common.next': 'Next',
   'common.showing': 'Showing',
   'common.of': 'of',
+  'common.to': 'to',
   'common.page': 'page',
   'common.total': 'total',
   'common.all': 'All',
@@ -1132,8 +1133,40 @@ const enTranslations: Translations = {
   'courses.form.status': 'Status',
   'courses.form.notes': 'Notes',
 
+  // Courses - Buttons & Actions
+  'courses.applyFilters': 'Apply Filters',
+  'courses.clearFilters': 'Clear Filters',
+  'courses.button.createCourse': 'Create Course',
+  'courses.button.updateCourse': 'Update Course',
+  'courses.button.editCourse': 'Edit Course',
+  'courses.saving': 'Saving...',
+
+  // Courses - Pagination
+  'courses.pagination.showing': 'Showing page',
+  'courses.pagination.of': 'of',
+  'courses.pagination.totalCourses': 'total courses',
+
+  // Courses - Table Headers
+  'courses.table.course': 'Course',
+
+  // Courses - Form Placeholders
+  'courses.form.namePlaceholder': 'e.g., Introduction to Programming',
+  'courses.form.codePlaceholder': 'e.g., CS101',
+  'courses.form.termFallPlaceholder': 'e.g., Fall 2024',
+  'courses.form.descriptionPlaceholder': 'Course description...',
+  'courses.form.basicInfo': 'Basic Information',
+  'courses.form.activeCourse': 'Active Course',
+
+  // Courses - Reserves
+  'courses.reserves.title': 'Course Reserves',
+  'courses.reserves.noReserves': 'No reserves added yet',
+  'courses.reserves.itemId': 'Item ID',
+  'courses.reserves.type': 'Type',
+  'courses.reserves.loanPeriod': 'Loan Period',
+
   // Courses - Messages
   'courses.noCourses': 'No courses found',
+  'courses.noCoursesHint': 'Try adjusting your search or create a new course',
   'courses.loading': 'Loading courses...',
   'courses.deleteConfirm': 'Are you sure you want to delete this course?',
 
@@ -1358,6 +1391,7 @@ const arTranslations: Translations = {
   'common.next': 'التالي',
   'common.showing': 'عرض',
   'common.of': 'من',
+  'common.to': 'إلى',
   'common.page': 'صفحة',
   'common.total': 'إجمالي',
   'common.all': 'الكل',
@@ -2382,8 +2416,40 @@ const arTranslations: Translations = {
   'courses.form.status': 'الحالة',
   'courses.form.notes': 'ملاحظات',
 
+  // Courses - Buttons & Actions (Arabic)
+  'courses.applyFilters': 'تطبيق الفلاتر',
+  'courses.clearFilters': 'مسح الفلاتر',
+  'courses.button.createCourse': 'إنشاء دورة',
+  'courses.button.updateCourse': 'تحديث الدورة',
+  'courses.button.editCourse': 'تعديل الدورة',
+  'courses.saving': 'جاري الحفظ...',
+
+  // Courses - Pagination (Arabic)
+  'courses.pagination.showing': 'عرض الصفحة',
+  'courses.pagination.of': 'من',
+  'courses.pagination.totalCourses': 'إجمالي الدورات',
+
+  // Courses - Table Headers (Arabic)
+  'courses.table.course': 'الدورة',
+
+  // Courses - Form Placeholders (Arabic)
+  'courses.form.namePlaceholder': 'مثلاً: مقدمة في البرمجة',
+  'courses.form.codePlaceholder': 'مثلاً: CS101',
+  'courses.form.termFallPlaceholder': 'مثلاً: خريف 2024',
+  'courses.form.descriptionPlaceholder': 'وصف الدورة...',
+  'courses.form.basicInfo': 'المعلومات الأساسية',
+  'courses.form.activeCourse': 'دورة نشطة',
+
+  // Courses - Reserves (Arabic)
+  'courses.reserves.title': 'الاحتياطيات الدراسية',
+  'courses.reserves.noReserves': 'لم يتم إضافة احتياطيات بعد',
+  'courses.reserves.itemId': 'معرف العنصر',
+  'courses.reserves.type': 'النوع',
+  'courses.reserves.loanPeriod': 'مدة الإعارة',
+
   // Courses - Messages (Arabic)
   'courses.noCourses': 'لم يتم العثور على دورات',
+  'courses.noCoursesHint': 'حاول تعديل البحث أو إنشاء دورة جديدة',
   'courses.loading': 'جاري تحميل الدورات...',
   'courses.deleteConfirm': 'هل أنت متأكد من حذف هذه الدورة؟',
 
