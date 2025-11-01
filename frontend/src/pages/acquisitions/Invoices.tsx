@@ -14,11 +14,13 @@ import {
   fetchVendors,
 } from '../../store/slices/acquisitionsSlice'
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiX, FiRefreshCw } from 'react-icons/fi'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 type ModalMode = 'create' | 'edit' | 'view' | null
 
 const Invoices = () => {
   const dispatch = useAppDispatch()
+  const { t } = useLanguage()
   const { invoices, selectedInvoice, vendors, loading } = useAppSelector(
     (state) => state.acquisitions
   )
@@ -35,7 +37,7 @@ const Invoices = () => {
   })
 
   useEffect(() => {
-    dispatch(fetchInvoices())
+    dispatch(fetchInvoices({}))
     dispatch(fetchVendors({ page: 1, page_size: 100 }))
   }, [dispatch])
 
@@ -98,7 +100,7 @@ const Invoices = () => {
   }
 
   const handleDelete = async (invoiceId: string) => {
-    if (window.confirm('Are you sure you want to delete this invoice?')) {
+    if (window.confirm(t('acquisitions.invoices.deleteConfirm'))) {
       await dispatch(deleteInvoice(invoiceId))
     }
   }
@@ -109,10 +111,10 @@ const Invoices = () => {
     const isViewMode = modalMode === 'view'
     const title =
       modalMode === 'create'
-        ? 'Create Invoice'
+        ? t('acquisitions.invoices.modal.create')
         : modalMode === 'edit'
-        ? 'Edit Invoice'
-        : 'Invoice Details'
+        ? t('acquisitions.invoices.modal.edit')
+        : t('acquisitions.invoices.modal.view')
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -129,7 +131,7 @@ const Invoices = () => {
               {/* Invoice Number */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Invoice Number *
+                  {t('acquisitions.invoices.form.invoiceNumber')} *
                 </label>
                 <input
                   type="text"
@@ -143,7 +145,9 @@ const Invoices = () => {
 
               {/* Vendor */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Vendor *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('acquisitions.invoices.form.vendor')} *
+                </label>
                 <select
                   value={formData.vendor_id}
                   onChange={(e) => setFormData({ ...formData, vendor_id: e.target.value })}
@@ -151,7 +155,7 @@ const Invoices = () => {
                   disabled={isViewMode}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
                 >
-                  <option value="">Select vendor...</option>
+                  <option value="">{t('acquisitions.invoices.form.selectVendor')}</option>
                   {vendors.map((vendor) => (
                     <option key={vendor.id} value={vendor.id}>
                       {vendor.name}
@@ -163,7 +167,7 @@ const Invoices = () => {
               {/* Invoice Date */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Invoice Date *
+                  {t('acquisitions.invoices.form.invoiceDate')} *
                 </label>
                 <input
                   type="date"
@@ -178,7 +182,7 @@ const Invoices = () => {
               {/* Payment Due Date */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Payment Due Date
+                  {t('acquisitions.invoices.form.paymentDueDate')}
                 </label>
                 <input
                   type="date"
@@ -193,7 +197,9 @@ const Invoices = () => {
 
               {/* Status */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('acquisitions.invoices.form.status')} *
+                </label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
@@ -201,17 +207,17 @@ const Invoices = () => {
                   disabled={isViewMode}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
                 >
-                  <option value="open">Open</option>
-                  <option value="approved">Approved</option>
-                  <option value="paid">Paid</option>
-                  <option value="cancelled">Cancelled</option>
+                  <option value="open">{t('acquisitions.invoices.status.open')}</option>
+                  <option value="approved">{t('acquisitions.invoices.status.approved')}</option>
+                  <option value="paid">{t('acquisitions.invoices.status.paid')}</option>
+                  <option value="cancelled">{t('acquisitions.invoices.status.cancelled')}</option>
                 </select>
               </div>
 
               {/* Total Amount */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Total Amount *
+                  {t('acquisitions.invoices.form.totalAmount')} *
                 </label>
                 <input
                   type="number"
@@ -233,7 +239,7 @@ const Invoices = () => {
               {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
+                  {t('acquisitions.invoices.form.description')}
                 </label>
                 <textarea
                   value={formData.description}
@@ -252,14 +258,14 @@ const Invoices = () => {
                 onClick={handleCloseModal}
                 className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
               >
-                {isViewMode ? 'Close' : 'Cancel'}
+                {isViewMode ? t('common.close') : t('common.cancel')}
               </button>
               {!isViewMode && (
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
-                  {modalMode === 'create' ? 'Create' : 'Update'}
+                  {modalMode === 'create' ? t('common.create') : t('common.update')}
                 </button>
               )}
             </div>
@@ -272,19 +278,19 @@ const Invoices = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Invoices</h2>
+        <h2 className="text-2xl font-semibold">{t('acquisitions.invoices.title')}</h2>
         <div className="flex gap-2">
           <button
-            onClick={() => dispatch(fetchInvoices())}
+            onClick={() => dispatch(fetchInvoices({}))}
             className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2"
           >
-            <FiRefreshCw /> Refresh
+            <FiRefreshCw /> {t('common.refresh')}
           </button>
           <button
             onClick={() => handleOpenModal('create')}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
           >
-            <FiPlus /> Create Invoice
+            <FiPlus /> {t('acquisitions.invoices.new')}
           </button>
         </div>
       </div>
@@ -296,7 +302,7 @@ const Invoices = () => {
           </div>
         ) : invoices.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
-            No invoices found. Create your first invoice to get started.
+            {t('acquisitions.invoices.noInvoices')}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -304,22 +310,22 @@ const Invoices = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Invoice Number
+                    {t('acquisitions.invoices.table.invoiceNumber')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Vendor
+                    {t('acquisitions.invoices.table.vendor')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Date
+                    {t('acquisitions.invoices.table.date')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Status
+                    {t('acquisitions.invoices.table.status')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Total
+                    {t('acquisitions.invoices.table.total')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Actions
+                    {t('acquisitions.invoices.table.actions')}
                   </th>
                 </tr>
               </thead>
@@ -345,7 +351,7 @@ const Invoices = () => {
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        {invoice.status}
+                        {t(`acquisitions.invoices.status.${invoice.status}`)}
                       </span>
                     </td>
                     <td className="px-6 py-4">${invoice.total_amount.toFixed(2)}</td>
@@ -354,21 +360,21 @@ const Invoices = () => {
                         <button
                           onClick={() => handleOpenModal('view', invoice.id)}
                           className="text-blue-600 hover:text-blue-900"
-                          title="View"
+                          title={t('common.view')}
                         >
                           <FiEye size={18} />
                         </button>
                         <button
                           onClick={() => handleOpenModal('edit', invoice.id)}
                           className="text-green-600 hover:text-green-900"
-                          title="Edit"
+                          title={t('common.edit')}
                         >
                           <FiEdit2 size={18} />
                         </button>
                         <button
                           onClick={() => handleDelete(invoice.id)}
                           className="text-red-600 hover:text-red-900"
-                          title="Delete"
+                          title={t('common.delete')}
                         >
                           <FiTrash2 size={18} />
                         </button>
