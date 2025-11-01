@@ -112,6 +112,7 @@ const enTranslations: Translations = {
   'common.page': 'page',
   'common.total': 'total',
   'common.all': 'All',
+  'common.notAvailable': 'N/A',
   'common.active': 'Active',
   'common.inactive': 'Inactive',
   'common.yes': 'Yes',
@@ -353,6 +354,7 @@ const enTranslations: Translations = {
   'items.noItems': 'No items found',
   'items.noItems.desc': 'Create your first item to get started',
   'items.loading': 'Loading items...',
+  'items.failedToSave': 'Failed to save item',
 
   // Item Fields
   'items.barcode': 'Barcode',
@@ -400,6 +402,10 @@ const enTranslations: Translations = {
 
   // Item Actions
   'items.button.refresh': 'Refresh',
+
+  // Holdings
+  'holdings.failedToFetch': 'Failed to fetch holdings',
+  'holdings.failedToSave': 'Failed to save holding',
 
   // Pagination
   'inventory.pagination.page': 'Page',
@@ -1430,6 +1436,7 @@ const arTranslations: Translations = {
   'common.page': 'صفحة',
   'common.total': 'إجمالي',
   'common.all': 'الكل',
+  'common.notAvailable': 'غير متاح',
   'common.active': 'نشط',
   'common.inactive': 'غير نشط',
   'common.yes': 'نعم',
@@ -1671,6 +1678,7 @@ const arTranslations: Translations = {
   'items.noItems': 'لم يتم العثور على عناصر',
   'items.noItems.desc': 'أنشئ عنصرك الأول للبدء',
   'items.loading': 'جاري تحميل العناصر...',
+  'items.failedToSave': 'فشل في حفظ العنصر',
 
   // Item Fields
   'items.barcode': 'الباركود',
@@ -1718,6 +1726,10 @@ const arTranslations: Translations = {
 
   // Item Actions
   'items.button.refresh': 'تحديث',
+
+  // Holdings
+  'holdings.failedToFetch': 'فشل في جلب المقتنيات',
+  'holdings.failedToSave': 'فشل في حفظ المقتنى',
 
   // Pagination
   'inventory.pagination.page': 'صفحة',

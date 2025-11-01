@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../../store';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import axios from 'axios';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { sanitizeSearchQuery } from '../../utils/sanitize';
@@ -71,7 +71,6 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const Items: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const { t } = useLanguage();
   const [items, setItems] = useState<Item[]>([]);
   const [holdings, setHoldings] = useState<Holding[]>([]);
@@ -173,7 +172,7 @@ const Items: React.FC = () => {
 
     try {
       await axios.delete(`/api/v1/inventory/items/${id}`, axiosConfig);
-      fetchItems();
+      await fetchItems();
     } catch (err: any) {
       setError(err.response?.data?.detail || t('items.deleteFailed'));
     }
@@ -220,7 +219,7 @@ const Items: React.FC = () => {
       setShowModal(false);
       fetchItems();
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to save item');
+      setError(err.response?.data?.detail || t('items.failedToSave'));
     }
   };
 
@@ -230,7 +229,7 @@ const Items: React.FC = () => {
   };
 
   const getLocationName = (locationId?: string) => {
-    if (!locationId) return 'N/A';
+    if (!locationId) return t('common.notAvailable');
     const location = locations.find((l) => l.id === locationId);
     return location ? `${location.name} (${location.code})` : locationId;
   };
@@ -286,7 +285,7 @@ const Items: React.FC = () => {
             <option value="">{t('items.allStatuses')}</option>
             {STATUS_OPTIONS.map((status) => (
               <option key={status} value={status}>
-                {status.replace('_', ' ').toUpperCase()}
+                {t(`items.status.${status}`)}
               </option>
             ))}
           </select>
@@ -383,7 +382,7 @@ const Items: React.FC = () => {
                             STATUS_COLORS[item.status] || 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {item.status.replace('_', ' ')}
+                          {t(`items.status.${item.status}`)}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -398,7 +397,7 @@ const Items: React.FC = () => {
                         <div className="text-sm text-gray-900">
                           {item.copy_number && `c.${item.copy_number}`}
                           {item.volume && ` v.${item.volume}`}
-                          {!item.copy_number && !item.volume && 'N/A'}
+                          {!item.copy_number && !item.volume && t('common.notAvailable')}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">

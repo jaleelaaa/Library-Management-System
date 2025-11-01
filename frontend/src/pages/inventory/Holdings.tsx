@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../../store';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import axios from 'axios';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -35,7 +35,6 @@ interface Location {
 }
 
 const Holdings: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const { t } = useLanguage();
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [instances, setInstances] = useState<Instance[]>([]);
@@ -47,7 +46,6 @@ const Holdings: React.FC = () => {
   const [selectedHolding, setSelectedHolding] = useState<Holding | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
   const [instanceFilter, setInstanceFilter] = useState('');
 
   const pageSize = 10;
@@ -81,7 +79,7 @@ const Holdings: React.FC = () => {
       setHoldings(response.data.items);
       setTotal(response.data.total);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to fetch holdings');
+      setError(err.response?.data?.detail || t('holdings.failedToFetch'));
     } finally {
       setLoading(false);
     }
@@ -169,7 +167,7 @@ const Holdings: React.FC = () => {
       setShowModal(false);
       fetchHoldings();
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to save holding');
+      setError(err.response?.data?.detail || t('holdings.failedToSave'));
     }
   };
 
@@ -179,7 +177,7 @@ const Holdings: React.FC = () => {
   };
 
   const getLocationName = (locationId?: string) => {
-    if (!locationId) return 'N/A';
+    if (!locationId) return t('common.notAvailable');
     const location = locations.find((l) => l.id === locationId);
     return location ? `${location.name} (${location.code})` : locationId;
   };
@@ -274,7 +272,7 @@ const Holdings: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
                           {holding.call_number_prefix && `${holding.call_number_prefix} `}
-                          {holding.call_number || 'N/A'}
+                          {holding.call_number || t('common.notAvailable')}
                           {holding.call_number_suffix && ` ${holding.call_number_suffix}`}
                         </div>
                       </td>
@@ -287,7 +285,7 @@ const Holdings: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{holding.shelving_title || 'N/A'}</div>
+                        <div className="text-sm text-gray-900">{holding.shelving_title || t('common.notAvailable')}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                         <button
