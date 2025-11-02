@@ -1,6 +1,6 @@
 /**
- * Invoices Page
- * Full CRUD for invoices with create/edit/view modals
+ * Invoices Page - Redesigned with shadcn/ui
+ * Full CRUD for invoices with modern UI components
  */
 
 import { useEffect, useState } from 'react'
@@ -13,8 +13,21 @@ import {
   deleteInvoice,
   fetchVendors,
 } from '../../store/slices/acquisitionsSlice'
-import { FiPlus, FiEdit2, FiTrash2, FiEye, FiX, FiRefreshCw } from 'react-icons/fi'
+import { FileText, Plus, Edit, Trash2, Eye, RefreshCw, CheckCircle2, Clock, XCircle, AlertCircle } from 'lucide-react'
 import { useLanguage } from '../../contexts/LanguageContext'
+import { motion, AnimatePresence } from 'framer-motion'
+
+// shadcn components
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../components/ui/dialog'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../components/ui/alert-dialog'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
+import { Badge } from '../../components/ui/badge'
+import { Skeleton } from '../../components/ui/skeleton'
 
 type ModalMode = 'create' | 'edit' | 'view' | null
 
@@ -26,6 +39,7 @@ const Invoices = () => {
   )
 
   const [modalMode, setModalMode] = useState<ModalMode>(null)
+  const [invoiceToDelete, setInvoiceToDelete] = useState<{ id: string, number: string } | null>(null)
   const [formData, setFormData] = useState({
     invoice_number: '',
     vendor_id: '',
@@ -99,296 +113,354 @@ const Invoices = () => {
     }
   }
 
-  const handleDelete = async (invoiceId: string) => {
-    if (window.confirm(t('acquisitions.invoices.deleteConfirm'))) {
-      await dispatch(deleteInvoice(invoiceId))
+  const handleDeleteClick = (invoiceId: string, invoiceNumber: string) => {
+    setInvoiceToDelete({ id: invoiceId, number: invoiceNumber })
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (invoiceToDelete) {
+      await dispatch(deleteInvoice(invoiceToDelete.id))
+      setInvoiceToDelete(null)
     }
   }
 
-  const renderModal = () => {
-    if (!modalMode) return null
+  const isViewMode = modalMode === 'view'
+  const modalTitle =
+    modalMode === 'create'
+      ? t('acquisitions.invoices.modal.create')
+      : modalMode === 'edit'
+      ? t('acquisitions.invoices.modal.edit')
+      : t('acquisitions.invoices.modal.view')
 
-    const isViewMode = modalMode === 'view'
-    const title =
-      modalMode === 'create'
-        ? t('acquisitions.invoices.modal.create')
-        : modalMode === 'edit'
-        ? t('acquisitions.invoices.modal.edit')
-        : t('acquisitions.invoices.modal.view')
+  const getStatusBadge = (status: string) => {
+    const badges: Record<string, { color: string; icon: any }> = {
+      paid: { color: 'from-green-100 to-emerald-100 text-green-700 border-green-200', icon: CheckCircle2 },
+      approved: { color: 'from-blue-100 to-cyan-100 text-blue-700 border-blue-200', icon: AlertCircle },
+      open: { color: 'from-yellow-100 to-amber-100 text-yellow-700 border-yellow-200', icon: Clock },
+      cancelled: { color: 'from-gray-100 to-slate-100 text-gray-700 border-gray-200', icon: XCircle },
+    }
+    const badge = badges[status] || badges.open
+    const Icon = badge.icon
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="flex justify-between items-center p-6 border-b">
-            <h2 className="text-2xl font-semibold">{title}</h2>
-            <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600">
-              <FiX size={24} />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-6">
-            <div className="space-y-4">
-              {/* Invoice Number */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.invoices.form.invoiceNumber')} *
-                </label>
-                <input
-                  type="text"
-                  value={formData.invoice_number}
-                  onChange={(e) => setFormData({ ...formData, invoice_number: e.target.value })}
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                />
-              </div>
-
-              {/* Vendor */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.invoices.form.vendor')} *
-                </label>
-                <select
-                  value={formData.vendor_id}
-                  onChange={(e) => setFormData({ ...formData, vendor_id: e.target.value })}
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                >
-                  <option value="">{t('acquisitions.invoices.form.selectVendor')}</option>
-                  {vendors.map((vendor) => (
-                    <option key={vendor.id} value={vendor.id}>
-                      {vendor.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Invoice Date */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.invoices.form.invoiceDate')} *
-                </label>
-                <input
-                  type="date"
-                  value={formData.invoice_date}
-                  onChange={(e) => setFormData({ ...formData, invoice_date: e.target.value })}
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                />
-              </div>
-
-              {/* Payment Due Date */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.invoices.form.paymentDueDate')}
-                </label>
-                <input
-                  type="date"
-                  value={formData.payment_due_date}
-                  onChange={(e) =>
-                    setFormData({ ...formData, payment_due_date: e.target.value })
-                  }
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                />
-              </div>
-
-              {/* Status */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.invoices.form.status')} *
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                >
-                  <option value="open">{t('acquisitions.invoices.status.open')}</option>
-                  <option value="approved">{t('acquisitions.invoices.status.approved')}</option>
-                  <option value="paid">{t('acquisitions.invoices.status.paid')}</option>
-                  <option value="cancelled">{t('acquisitions.invoices.status.cancelled')}</option>
-                </select>
-              </div>
-
-              {/* Total Amount */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.invoices.form.totalAmount')} *
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={formData.total_amount}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      total_amount: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.invoices.form.description')}
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                />
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={handleCloseModal}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-              >
-                {isViewMode ? t('common.close') : t('common.cancel')}
-              </button>
-              {!isViewMode && (
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  {modalMode === 'create' ? t('common.create') : t('common.update')}
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-      </div>
+      <Badge className={`bg-gradient-to-r ${badge.color}`}>
+        <Icon className="w-3 h-3 me-1" />
+        {t(`acquisitions.invoices.status.${status}`)}
+      </Badge>
     )
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">{t('acquisitions.invoices.title')}</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={() => dispatch(fetchInvoices({}))}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2"
-          >
-            <FiRefreshCw /> {t('common.refresh')}
-          </button>
-          <button
-            onClick={() => handleOpenModal('create')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
-          >
-            <FiPlus /> {t('acquisitions.invoices.new')}
-          </button>
-        </div>
-      </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-teal-50 to-cyan-50">
+          <CardHeader className="space-y-1">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-900 to-cyan-600 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-xl">
+                    <FileText className="w-8 h-8 text-white" />
+                  </div>
+                  {t('acquisitions.invoices.title')}
+                </h1>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => dispatch(fetchInvoices({}))}
+                  className="gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  {t('common.refresh')}
+                </Button>
+                <Button
+                  onClick={() => handleOpenModal('create')}
+                  className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  {t('acquisitions.invoices.new')}
+                </Button>
+              </div>
+            </div>
+            <p className="text-gray-600 mt-2">{t('acquisitions.invoices.subtitle')}</p>
+          </CardHeader>
+        </Card>
+      </motion.div>
 
-      <div className="folio-card">
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
-        ) : invoices.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            {t('acquisitions.invoices.noInvoices')}
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.invoices.table.invoiceNumber')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.invoices.table.vendor')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.invoices.table.date')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.invoices.table.status')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.invoices.table.total')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.invoices.table.actions')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {invoices.map((invoice) => (
-                  <tr key={invoice.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">
-                      {invoice.invoice_number}
-                    </td>
-                    <td className="px-6 py-4">{invoice.vendor_name}</td>
-                    <td className="px-6 py-4">
-                      {new Date(invoice.invoice_date).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          invoice.status === 'paid'
-                            ? 'bg-green-100 text-green-800'
-                            : invoice.status === 'approved'
-                            ? 'bg-blue-100 text-blue-800'
-                            : invoice.status === 'open'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
-                        {t(`acquisitions.invoices.status.${invoice.status}`)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">${invoice.total_amount.toFixed(2)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleOpenModal('view', invoice.id)}
-                          className="text-blue-600 hover:text-blue-900"
-                          title={t('common.view')}
-                        >
-                          <FiEye size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleOpenModal('edit', invoice.id)}
-                          className="text-green-600 hover:text-green-900"
-                          title={t('common.edit')}
-                        >
-                          <FiEdit2 size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(invoice.id)}
-                          className="text-red-600 hover:text-red-900"
-                          title={t('common.delete')}
-                        >
-                          <FiTrash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+      {/* Content */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <Card className="border-0 shadow-md">
+          <CardContent className="p-6">
+            {loading ? (
+              <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-full" />
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+              </div>
+            ) : invoices.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-16"
+              >
+                <div className="flex justify-center mb-4">
+                  <div className="p-4 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full">
+                    <FileText className="w-16 h-16 text-teal-600" />
+                  </div>
+                </div>
+                <p className="text-xl font-semibold text-gray-700 mb-2">{t('acquisitions.invoices.noInvoices')}</p>
+                <p className="text-gray-500">{t('acquisitions.invoices.noInvoices.desc')}</p>
+              </motion.div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-gray-50 to-slate-50">
+                      <TableHead className="font-semibold">{t('acquisitions.invoices.table.invoiceNumber')}</TableHead>
+                      <TableHead className="font-semibold">{t('acquisitions.invoices.table.vendor')}</TableHead>
+                      <TableHead className="font-semibold">{t('acquisitions.invoices.table.date')}</TableHead>
+                      <TableHead className="font-semibold">{t('acquisitions.invoices.table.status')}</TableHead>
+                      <TableHead className="font-semibold">{t('acquisitions.invoices.table.total')}</TableHead>
+                      <TableHead className="font-semibold text-end">{t('acquisitions.invoices.table.actions')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <AnimatePresence>
+                      {invoices.map((invoice, index) => (
+                        <motion.tr
+                          key={invoice.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 20 }}
+                          transition={{ duration: 0.2, delay: index * 0.05 }}
+                          className="border-b hover:bg-teal-50/50 transition-colors"
+                        >
+                          <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
+                          <TableCell>{invoice.vendor_name}</TableCell>
+                          <TableCell>{new Date(invoice.invoice_date).toLocaleDateString()}</TableCell>
+                          <TableCell>{getStatusBadge(invoice.status)}</TableCell>
+                          <TableCell className="font-medium">${invoice.total_amount.toFixed(2)}</TableCell>
+                          <TableCell className="text-end">
+                            <div className="flex gap-2 justify-end">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleOpenModal('view', invoice.id)}
+                                className="h-8 w-8 p-0 text-blue-600 hover:text-blue-900 hover:bg-blue-50"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleOpenModal('edit', invoice.id)}
+                                className="h-8 w-8 p-0 text-green-600 hover:text-green-900 hover:bg-green-50"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteClick(invoice.id, invoice.invoice_number)}
+                                className="h-8 w-8 p-0 text-red-600 hover:text-red-900 hover:bg-red-50"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      {renderModal()}
+      {/* Create/Edit/View Dialog */}
+      <Dialog open={!!modalMode} onOpenChange={handleCloseModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+              {modalTitle}
+            </DialogTitle>
+            <DialogDescription>
+              {modalMode === 'create' && t('acquisitions.invoices.modal.createDesc')}
+              {modalMode === 'edit' && t('acquisitions.invoices.modal.editDesc')}
+              {modalMode === 'view' && t('acquisitions.invoices.modal.viewDesc')}
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit}>
+            <div className="grid gap-4 py-4">
+              {/* Invoice Number */}
+              <div className="grid gap-2">
+                <Label htmlFor="invoice_number">{t('acquisitions.invoices.form.invoiceNumber')} *</Label>
+                <Input
+                  id="invoice_number"
+                  value={formData.invoice_number}
+                  onChange={(e) => setFormData({ ...formData, invoice_number: e.target.value })}
+                  required
+                  disabled={isViewMode}
+                  placeholder={t('acquisitions.invoices.form.invoiceNumberPlaceholder')}
+                  className="h-11"
+                />
+              </div>
+
+              {/* Vendor */}
+              <div className="grid gap-2">
+                <Label htmlFor="vendor">{t('acquisitions.invoices.form.vendor')} *</Label>
+                <Select
+                  value={formData.vendor_id}
+                  onValueChange={(value) => setFormData({ ...formData, vendor_id: value })}
+                  disabled={isViewMode}
+                >
+                  <SelectTrigger id="vendor" className="h-11">
+                    <SelectValue placeholder={t('acquisitions.invoices.form.selectVendor')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {vendors.map((vendor) => (
+                      <SelectItem key={vendor.id} value={vendor.id}>
+                        {vendor.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Invoice Date */}
+                <div className="grid gap-2">
+                  <Label htmlFor="invoice_date">{t('acquisitions.invoices.form.invoiceDate')} *</Label>
+                  <Input
+                    id="invoice_date"
+                    type="date"
+                    value={formData.invoice_date}
+                    onChange={(e) => setFormData({ ...formData, invoice_date: e.target.value })}
+                    required
+                    disabled={isViewMode}
+                    className="h-11"
+                  />
+                </div>
+
+                {/* Payment Due Date */}
+                <div className="grid gap-2">
+                  <Label htmlFor="payment_due_date">{t('acquisitions.invoices.form.paymentDueDate')}</Label>
+                  <Input
+                    id="payment_due_date"
+                    type="date"
+                    value={formData.payment_due_date}
+                    onChange={(e) => setFormData({ ...formData, payment_due_date: e.target.value })}
+                    disabled={isViewMode}
+                    className="h-11"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Status */}
+                <div className="grid gap-2">
+                  <Label htmlFor="status">{t('acquisitions.invoices.form.status')} *</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) => setFormData({ ...formData, status: value })}
+                    disabled={isViewMode}
+                  >
+                    <SelectTrigger id="status" className="h-11">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="open">{t('acquisitions.invoices.status.open')}</SelectItem>
+                      <SelectItem value="approved">{t('acquisitions.invoices.status.approved')}</SelectItem>
+                      <SelectItem value="paid">{t('acquisitions.invoices.status.paid')}</SelectItem>
+                      <SelectItem value="cancelled">{t('acquisitions.invoices.status.cancelled')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Total Amount */}
+                <div className="grid gap-2">
+                  <Label htmlFor="total_amount">{t('acquisitions.invoices.form.totalAmount')} *</Label>
+                  <Input
+                    id="total_amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.total_amount}
+                    onChange={(e) => setFormData({ ...formData, total_amount: parseFloat(e.target.value) || 0 })}
+                    required
+                    disabled={isViewMode}
+                    placeholder="0.00"
+                    className="h-11"
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="grid gap-2">
+                <Label htmlFor="description">{t('acquisitions.invoices.form.description')}</Label>
+                <textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows={3}
+                  disabled={isViewMode}
+                  placeholder={t('acquisitions.invoices.form.descriptionPlaceholder')}
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={handleCloseModal}>
+                {isViewMode ? t('common.close') : t('common.cancel')}
+              </Button>
+              {!isViewMode && (
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700"
+                >
+                  {modalMode === 'create' ? t('common.create') : t('common.update')}
+                </Button>
+              )}
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!invoiceToDelete} onOpenChange={() => setInvoiceToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('acquisitions.invoices.deleteTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('acquisitions.invoices.deleteConfirm')} <strong>{invoiceToDelete?.number}</strong>?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

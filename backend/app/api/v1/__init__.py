@@ -13,6 +13,7 @@ from app.api.v1 import (
     search,
     notifications,
     reports,
+    audit_logs,
 )
 
 __all__ = [
@@ -28,4 +29,5 @@ __all__ = [
     "search",
     "notifications",
     "reports",
+    "audit_logs",
 ]

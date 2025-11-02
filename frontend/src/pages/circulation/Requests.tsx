@@ -1,17 +1,68 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { fetchRequests, createRequest, cancelRequest, setRequestsFilters } from '../../store/slices/circulationSlice'
-import { FiRefreshCw, FiFilter, FiX, FiPlus, FiInbox } from 'react-icons/fi'
-import type { RequestStatus, RequestType } from '../../types/circulation'
+import { fetchRequests, cancelRequest } from '../../store/slices/circulationSlice'
+import { BookMarked, Plus, RefreshCw, Filter, X, User, Package, Calendar, Clock, AlertCircle, CheckCircle2, XCircle } from 'lucide-react'
+import type { Request as CirculationRequest, RequestType } from '../../types/circulation'
+import * as circulationService from '../../services/circulationService'
+import { toast } from 'react-toastify'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 
 const Requests = () => {
   const dispatch = useAppDispatch()
-  const { requests, loading, requestsMeta, requestsFilters } = useAppSelector(state => state.circulation)
+  const { requests, requestsMeta, loading } = useAppSelector(state => state.circulation)
+  const { t } = useLanguage()
 
   const [showFilters, setShowFilters] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+  const [requestToCancel, setRequestToCancel] = useState<{ id: string, itemTitle: string } | null>(null)
 
-  // Create request form
+  // Filters
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [typeFilter, setTypeFilter] = useState<string>('all')
+
+  // Create form
   const [createForm, setCreateForm] = useState({
     item_barcode: '',
     user_barcode: '',
@@ -21,43 +72,57 @@ const Requests = () => {
   })
 
   useEffect(() => {
-    dispatch(fetchRequests(requestsFilters))
-  }, [dispatch])
+    loadRequests()
+  }, [statusFilter, typeFilter])
 
-  const handleFilterChange = (key: string, value: any) => {
-    const newFilters = { ...requestsFilters, [key]: value, page: 1 }
-    dispatch(setRequestsFilters(newFilters))
-    dispatch(fetchRequests(newFilters))
+  const loadRequests = (page = 1) => {
+    const params: any = { page, limit: 10 }
+    if (statusFilter && statusFilter !== 'all') params.status = statusFilter
+    if (typeFilter && typeFilter !== 'all') params.request_type = typeFilter
+    dispatch(fetchRequests(params))
   }
 
   const handlePageChange = (page: number) => {
-    const newFilters = { ...requestsFilters, page }
-    dispatch(setRequestsFilters(newFilters))
-    dispatch(fetchRequests(newFilters))
+    loadRequests(page)
   }
 
   const handleRefresh = () => {
-    dispatch(fetchRequests(requestsFilters))
+    loadRequests(requestsMeta.page)
+  }
+
+  const handleClearFilters = () => {
+    setStatusFilter('all')
+    setTypeFilter('all')
+  }
+
+  const confirmCancel = (request: CirculationRequest) => {
+    setRequestToCancel({ id: request.id, itemTitle: request.item?.title || 'Unknown' })
+    setCancelDialogOpen(true)
+  }
+
+  const handleCancelRequest = async () => {
+    if (!requestToCancel) return
+
+    try {
+      await dispatch(cancelRequest(requestToCancel.id))
+      toast.success(t('circulation.requests.cancelSuccess'))
+      loadRequests(requestsMeta.page)
+      setCancelDialogOpen(false)
+      setRequestToCancel(null)
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || t('circulation.requests.cancelError'))
+    }
   }
 
   const handleCreateRequest = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const requestData: any = {
-      item_barcode: createForm.item_barcode,
-      user_barcode: createForm.user_barcode,
-      request_type: createForm.request_type,
-      pickup_service_point_id: createForm.pickup_service_point_id
-    }
-
-    if (createForm.expiration_date) {
-      requestData.expiration_date = createForm.expiration_date
-    }
-
-    const result = await dispatch(createRequest(requestData))
-
-    if (createRequest.fulfilled.match(result)) {
-      await dispatch(fetchRequests(requestsFilters))
+    try {
+      await circulationService.createRequest({
+        ...createForm,
+        expiration_date: createForm.expiration_date || undefined
+      })
+      toast.success(t('circulation.requests.createSuccess'))
       setShowCreateModal(false)
       setCreateForm({
         item_barcode: '',
@@ -66,343 +131,459 @@ const Requests = () => {
         pickup_service_point_id: '00000000-0000-0000-0000-000000000000',
         expiration_date: ''
       })
+      loadRequests()
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || t('circulation.requests.createError'))
     }
   }
 
-  const handleCancelRequest = async (requestId: string) => {
-    if (window.confirm('Are you sure you want to cancel this request?')) {
-      await dispatch(cancelRequest(requestId))
-      await dispatch(fetchRequests(requestsFilters))
-    }
-  }
-
-  const getStatusColor = (status: RequestStatus) => {
-    if (status.startsWith('open_')) {
-      return 'bg-green-100 text-green-800'
-    } else if (status === 'closed_cancelled') {
-      return 'bg-red-100 text-red-800'
-    } else if (status.startsWith('closed_')) {
-      return 'bg-gray-100 text-gray-800'
-    }
-    return 'bg-gray-100 text-gray-800'
-  }
-
-  const getRequestTypeLabel = (type: RequestType) => {
-    switch (type) {
-      case 'hold':
-        return 'Hold'
-      case 'recall':
-        return 'Recall'
-      case 'page':
-        return 'Page'
+  const getStatusBadge = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'open':
+        return (
+          <Badge className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-green-200">
+            <CheckCircle2 className="w-3 h-3 me-1" />
+            {t('circulation.requests.status.open')}
+          </Badge>
+        )
+      case 'closed':
+        return (
+          <Badge className="bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border-gray-200">
+            <XCircle className="w-3 h-3 me-1" />
+            {t('circulation.requests.status.closed')}
+          </Badge>
+        )
+      case 'cancelled':
+        return (
+          <Badge className="bg-gradient-to-r from-red-100 to-orange-100 text-red-700 border-red-200">
+            <XCircle className="w-3 h-3 me-1" />
+            {t('circulation.requests.status.cancelled')}
+          </Badge>
+        )
       default:
-        return type
+        return (
+          <Badge className="bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 border-blue-200">
+            {status}
+          </Badge>
+        )
     }
+  }
+
+  const getTypeBadge = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'hold':
+        return (
+          <Badge className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-200">
+            {t('circulation.requests.type.hold')}
+          </Badge>
+        )
+      case 'recall':
+        return (
+          <Badge className="bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 border-amber-200">
+            {t('circulation.requests.type.recall')}
+          </Badge>
+        )
+      case 'page':
+        return (
+          <Badge className="bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 border-teal-200">
+            {t('circulation.requests.type.page')}
+          </Badge>
+        )
+      default:
+        return <Badge>{type}</Badge>
+    }
+  }
+
+  const item = {
+    hidden: { opacity: 0, x: -20 },
+    show: { opacity: 1, x: 0 }
   }
 
   return (
-    <div>
-      {/* Header with Actions */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Requests & Holds</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition"
-          >
-            <FiPlus /> Create Request
-          </button>
-          <button
-            onClick={handleRefresh}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2 transition"
-          >
-            <FiRefreshCw /> Refresh
-          </button>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2 transition"
-          >
-            <FiFilter /> Filters
-          </button>
+    <div className="p-6 space-y-6">
+      {/* Header with gradient */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
+        <div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-xl">
+              <BookMarked className="w-8 h-8 text-white" />
+            </div>
+            {t('circulation.requests.title')}
+          </h1>
+          <p className="text-gray-600 mt-2">{t('circulation.requests.subtitle')}</p>
         </div>
-      </div>
+        <div className="flex gap-2">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={() => setShowCreateModal(true)}
+              className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl"
+            >
+              <Plus className="w-5 h-5 me-2" />
+              {t('circulation.requests.createRequest')}
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={handleRefresh}
+              variant="outline"
+              className="border-teal-200 text-teal-600 hover:bg-teal-50"
+            >
+              <RefreshCw className="w-5 h-5" />
+            </Button>
+          </motion.div>
+        </div>
+      </motion.div>
 
       {/* Filters */}
-      {showFilters && (
-        <div className="folio-card mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <select
-                value={requestsFilters.status || 'all'}
-                onChange={(e) => handleFilterChange('status', e.target.value === 'all' ? undefined : e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="all">All Requests</option>
-                <option value="open_not_yet_filled">Open - Not Yet Filled</option>
-                <option value="open_awaiting_pickup">Open - Awaiting Pickup</option>
-                <option value="open_in_transit">Open - In Transit</option>
-                <option value="closed_filled">Closed - Filled</option>
-                <option value="closed_cancelled">Closed - Cancelled</option>
-                <option value="closed_unfilled">Closed - Unfilled</option>
-                <option value="closed_pickup_expired">Closed - Pickup Expired</option>
-              </select>
-            </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Collapsible open={showFilters} onOpenChange={setShowFilters}>
+          <Card className="shadow-md border-0">
+            <CardHeader className="pb-3">
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="w-full flex justify-between items-center hover:bg-teal-50">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-5 h-5 text-teal-600" />
+                    <CardTitle className="text-lg">{t('common.filters')}</CardTitle>
+                  </div>
+                  <motion.div
+                    animate={{ rotate: showFilters ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <X className={`w-5 h-5 transition-transform ${showFilters ? 'rotate-45' : ''}`} />
+                  </motion.div>
+                </Button>
+              </CollapsibleTrigger>
+            </CardHeader>
+            <CollapsibleContent>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>{t('circulation.requests.filters.status')}</Label>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('common.selectStatus')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t('common.all')}</SelectItem>
+                        <SelectItem value="open">{t('circulation.requests.status.open')}</SelectItem>
+                        <SelectItem value="closed">{t('circulation.requests.status.closed')}</SelectItem>
+                        <SelectItem value="cancelled">{t('circulation.requests.status.cancelled')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Request Type</label>
-              <select
-                value={requestsFilters.request_type || 'all'}
-                onChange={(e) => handleFilterChange('request_type', e.target.value === 'all' ? undefined : e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="all">All Types</option>
-                <option value="hold">Hold</option>
-                <option value="recall">Recall</option>
-                <option value="page">Page</option>
-              </select>
-            </div>
+                  <div className="space-y-2">
+                    <Label>{t('circulation.requests.filters.type')}</Label>
+                    <Select value={typeFilter} onValueChange={setTypeFilter}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('common.selectType')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t('common.all')}</SelectItem>
+                        <SelectItem value="hold">{t('circulation.requests.type.hold')}</SelectItem>
+                        <SelectItem value="recall">{t('circulation.requests.type.recall')}</SelectItem>
+                        <SelectItem value="page">{t('circulation.requests.type.page')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            <div className="flex items-end">
-              <button
-                onClick={() => {
-                  dispatch(setRequestsFilters({ page: 1, page_size: 20 }))
-                  dispatch(fetchRequests({ page: 1, page_size: 20 }))
-                }}
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md flex items-center justify-center gap-2 transition"
-              >
-                <FiX /> Clear Filters
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                  <div className="flex items-end">
+                    <Button
+                      onClick={handleClearFilters}
+                      variant="outline"
+                      className="w-full border-gray-300 hover:bg-gray-50"
+                    >
+                      <X className="w-4 h-4 me-2" />
+                      {t('common.clearFilters')}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
+      </motion.div>
 
       {/* Requests Table */}
-      <div className="folio-card">
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="mt-4 text-gray-600">Loading requests...</p>
-          </div>
-        ) : requests.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            <FiInbox size={48} className="mx-auto mb-4 text-gray-400" />
-            <p className="text-xl mb-2">No requests found</p>
-            <p>Try adjusting your filters or create a new request</p>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Position
-                    </th>
-                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Item
-                    </th>
-                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
-                    </th>
-                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Type
-                    </th>
-                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Request Date
-                    </th>
-                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Expiration Date
-                    </th>
-                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {requests.map((request) => (
-                    <tr key={request.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-primary-100 text-primary-800 font-semibold">
-                            {request.position}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-gray-900">
-                          {request.item_title || 'Unknown Item'}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Barcode: {request.item_barcode}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-gray-900">
-                          {request.user_name || 'Unknown User'}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {request.user_barcode}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                          {getRequestTypeLabel(request.request_type)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                        {new Date(request.request_date).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                        {request.request_expiration_date
-                          ? new Date(request.request_expiration_date).toLocaleDateString()
-                          : 'No expiration'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(request.status)}`}>
-                          {request.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {request.status.startsWith('open_') && (
-                          <button
-                            onClick={() => handleCancelRequest(request.id)}
-                            className="text-red-600 hover:text-red-800 flex items-center gap-1"
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Card className="shadow-md border-0">
+          <CardContent className="pt-6">
+            {loading ? (
+              <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-4 w-[250px]" />
+                      <Skeleton className="h-4 w-[200px]" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : !requests || requests.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="flex justify-center mb-4">
+                  <div className="p-4 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full">
+                    <BookMarked className="w-12 h-12 text-teal-600" />
+                  </div>
+                </div>
+                <p className="text-xl font-semibold text-gray-700 mb-2">{t('circulation.requests.noRequests')}</p>
+                <p className="text-gray-500">{t('circulation.requests.noRequests.desc')}</p>
+              </div>
+            ) : (
+              <>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-gray-50">
+                        <TableHead className="font-semibold">{t('circulation.requests.position')}</TableHead>
+                        <TableHead className="font-semibold">{t('circulation.requests.item')}</TableHead>
+                        <TableHead className="font-semibold">{t('circulation.requests.user')}</TableHead>
+                        <TableHead className="font-semibold">{t('circulation.requests.type')}</TableHead>
+                        <TableHead className="font-semibold">{t('circulation.requests.requestDate')}</TableHead>
+                        <TableHead className="font-semibold">{t('circulation.requests.expirationDate')}</TableHead>
+                        <TableHead className="font-semibold">{t('circulation.requests.status')}</TableHead>
+                        <TableHead className="font-semibold text-end">{t('common.actions')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <AnimatePresence>
+                        {requests.map((request, index) => (
+                          <motion.tr
+                            key={request.id}
+                            variants={item}
+                            initial="hidden"
+                            animate="show"
+                            transition={{ delay: index * 0.05 }}
+                            className="hover:bg-gray-50 transition-colors border-b"
                           >
-                            <FiX size={16} />
-                            Cancel
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                            <TableCell>
+                              <Badge className="bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 border-teal-200">
+                                #{request.position}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Package className="w-4 h-4 text-teal-500" />
+                                <div>
+                                  <div className="font-medium text-gray-900">{request.item?.title || '-'}</div>
+                                  <div className="text-sm text-gray-500">{request.item?.barcode || '-'}</div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <User className="w-4 h-4 text-teal-500" />
+                                <div>
+                                  <div className="font-medium text-gray-900">{request.user?.full_name || '-'}</div>
+                                  <div className="text-sm text-gray-500">{request.user?.barcode || '-'}</div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>{getTypeBadge(request.request_type)}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2 text-gray-700">
+                                <Calendar className="w-4 h-4 text-teal-500" />
+                                <span>{new Date(request.request_date).toLocaleDateString()}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {request.expiration_date ? (
+                                <div className="flex items-center gap-2 text-gray-700">
+                                  <Clock className="w-4 h-4 text-amber-500" />
+                                  <span>{new Date(request.expiration_date).toLocaleDateString()}</span>
+                                </div>
+                              ) : (
+                                <span className="text-gray-400">-</span>
+                              )}
+                            </TableCell>
+                            <TableCell>{getStatusBadge(request.status)}</TableCell>
+                            <TableCell className="text-end">
+                              {request.status.toLowerCase() === 'open' && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => confirmCancel(request)}
+                                  className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                                >
+                                  <XCircle className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </TableCell>
+                          </motion.tr>
+                        ))}
+                      </AnimatePresence>
+                    </TableBody>
+                  </Table>
+                </div>
 
-            {/* Pagination */}
-            {requestsMeta && requestsMeta.total_pages > 1 && (
-              <div className="flex items-center justify-between px-6 py-4 border-t">
-                <div className="text-sm text-gray-700">
-                  Showing page {requestsMeta.page} of {requestsMeta.total_pages} ({requestsMeta.total_items} total requests)
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handlePageChange(requestsMeta.page - 1)}
-                    disabled={requestsMeta.page === 1}
-                    className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(requestsMeta.page + 1)}
-                    disabled={requestsMeta.page === requestsMeta.total_pages}
-                    className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
+                {/* Pagination */}
+                {requestsMeta.total_pages > 1 && (
+                  <div className="flex justify-between items-center mt-6 pt-4 border-t">
+                    <div className="text-sm text-gray-600">
+                      {t('common.page')} {requestsMeta.page} {t('common.of')} {requestsMeta.total_pages}
+                      <span className="ms-2">
+                        ({requestsMeta.total} {t('common.total')})
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handlePageChange(requestsMeta.page - 1)}
+                        disabled={requestsMeta.page === 1}
+                        variant="outline"
+                      >
+                        {t('common.previous')}
+                      </Button>
+                      <Button
+                        onClick={() => handlePageChange(requestsMeta.page + 1)}
+                        disabled={requestsMeta.page === requestsMeta.total_pages}
+                        variant="outline"
+                      >
+                        {t('common.next')}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
-          </>
-        )}
-      </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      {/* Create Request Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Create New Request</h3>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <FiX size={24} />
-              </button>
+      {/* Create Request Dialog */}
+      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+              {t('circulation.requests.createRequest')}
+            </DialogTitle>
+            <DialogDescription>
+              Fill in the details to create a new hold, recall, or page request
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateRequest} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="user_barcode" className="flex items-center gap-2">
+                <User className="w-4 h-4 text-teal-500" />
+                {t('circulation.requests.form.userBarcode')} *
+              </Label>
+              <Input
+                id="user_barcode"
+                type="text"
+                required
+                value={createForm.user_barcode}
+                onChange={(e) => setCreateForm({ ...createForm, user_barcode: e.target.value })}
+                placeholder={t('circulation.requests.form.userBarcodePlaceholder')}
+                className="h-11"
+              />
             </div>
 
-            <form onSubmit={handleCreateRequest} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  User Barcode *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={createForm.user_barcode}
-                  onChange={(e) => setCreateForm({ ...createForm, user_barcode: e.target.value })}
-                  placeholder="Scan or enter user barcode"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="item_barcode" className="flex items-center gap-2">
+                <Package className="w-4 h-4 text-teal-500" />
+                {t('circulation.requests.form.itemBarcode')} *
+              </Label>
+              <Input
+                id="item_barcode"
+                type="text"
+                required
+                value={createForm.item_barcode}
+                onChange={(e) => setCreateForm({ ...createForm, item_barcode: e.target.value })}
+                placeholder={t('circulation.requests.form.itemBarcodePlaceholder')}
+                className="h-11"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Item Barcode *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={createForm.item_barcode}
-                  onChange={(e) => setCreateForm({ ...createForm, item_barcode: e.target.value })}
-                  placeholder="Scan or enter item barcode"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="request_type">{t('circulation.requests.form.requestType')} *</Label>
+              <Select
+                value={createForm.request_type}
+                onValueChange={(value) => setCreateForm({ ...createForm, request_type: value as RequestType })}
+              >
+                <SelectTrigger className="h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="hold">{t('circulation.requests.type.hold')}</SelectItem>
+                  <SelectItem value="recall">{t('circulation.requests.type.recall')}</SelectItem>
+                  <SelectItem value="page">{t('circulation.requests.type.page')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Request Type *
-                </label>
-                <select
-                  required
-                  value={createForm.request_type}
-                  onChange={(e) => setCreateForm({ ...createForm, request_type: e.target.value as RequestType })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-                >
-                  <option value="hold">Hold</option>
-                  <option value="recall">Recall</option>
-                  <option value="page">Page</option>
-                </select>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="expiration_date" className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-teal-500" />
+                {t('circulation.requests.form.expirationDate')}
+              </Label>
+              <Input
+                id="expiration_date"
+                type="date"
+                value={createForm.expiration_date}
+                onChange={(e) => setCreateForm({ ...createForm, expiration_date: e.target.value })}
+                className="h-11"
+              />
+              <p className="text-xs text-gray-500">{t('circulation.requests.form.optional')}</p>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Expiration Date (Optional)
-                </label>
-                <input
-                  type="date"
-                  value={createForm.expiration_date}
-                  onChange={(e) => setCreateForm({ ...createForm, expiration_date: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
+            <DialogFooter className="gap-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowCreateModal(false)}
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700"
+              >
+                {loading ? t('common.creating') : t('circulation.requests.button.create')}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
-              <div className="flex gap-2 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md disabled:opacity-50 transition"
-                >
-                  {loading ? 'Creating...' : 'Create Request'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Cancel Confirmation Dialog */}
+      <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-red-600" />
+              {t('circulation.requests.cancel.confirm')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('circulation.requests.cancel.message', { itemTitle: requestToCancel?.itemTitle })}
+              <br />
+              <span className="font-semibold text-red-600">{t('circulation.requests.cancel.warning')}</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCancelRequest}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {t('circulation.requests.button.cancelRequest')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

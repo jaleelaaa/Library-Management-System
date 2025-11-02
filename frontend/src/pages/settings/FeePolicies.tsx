@@ -2,6 +2,50 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import axios from 'axios';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  DollarSign, Plus, RefreshCw, Edit, Trash2, Eye,
+  Receipt, CheckCircle2, XCircle
+} from 'lucide-react';
+import { Card, CardHeader } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '../../components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../../components/ui/alert-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../components/ui/table';
+import { Badge } from '../../components/ui/badge';
+import { Skeleton } from '../../components/ui/skeleton';
 
 interface FeePolicy {
   id: string;
@@ -21,6 +65,7 @@ interface FeePolicy {
 
 const FeePolicies: React.FC = () => {
   const [policies, setPolicies] = useState<FeePolicy[]>([]);
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -30,6 +75,8 @@ const FeePolicies: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [feeTypeFilter, setFeeTypeFilter] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<string>('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [policyToDelete, setPolicyToDelete] = useState<string | null>(null);
 
   const pageSize = 10;
   const totalPages = Math.ceil(total / pageSize);
@@ -58,10 +105,10 @@ const FeePolicies: React.FC = () => {
         ...axiosConfig,
         params,
       });
-      setPolicies(response.data.items);
+      setPolicies(response.data.items || []);
       setTotal(response.data.total);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to fetch fee policies');
+      setError(err.response?.data?.detail || t('feePolicies.error.fetch'));
     } finally {
       setLoading(false);
     }
@@ -85,14 +132,22 @@ const FeePolicies: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this fee policy?')) return;
+  const confirmDelete = (id: string) => {
+    setPolicyToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!policyToDelete) return;
 
     try {
-      await axios.delete(`/api/v1/fees/fee-policies/${id}`, axiosConfig);
+      await axios.delete(`/api/v1/fees/fee-policies/${policyToDelete}`, axiosConfig);
+      setDeleteDialogOpen(false);
+      setPolicyToDelete(null);
       fetchPolicies();
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to delete fee policy');
+      setError(err.response?.data?.detail || t('feePolicies.error.delete'));
+      setDeleteDialogOpen(false);
     }
   };
 
@@ -145,7 +200,7 @@ const FeePolicies: React.FC = () => {
       setShowModal(false);
       fetchPolicies();
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to save fee policy');
+      setError(err.response?.data?.detail || t('feePolicies.error.save'));
     }
   };
 
@@ -155,387 +210,513 @@ const FeePolicies: React.FC = () => {
     return type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
 
-  return (
-    <div>
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">Fee Policies</h2>
-          <p className="text-gray-600 mt-2">Configure automated fee amounts and rules</p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handleCreate}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            + New Fee Policy
-          </button>
-          <button
-            onClick={fetchPolicies}
-            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-          >
-            Refresh
-          </button>
-        </div>
-      </div>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-          {error}
-          <button onClick={() => setError(null)} className="ms-4 text-sm underline">Dismiss</button>
-        </div>
-      )}
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: 'spring', stiffness: 300, damping: 24 }
+    }
+  };
+
+  return (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      {/* Header Card */}
+      <motion.div variants={itemVariants}>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-900 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl">
+                    <DollarSign className="w-8 h-8 text-white" />
+                  </div>
+                  {t('feePolicies.title')}
+                </h1>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleCreate}
+                  size="lg"
+                  className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 shadow-md"
+                >
+                  <Plus className="w-4 h-4 me-2" />
+                  {t('feePolicies.new')}
+                </Button>
+                <Button onClick={fetchPolicies} variant="outline" size="lg">
+                  <RefreshCw className="w-4 h-4 me-2" />
+                  {t('common.refresh')}
+                </Button>
+              </div>
+            </div>
+            <p className="text-gray-600 mt-2 text-lg">{t('feePolicies.subtitle')}</p>
+          </CardHeader>
+        </Card>
+      </motion.div>
+
+      {/* Error Alert */}
+      <AnimatePresence mode="wait">
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-6"
+          >
+            <Card className="border-red-200 bg-red-50">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-red-800">{error}</p>
+                  <Button onClick={() => setError(null)} variant="ghost" size="sm">
+                    {t('common.dismiss')}
+                  </Button>
+                </div>
+              </CardHeader>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Filters */}
-      <div className="mb-6 flex gap-4">
-        <select
-          value={feeTypeFilter}
-          onChange={(e) => setFeeTypeFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Fee Types</option>
-          {FEE_TYPES.map(type => (
-            <option key={type} value={type}>{getFeeTypeLabel(type)}</option>
-          ))}
-        </select>
-
-        <select
-          value={activeFilter}
-          onChange={(e) => setActiveFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Statuses</option>
-          <option value="true">Active Only</option>
-          <option value="false">Inactive Only</option>
-        </select>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : (
-        <>
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Code
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fee Type
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Amounts
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {policies.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                      No fee policies found. Create your first policy to get started.
-                    </td>
-                  </tr>
-                ) : (
-                  policies.map((policy) => (
-                    <tr key={policy.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{policy.code}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">{policy.name}</div>
-                        {policy.description && (
-                          <div className="text-xs text-gray-500">{policy.description}</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{getFeeTypeLabel(policy.fee_type)}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-xs text-gray-600 space-y-1">
-                          {policy.initial_amount !== null && policy.initial_amount !== undefined && (
-                            <div>Initial: ${policy.initial_amount.toFixed(2)}</div>
-                          )}
-                          {policy.per_day_amount !== null && policy.per_day_amount !== undefined && (
-                            <div>Per Day: ${policy.per_day_amount.toFixed(2)}</div>
-                          )}
-                          {policy.max_amount !== null && policy.max_amount !== undefined && (
-                            <div>Max: ${policy.max_amount.toFixed(2)}</div>
-                          )}
-                          {policy.grace_period_days > 0 && (
-                            <div>Grace: {policy.grace_period_days} days</div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          policy.is_active
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {policy.is_active ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button
-                          onClick={() => handleView(policy)}
-                          className="text-blue-600 hover:text-blue-900"
-                        >
-                          View
-                        </button>
-                        <button
-                          onClick={() => handleEdit(policy)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(policy.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {totalPages > 1 && (
-            <div className="mt-6 flex justify-center items-center space-x-2">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Previous
-              </button>
-              <span className="px-4 py-2 text-gray-700">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">
-              {modalMode === 'create' ? 'Create Fee Policy' : modalMode === 'edit' ? 'Edit Fee Policy' : 'View Fee Policy'}
-            </h2>
-
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Code *
-                    </label>
-                    <input
-                      type="text"
-                      name="code"
-                      defaultValue={selectedPolicy?.code || ''}
-                      required
-                      disabled={modalMode !== 'create'}
-                      placeholder="OVERDUE_STD"
-                      maxLength={50}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                    />
-                    {modalMode === 'create' && (
-                      <p className="mt-1 text-xs text-gray-500">Unique code (e.g., OVERDUE_STD, LOST_ITEM)</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fee Type *
-                    </label>
-                    <select
-                      name="fee_type"
-                      defaultValue={selectedPolicy?.fee_type || 'overdue'}
-                      required
-                      disabled={modalMode !== 'create'}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                    >
-                      {FEE_TYPES.map(type => (
-                        <option key={type} value={type}>{getFeeTypeLabel(type)}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    defaultValue={selectedPolicy?.name || ''}
-                    required
-                    disabled={modalMode === 'view'}
-                    placeholder="Standard Overdue Policy"
-                    maxLength={255}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    name="description"
-                    defaultValue={selectedPolicy?.description || ''}
-                    disabled={modalMode === 'view'}
-                    rows={2}
-                    placeholder="Description of this fee policy"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                  />
-                </div>
-
-                <div className="border-t pt-4">
-                  <h3 className="text-lg font-semibold mb-3">Fee Amounts</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Initial Amount
-                      </label>
-                      <input
-                        type="number"
-                        name="initial_amount"
-                        step="0.01"
-                        min="0"
-                        defaultValue={selectedPolicy?.initial_amount || ''}
-                        disabled={modalMode === 'view'}
-                        placeholder="0.00"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                      />
-                      <p className="mt-1 text-xs text-gray-500">Initial charge when fee is created</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Per Day Amount
-                      </label>
-                      <input
-                        type="number"
-                        name="per_day_amount"
-                        step="0.01"
-                        min="0"
-                        defaultValue={selectedPolicy?.per_day_amount || ''}
-                        disabled={modalMode === 'view'}
-                        placeholder="0.00"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                      />
-                      <p className="mt-1 text-xs text-gray-500">Daily rate (for overdue fees)</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Maximum Amount
-                      </label>
-                      <input
-                        type="number"
-                        name="max_amount"
-                        step="0.01"
-                        min="0"
-                        defaultValue={selectedPolicy?.max_amount || ''}
-                        disabled={modalMode === 'view'}
-                        placeholder="0.00"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                      />
-                      <p className="mt-1 text-xs text-gray-500">Maximum charge cap</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Grace Period (Days)
-                      </label>
-                      <input
-                        type="number"
-                        name="grace_period_days"
-                        min="0"
-                        defaultValue={selectedPolicy?.grace_period_days || 0}
-                        disabled={modalMode === 'view'}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                      />
-                      <p className="mt-1 text-xs text-gray-500">Days before fees start accruing</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status
-                  </label>
-                  <select
-                    name="is_active"
-                    defaultValue={selectedPolicy?.is_active ? 'true' : 'false'}
-                    disabled={modalMode === 'view'}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                  >
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                  </select>
-                </div>
-
-                {selectedPolicy && modalMode === 'view' && (
-                  <div className="border-t pt-4 mt-4">
-                    <div className="text-xs text-gray-500 space-y-1">
-                      <p><strong>Created:</strong> {new Date(selectedPolicy.created_date).toLocaleString()}</p>
-                      {selectedPolicy.updated_date && (
-                        <p><strong>Updated:</strong> {new Date(selectedPolicy.updated_date).toLocaleString()}</p>
-                      )}
-                      <p><strong>ID:</strong> {selectedPolicy.id}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-6 flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+      <motion.div variants={itemVariants} className="mt-6">
+        <Card>
+          <CardHeader>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <Label>{t('feePolicies.filterByType')}</Label>
+                <Select
+                  value={feeTypeFilter || 'all'}
+                  onValueChange={(value) => setFeeTypeFilter(value === 'all' ? '' : value)}
                 >
-                  {modalMode === 'view' ? 'Close' : 'Cancel'}
-                </button>
-                {modalMode !== 'view' && (
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
-                    {modalMode === 'create' ? 'Create' : 'Save Changes'}
-                  </button>
-                )}
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('feePolicies.allTypes')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('feePolicies.allTypes')}</SelectItem>
+                    {FEE_TYPES.map(type => (
+                      <SelectItem key={type} value={type}>{getFeeTypeLabel(type)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            </form>
-          </div>
-        </div>
+              <div className="flex-1">
+                <Label>{t('feePolicies.filterByStatus')}</Label>
+                <Select
+                  value={activeFilter || 'all'}
+                  onValueChange={(value) => setActiveFilter(value === 'all' ? '' : value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('feePolicies.allStatuses')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('feePolicies.allStatuses')}</SelectItem>
+                    <SelectItem value="true">{t('feePolicies.activeOnly')}</SelectItem>
+                    <SelectItem value="false">{t('feePolicies.inactiveOnly')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+      </motion.div>
+
+      {/* Table */}
+      <motion.div variants={itemVariants} className="mt-6">
+        <Card>
+          {loading ? (
+            <div className="p-8 space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex gap-4">
+                  <Skeleton className="h-12 flex-1" />
+                  <Skeleton className="h-12 w-32" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('feePolicies.table.code')}</TableHead>
+                  <TableHead>{t('feePolicies.table.name')}</TableHead>
+                  <TableHead>{t('feePolicies.table.type')}</TableHead>
+                  <TableHead>{t('feePolicies.table.amounts')}</TableHead>
+                  <TableHead>{t('feePolicies.table.status')}</TableHead>
+                  <TableHead>{t('common.actions')}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <AnimatePresence mode="popLayout">
+                  {(policies || []).length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6}>
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="flex flex-col items-center justify-center py-16"
+                        >
+                          <div className="p-6 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full mb-4">
+                            <Receipt className="w-16 h-16 text-rose-600" />
+                          </div>
+                          <p className="text-xl font-semibold text-gray-700 mb-2">{t('feePolicies.noPolicies')}</p>
+                          <p className="text-gray-500">{t('feePolicies.noPolicies.desc')}</p>
+                        </motion.div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    (policies || []).map((policy, index) => (
+                      <motion.tr
+                        key={policy.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="group hover:bg-rose-50/50 transition-colors"
+                      >
+                        <TableCell className="font-medium">{policy.code}</TableCell>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{policy.name}</div>
+                            {policy.description && (
+                              <div className="text-xs text-gray-500 mt-1">{policy.description}</div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="bg-gradient-to-r from-rose-50 to-pink-50">
+                            {getFeeTypeLabel(policy.fee_type)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-xs text-gray-600 space-y-1">
+                            {policy.initial_amount !== null && policy.initial_amount !== undefined && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-medium">{t('feePolicies.initialAmount')}:</span>
+                                <span>${policy.initial_amount.toFixed(2)}</span>
+                              </div>
+                            )}
+                            {policy.per_day_amount !== null && policy.per_day_amount !== undefined && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-medium">{t('feePolicies.perDay')}:</span>
+                                <span>${policy.per_day_amount.toFixed(2)}</span>
+                              </div>
+                            )}
+                            {policy.max_amount !== null && policy.max_amount !== undefined && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-medium">{t('feePolicies.max')}:</span>
+                                <span>${policy.max_amount.toFixed(2)}</span>
+                              </div>
+                            )}
+                            {policy.grace_period_days > 0 && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-medium">{t('feePolicies.grace')}:</span>
+                                <span>{policy.grace_period_days} {t('feePolicies.days')}</span>
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {policy.is_active ? (
+                            <Badge className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700">
+                              <CheckCircle2 className="w-3 h-3 me-1" />
+                              {t('common.active')}
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700">
+                              <XCircle className="w-3 h-3 me-1" />
+                              {t('common.inactive')}
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={() => handleView(policy)}
+                              variant="ghost"
+                              size="sm"
+                              className="hover:bg-blue-50"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              onClick={() => handleEdit(policy)}
+                              variant="ghost"
+                              size="sm"
+                              className="hover:bg-rose-50"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              onClick={() => confirmDelete(policy.id)}
+                              variant="ghost"
+                              size="sm"
+                              className="hover:bg-red-50 text-red-600"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </motion.tr>
+                    ))
+                  )}
+                </AnimatePresence>
+              </TableBody>
+            </Table>
+          )}
+        </Card>
+      </motion.div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <motion.div variants={itemVariants} className="mt-6 flex justify-center items-center gap-2">
+          <Button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            variant="outline"
+          >
+            {t('common.previous')}
+          </Button>
+          <span className="px-4 py-2 text-gray-700">
+            {t('common.page')} {currentPage} {t('common.of')} {totalPages}
+          </span>
+          <Button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            variant="outline"
+          >
+            {t('common.next')}
+          </Button>
+        </motion.div>
       )}
-    </div>
+
+      {/* Create/Edit/View Modal */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl bg-gradient-to-r from-rose-900 to-pink-600 bg-clip-text text-transparent">
+              {modalMode === 'create' ? t('feePolicies.modal.create') :
+               modalMode === 'edit' ? t('feePolicies.modal.edit') :
+               t('feePolicies.modal.view')}
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+            {/* Basic Information */}
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="code">{t('feePolicies.code')} *</Label>
+                  <Input
+                    id="code"
+                    name="code"
+                    defaultValue={selectedPolicy?.code || ''}
+                    required
+                    disabled={modalMode !== 'create'}
+                    placeholder="OVERDUE_STD"
+                    maxLength={50}
+                  />
+                  {modalMode === 'create' && (
+                    <p className="mt-1 text-xs text-gray-500">{t('feePolicies.codeHint')}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="fee_type">{t('feePolicies.feeType')} *</Label>
+                  <Select
+                    name="fee_type"
+                    defaultValue={selectedPolicy?.fee_type || 'overdue'}
+                    required
+                    disabled={modalMode !== 'create'}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FEE_TYPES.map(type => (
+                        <SelectItem key={type} value={type}>{getFeeTypeLabel(type)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="name">{t('feePolicies.name')} *</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  defaultValue={selectedPolicy?.name || ''}
+                  required
+                  disabled={modalMode === 'view'}
+                  placeholder={t('feePolicies.namePlaceholder')}
+                  maxLength={255}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="description">{t('feePolicies.description')}</Label>
+                <textarea
+                  id="description"
+                  name="description"
+                  defaultValue={selectedPolicy?.description || ''}
+                  disabled={modalMode === 'view'}
+                  rows={2}
+                  placeholder={t('feePolicies.descriptionPlaceholder')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent disabled:bg-gray-100"
+                />
+              </div>
+            </div>
+
+            {/* Fee Amounts */}
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-semibold mb-3 text-rose-900">{t('feePolicies.feeAmounts')}</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="initial_amount">{t('feePolicies.initialAmount')}</Label>
+                  <Input
+                    id="initial_amount"
+                    name="initial_amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    defaultValue={selectedPolicy?.initial_amount || ''}
+                    disabled={modalMode === 'view'}
+                    placeholder="0.00"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">{t('feePolicies.initialAmountHint')}</p>
+                </div>
+
+                <div>
+                  <Label htmlFor="per_day_amount">{t('feePolicies.perDayAmount')}</Label>
+                  <Input
+                    id="per_day_amount"
+                    name="per_day_amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    defaultValue={selectedPolicy?.per_day_amount || ''}
+                    disabled={modalMode === 'view'}
+                    placeholder="0.00"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">{t('feePolicies.perDayAmountHint')}</p>
+                </div>
+
+                <div>
+                  <Label htmlFor="max_amount">{t('feePolicies.maxAmount')}</Label>
+                  <Input
+                    id="max_amount"
+                    name="max_amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    defaultValue={selectedPolicy?.max_amount || ''}
+                    disabled={modalMode === 'view'}
+                    placeholder="0.00"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">{t('feePolicies.maxAmountHint')}</p>
+                </div>
+
+                <div>
+                  <Label htmlFor="grace_period_days">{t('feePolicies.gracePeriod')}</Label>
+                  <Input
+                    id="grace_period_days"
+                    name="grace_period_days"
+                    type="number"
+                    min="0"
+                    defaultValue={selectedPolicy?.grace_period_days || 0}
+                    disabled={modalMode === 'view'}
+                  />
+                  <p className="mt-1 text-xs text-gray-500">{t('feePolicies.gracePeriodHint')}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div>
+              <Label htmlFor="is_active">{t('common.status')}</Label>
+              <Select
+                name="is_active"
+                defaultValue={selectedPolicy?.is_active ? 'true' : 'false'}
+                disabled={modalMode === 'view'}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="true">{t('common.active')}</SelectItem>
+                  <SelectItem value="false">{t('common.inactive')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Metadata (View mode only) */}
+            {selectedPolicy && modalMode === 'view' && (
+              <div className="border-t pt-4 mt-4">
+                <div className="text-xs text-gray-500 space-y-1">
+                  <p><strong>{t('feePolicies.created')}:</strong> {new Date(selectedPolicy.created_date).toLocaleString()}</p>
+                  {selectedPolicy.updated_date && (
+                    <p><strong>{t('feePolicies.updated')}:</strong> {new Date(selectedPolicy.updated_date).toLocaleString()}</p>
+                  )}
+                  <p><strong>{t('feePolicies.id')}:</strong> {selectedPolicy.id}</p>
+                </div>
+              </div>
+            )}
+
+            <DialogFooter>
+              <Button
+                type="button"
+                onClick={() => setShowModal(false)}
+                variant="outline"
+              >
+                {modalMode === 'view' ? t('common.close') : t('common.cancel')}
+              </Button>
+              {modalMode !== 'view' && (
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700"
+                >
+                  {modalMode === 'create' ? t('common.create') : t('common.save')}
+                </Button>
+              )}
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('feePolicies.deleteConfirm')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('feePolicies.deleteWarning')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </motion.div>
   );
 };
 

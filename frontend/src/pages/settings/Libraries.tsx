@@ -1,321 +1,488 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import axios from 'axios';
+/**
+ * Libraries Page - Redesigned with shadcn/ui
+ * Manage library branches and organizational units
+ */
 
-interface Library {
-  id: string;
-  name: string;
-  code: string;
-  created_date: string;
-  updated_date?: string;
-  tenant_id: string;
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store'
+import axios from 'axios'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { Library, Plus, Edit, Trash2, Eye, RefreshCw, Search, Building2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+// shadcn components
+import { Card, CardContent, CardDescription, CardHeader } from '../../components/ui/card'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
+import { Skeleton } from '../../components/ui/skeleton'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../../components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../../components/ui/alert-dialog'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table'
+
+interface LibraryType {
+  id: string
+  name: string
+  code: string
+  created_date: string
+  updated_date?: string
+  tenant_id: string
 }
 
-const Libraries: React.FC = () => {
-  const [libraries, setLibraries] = useState<Library[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
-  const [selectedLibrary, setSelectedLibrary] = useState<Library | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [total, setTotal] = useState(0);
+const Libraries = () => {
+  const { t } = useLanguage()
+  const [libraries, setLibraries] = useState<LibraryType[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [showModal, setShowModal] = useState(false)
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create')
+  const [selectedLibrary, setSelectedLibrary] = useState<LibraryType | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [libraryToDelete, setLibraryToDelete] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [total, setTotal] = useState(0)
 
-  const pageSize = 10;
-  const totalPages = Math.ceil(total / pageSize);
+  const pageSize = 10
+  const totalPages = Math.ceil(total / pageSize)
 
-  const token = useSelector((state: RootState) => state.auth.token);
+  const token = useSelector((state: RootState) => state.auth.token)
 
   const axiosConfig = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  };
+  }
 
   useEffect(() => {
-    fetchLibraries();
-  }, [currentPage]);
+    fetchLibraries()
+  }, [currentPage])
 
   const fetchLibraries = async () => {
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
     try {
       const response = await axios.get('/api/v1/inventory/libraries', {
         ...axiosConfig,
         params: { page: currentPage, page_size: pageSize },
-      });
-      setLibraries(response.data.items);
-      setTotal(response.data.total);
+      })
+      setLibraries(response.data.items)
+      setTotal(response.data.total)
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to fetch libraries');
+      setError(err.response?.data?.detail || t('libraries.error.fetch'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleCreate = () => {
-    setSelectedLibrary(null);
-    setModalMode('create');
-    setShowModal(true);
-  };
+    setSelectedLibrary(null)
+    setModalMode('create')
+    setShowModal(true)
+  }
 
-  const handleEdit = (library: Library) => {
-    setSelectedLibrary(library);
-    setModalMode('edit');
-    setShowModal(true);
-  };
+  const handleEdit = (library: LibraryType) => {
+    setSelectedLibrary(library)
+    setModalMode('edit')
+    setShowModal(true)
+  }
 
-  const handleView = (library: Library) => {
-    setSelectedLibrary(library);
-    setModalMode('view');
-    setShowModal(true);
-  };
+  const handleView = (library: LibraryType) => {
+    setSelectedLibrary(library)
+    setModalMode('view')
+    setShowModal(true)
+  }
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this library? This may affect associated locations.')) return;
+  const handleDeleteClick = (id: string) => {
+    setLibraryToDelete(id)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!libraryToDelete) return
 
     try {
-      await axios.delete(`/api/v1/inventory/libraries/${id}`, axiosConfig);
-      fetchLibraries();
+      await axios.delete(`/api/v1/inventory/libraries/${libraryToDelete}`, axiosConfig)
+      setDeleteDialogOpen(false)
+      setLibraryToDelete(null)
+      fetchLibraries()
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to delete library');
+      setError(err.response?.data?.detail || t('libraries.error.delete'))
+      setDeleteDialogOpen(false)
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
 
     const libraryData: any = {
       name: formData.get('name'),
       code: formData.get('code'),
-    };
+    }
 
     try {
       if (modalMode === 'create') {
-        await axios.post('/api/v1/inventory/libraries', libraryData, axiosConfig);
+        await axios.post('/api/v1/inventory/libraries', libraryData, axiosConfig)
       } else if (modalMode === 'edit' && selectedLibrary) {
-        await axios.put(`/api/v1/inventory/libraries/${selectedLibrary.id}`, libraryData, axiosConfig);
+        await axios.put(`/api/v1/inventory/libraries/${selectedLibrary.id}`, libraryData, axiosConfig)
       }
-      setShowModal(false);
-      fetchLibraries();
+      setShowModal(false)
+      fetchLibraries()
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to save library');
+      setError(err.response?.data?.detail || t('libraries.error.save'))
     }
-  };
+  }
+
+  const filteredLibraries = libraries.filter((library) => {
+    const query = searchQuery.toLowerCase()
+    return (
+      library.name?.toLowerCase().includes(query) ||
+      library.code?.toLowerCase().includes(query)
+    )
+  })
+
+  const isViewMode = modalMode === 'view'
+  const dialogTitle =
+    modalMode === 'create'
+      ? t('libraries.modal.create')
+      : modalMode === 'edit'
+      ? t('libraries.modal.edit')
+      : t('libraries.modal.view')
+
+  const dialogDescription =
+    modalMode === 'create'
+      ? t('libraries.modal.createDesc')
+      : modalMode === 'edit'
+      ? t('libraries.modal.editDesc')
+      : t('libraries.modal.viewDesc')
 
   return (
-    <div>
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">Libraries</h2>
-          <p className="text-gray-600 mt-2">Manage library branches and organizational units</p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handleCreate}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            + New Library
-          </button>
-          <button
-            onClick={fetchLibraries}
-            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-          >
-            Refresh
-          </button>
-        </div>
-      </div>
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-          {error}
-        </div>
-      )}
-
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : (
-        <>
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Code
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {libraries.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
-                      No libraries found. Create your first library to get started.
-                    </td>
-                  </tr>
-                ) : (
-                  libraries.map((library) => (
-                    <tr key={library.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{library.code}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">{library.name}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">
-                          {new Date(library.created_date).toLocaleDateString()}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button
-                          onClick={() => handleView(library)}
-                          className="text-blue-600 hover:text-blue-900"
-                        >
-                          View
-                        </button>
-                        <button
-                          onClick={() => handleEdit(library)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(library.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {totalPages > 1 && (
-            <div className="mt-6 flex justify-center items-center space-x-2">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Previous
-              </button>
-              <span className="px-4 py-2 text-gray-700">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">
-              {modalMode === 'create' ? 'Create Library' : modalMode === 'edit' ? 'Edit Library' : 'View Library'}
-            </h2>
-
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Code *
-                  </label>
-                  <input
-                    type="text"
-                    name="code"
-                    defaultValue={selectedLibrary?.code || ''}
-                    required
-                    disabled={modalMode === 'view' || modalMode === 'edit'}
-                    placeholder="MAIN"
-                    maxLength={50}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                  />
-                  {modalMode === 'edit' && (
-                    <p className="mt-1 text-xs text-gray-500">Code cannot be changed after creation</p>
-                  )}
-                  {modalMode === 'create' && (
-                    <p className="mt-1 text-xs text-gray-500">Unique code to identify this library (e.g., MAIN, BRANCH1)</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    defaultValue={selectedLibrary?.name || ''}
-                    required
-                    disabled={modalMode === 'view'}
-                    placeholder="Main Library"
-                    maxLength={255}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">Full name of the library</p>
-                </div>
-
-                {selectedLibrary && modalMode === 'view' && (
-                  <div className="border-t pt-4 mt-4">
-                    <div className="text-xs text-gray-500 space-y-1">
-                      <p><strong>Created:</strong> {new Date(selectedLibrary.created_date).toLocaleString()}</p>
-                      {selectedLibrary.updated_date && (
-                        <p><strong>Updated:</strong> {new Date(selectedLibrary.updated_date).toLocaleString()}</p>
-                      )}
-                      <p><strong>ID:</strong> {selectedLibrary.id}</p>
-                      <p><strong>Tenant ID:</strong> {selectedLibrary.tenant_id}</p>
-                    </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-50">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-900 to-violet-600 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl">
+                    <Library className="w-8 h-8 text-white" />
                   </div>
-                )}
+                  {t('libraries.title')}
+                </h1>
               </div>
+              <Button onClick={handleCreate} size="lg" className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 shadow-md">
+                <Plus className="w-4 h-4 me-2" />
+                {t('libraries.new')}
+              </Button>
+            </div>
+            <CardDescription className="text-base mt-2">
+              {t('libraries.subtitle')}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </motion.div>
 
-              <div className="mt-6 flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-                >
-                  {modalMode === 'view' ? 'Close' : 'Cancel'}
-                </button>
-                {modalMode !== 'view' && (
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
-                    {modalMode === 'create' ? 'Create' : 'Save Changes'}
-                  </button>
-                )}
+      {/* Error Alert */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800"
+        >
+          {error}
+        </motion.div>
+      )}
+
+      {/* Search and Actions */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <Card className="shadow-md">
+          <CardContent className="pt-6">
+            <div className="flex gap-4 items-center">
+              <div className="flex-1 relative">
+                <Input
+                  placeholder={t('libraries.searchPlaceholder')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="ps-10"
+                />
+                <Search className="w-4 h-4 absolute start-3 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
-            </form>
-          </div>
+              <Button
+                onClick={fetchLibraries}
+                variant="outline"
+                className="gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                {t('common.refresh')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Libraries Table */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+      >
+        <Card className="shadow-md">
+          <CardContent className="p-0">
+            {loading ? (
+              <div className="p-8 space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <Skeleton className="h-12 w-full" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredLibraries.length === 0 ? (
+              <div className="text-center py-16">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', duration: 0.5 }}
+                  className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-100 to-violet-100 mb-4"
+                >
+                  <Building2 className="w-10 h-10 text-purple-600" />
+                </motion.div>
+                <p className="text-xl font-semibold text-gray-900 mb-2">
+                  {t('libraries.noLibraries')}
+                </p>
+                <p className="text-gray-500">{t('libraries.noLibraries.desc')}</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-gray-50 to-gray-100">
+                      <TableHead>{t('libraries.table.code')}</TableHead>
+                      <TableHead>{t('libraries.table.name')}</TableHead>
+                      <TableHead>{t('libraries.table.created')}</TableHead>
+                      <TableHead className="text-end">{t('libraries.table.actions')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <AnimatePresence>
+                      {filteredLibraries.map((library, index) => (
+                        <motion.tr
+                          key={library.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 20 }}
+                          transition={{ duration: 0.2, delay: index * 0.05 }}
+                          className="hover:bg-purple-50/50 transition-colors"
+                        >
+                          <TableCell className="font-semibold">{library.code}</TableCell>
+                          <TableCell>{library.name}</TableCell>
+                          <TableCell className="text-gray-500">
+                            {new Date(library.created_date).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                onClick={() => handleView(library)}
+                                variant="ghost"
+                                size="sm"
+                                className="hover:bg-blue-50 hover:text-blue-600"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                onClick={() => handleEdit(library)}
+                                variant="ghost"
+                                size="sm"
+                                className="hover:bg-purple-50 hover:text-purple-600"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                onClick={() => handleDeleteClick(library.id)}
+                                variant="ghost"
+                                size="sm"
+                                className="hover:bg-red-50 hover:text-red-600"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2">
+          <Button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            variant="outline"
+          >
+            {t('common.previous')}
+          </Button>
+          <span className="px-4 py-2 text-gray-700">
+            {t('common.page')} {currentPage} {t('common.of')} {totalPages}
+          </span>
+          <Button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            variant="outline"
+          >
+            {t('common.next')}
+          </Button>
         </div>
       )}
-    </div>
-  );
-};
 
-export default Libraries;
+      {/* Create/Edit/View Dialog */}
+      <Dialog open={showModal} onOpenChange={(open) => !open && setShowModal(false)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <div className="p-2 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg">
+                <Library className="w-5 h-5 text-white" />
+              </div>
+              {dialogTitle}
+            </DialogTitle>
+            <DialogDescription>{dialogDescription}</DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4 py-4">
+            {/* Code */}
+            <div className="space-y-2">
+              <Label htmlFor="code">{t('libraries.form.code')} *</Label>
+              <Input
+                id="code"
+                name="code"
+                defaultValue={selectedLibrary?.code || ''}
+                required
+                disabled={isViewMode || modalMode === 'edit'}
+                placeholder="MAIN"
+                maxLength={50}
+              />
+              {modalMode === 'edit' && (
+                <p className="text-xs text-gray-500">{t('libraries.codeImmutable')}</p>
+              )}
+              {modalMode === 'create' && (
+                <p className="text-xs text-gray-500">{t('libraries.codeHelp')}</p>
+              )}
+            </div>
+
+            {/* Name */}
+            <div className="space-y-2">
+              <Label htmlFor="name">{t('libraries.form.name')} *</Label>
+              <Input
+                id="name"
+                name="name"
+                defaultValue={selectedLibrary?.name || ''}
+                required
+                disabled={isViewMode}
+                placeholder={t('libraries.namePlaceholder')}
+                maxLength={255}
+              />
+              <p className="text-xs text-gray-500">{t('libraries.nameHelp')}</p>
+            </div>
+
+            {/* View Mode Additional Info */}
+            {selectedLibrary && isViewMode && (
+              <div className="border-t pt-4 mt-4">
+                <div className="text-xs text-gray-500 space-y-2">
+                  <p>
+                    <strong>{t('libraries.created')}:</strong>{' '}
+                    {new Date(selectedLibrary.created_date).toLocaleString()}
+                  </p>
+                  {selectedLibrary.updated_date && (
+                    <p>
+                      <strong>{t('libraries.updated')}:</strong>{' '}
+                      {new Date(selectedLibrary.updated_date).toLocaleString()}
+                    </p>
+                  )}
+                  <p>
+                    <strong>ID:</strong> {selectedLibrary.id}
+                  </p>
+                  <p>
+                    <strong>Tenant ID:</strong> {selectedLibrary.tenant_id}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <DialogFooter className="gap-2">
+              <Button type="button" variant="outline" onClick={() => setShowModal(false)}>
+                {isViewMode ? t('common.close') : t('common.cancel')}
+              </Button>
+              {!isViewMode && (
+                <Button type="submit" className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700">
+                  {modalMode === 'create' ? t('common.create') : t('common.update')}
+                </Button>
+              )}
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <div className="p-2 bg-red-100 rounded-lg">
+                <Trash2 className="w-5 h-5 text-red-600" />
+              </div>
+              {t('libraries.deleteTitle')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('libraries.deleteConfirm')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteDialogOpen(false)}>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  )
+}
+
+export default Libraries

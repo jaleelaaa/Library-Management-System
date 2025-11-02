@@ -13,8 +13,59 @@ import {
   deletePurchaseOrder,
   fetchVendors,
 } from '../../store/slices/acquisitionsSlice'
-import { FiPlus, FiEdit2, FiTrash2, FiEye, FiX, FiRefreshCw } from 'react-icons/fi'
 import { useLanguage } from '../../contexts/LanguageContext'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  ShoppingCart,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Package
+} from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 type ModalMode = 'create' | 'edit' | 'view' | null
 
@@ -26,6 +77,8 @@ const PurchaseOrders = () => {
   )
 
   const [modalMode, setModalMode] = useState<ModalMode>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [poToDelete, setPoToDelete] = useState<{ id: string; po_number: string } | null>(null)
   const [formData, setFormData] = useState({
     po_number: '',
     vendor_id: '',
@@ -95,280 +148,347 @@ const PurchaseOrders = () => {
     }
   }
 
-  const handleDelete = async (poId: string) => {
-    if (window.confirm(t('acquisitions.po.deleteConfirm'))) {
-      await dispatch(deletePurchaseOrder(poId))
-    }
+  const confirmDelete = (po: { id: string; po_number: string }) => {
+    setPoToDelete(po)
+    setDeleteDialogOpen(true)
   }
 
-  const renderModal = () => {
-    if (!modalMode) return null
+  const handleDelete = async () => {
+    if (!poToDelete) return
+    await dispatch(deletePurchaseOrder(poToDelete.id))
+    setDeleteDialogOpen(false)
+    setPoToDelete(null)
+  }
 
-    const isViewMode = modalMode === 'view'
-    const title =
-      modalMode === 'create'
-        ? t('acquisitions.po.modal.create')
-        : modalMode === 'edit'
-        ? t('acquisitions.po.modal.edit')
-        : t('acquisitions.po.modal.view')
-
+  const getStatusBadge = (status: string) => {
+    const badges: Record<string, { color: string; icon: any }> = {
+      open: { color: 'from-green-100 to-emerald-100 text-green-700 border-green-200', icon: CheckCircle2 },
+      pending: { color: 'from-yellow-100 to-amber-100 text-yellow-700 border-yellow-200', icon: Clock },
+      closed: { color: 'from-gray-100 to-slate-100 text-gray-700 border-gray-200', icon: Package },
+    }
+    const badge = badges[status] || badges.pending
+    const Icon = badge.icon
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="flex justify-between items-center p-6 border-b">
-            <h2 className="text-2xl font-semibold">{title}</h2>
-            <button
-              onClick={handleCloseModal}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <FiX size={24} />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-6">
-            <div className="space-y-4">
-              {/* PO Number */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.po.form.poNumber')} *
-                </label>
-                <input
-                  type="text"
-                  value={formData.po_number}
-                  onChange={(e) => setFormData({ ...formData, po_number: e.target.value })}
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                />
-              </div>
-
-              {/* Vendor */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.po.form.vendor')} *
-                </label>
-                <select
-                  value={formData.vendor_id}
-                  onChange={(e) => setFormData({ ...formData, vendor_id: e.target.value })}
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                >
-                  <option value="">{t('acquisitions.po.form.selectVendor')}</option>
-                  {vendors.map((vendor) => (
-                    <option key={vendor.id} value={vendor.id}>
-                      {vendor.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Order Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.po.form.orderType')} *
-                </label>
-                <select
-                  value={formData.order_type}
-                  onChange={(e) => setFormData({ ...formData, order_type: e.target.value })}
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                >
-                  <option value="one-time">{t('acquisitions.po.orderType.oneTime')}</option>
-                  <option value="ongoing">{t('acquisitions.po.orderType.ongoing')}</option>
-                </select>
-              </div>
-
-              {/* Workflow Status */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.po.form.status')} *
-                </label>
-                <select
-                  value={formData.workflow_status}
-                  onChange={(e) =>
-                    setFormData({ ...formData, workflow_status: e.target.value })
-                  }
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                >
-                  <option value="pending">{t('acquisitions.po.status.pending')}</option>
-                  <option value="open">{t('acquisitions.po.status.open')}</option>
-                  <option value="closed">{t('acquisitions.po.status.closed')}</option>
-                </select>
-              </div>
-
-              {/* Total Estimated Price */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.po.form.totalPrice')} *
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={formData.total_estimated_price}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      total_estimated_price: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  required
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                />
-              </div>
-
-              {/* Notes */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('acquisitions.po.form.notes')}
-                </label>
-                <textarea
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  rows={3}
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                />
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={handleCloseModal}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-              >
-                {isViewMode ? t('common.close') : t('common.cancel')}
-              </button>
-              {!isViewMode && (
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  {modalMode === 'create' ? t('common.create') : t('common.update')}
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-      </div>
+      <Badge className={`bg-gradient-to-r ${badge.color}`}>
+        <Icon className="w-3 h-3 me-1" />
+        {t(`acquisitions.po.status.${status}`)}
+      </Badge>
     )
   }
 
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  }
+
+  const isViewMode = modalMode === 'view'
+  const modalTitle =
+    modalMode === 'create'
+      ? t('acquisitions.po.modal.create')
+      : modalMode === 'edit'
+      ? t('acquisitions.po.modal.edit')
+      : t('acquisitions.po.modal.view')
+
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">{t('acquisitions.po.title')}</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={() => dispatch(fetchPurchaseOrders({}))}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2"
-          >
-            <FiRefreshCw /> {t('common.refresh')}
-          </button>
-          <button
-            onClick={() => handleOpenModal('create')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
-          >
-            <FiPlus /> {t('acquisitions.po.new')}
-          </button>
+    <div className="p-6 space-y-6">
+      {/* Header with gradient */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
+        <div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-900 to-orange-600 bg-clip-text text-transparent flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl">
+              <ShoppingCart className="w-8 h-8 text-white" />
+            </div>
+            {t('acquisitions.po.title')}
+          </h1>
+          <p className="text-gray-600 mt-2">{t('acquisitions.po.subtitle')}</p>
         </div>
-      </div>
 
-      <div className="folio-card">
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
-        ) : purchaseOrders.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            {t('acquisitions.po.noPOs')}
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.po.table.poNumber')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.po.table.vendor')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.po.table.type')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.po.table.status')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.po.table.total')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                    {t('acquisitions.po.table.actions')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {purchaseOrders.map((po) => (
-                  <tr key={po.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">{po.po_number}</td>
-                    <td className="px-6 py-4">{po.vendor_name}</td>
-                    <td className="px-6 py-4">{t(`acquisitions.po.orderType.${po.order_type === 'one-time' ? 'oneTime' : 'ongoing'}`)}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          po.workflow_status === 'open'
-                            ? 'bg-green-100 text-green-800'
-                            : po.workflow_status === 'pending'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
-                        {t(`acquisitions.po.status.${po.workflow_status}`)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">${po.total_estimated_price.toFixed(2)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleOpenModal('view', po.id)}
-                          className="text-blue-600 hover:text-blue-900"
-                          title={t('common.view')}
-                        >
-                          <FiEye size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleOpenModal('edit', po.id)}
-                          className="text-green-600 hover:text-green-900"
-                          title={t('common.edit')}
-                        >
-                          <FiEdit2 size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(po.id)}
-                          className="text-red-600 hover:text-red-900"
-                          title={t('common.delete')}
-                        >
-                          <FiTrash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => dispatch(fetchPurchaseOrders({}))}
+            variant="outline"
+            className="shadow-sm"
+          >
+            <RefreshCw className="w-4 h-4 me-2" />
+            {t('common.refresh')}
+          </Button>
+          <Button
+            onClick={() => handleOpenModal('create')}
+            className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-md"
+          >
+            <Plus className="w-4 h-4 me-2" />
+            {t('acquisitions.po.new')}
+          </Button>
+        </div>
+      </motion.div>
+
+      {/* Purchase Orders Table */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Card className="shadow-md border-0">
+          <CardContent className="pt-6">
+            {loading ? (
+              <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-full" />
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+              </div>
+            ) : purchaseOrders.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="flex justify-center mb-4">
+                  <div className="p-4 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full">
+                    <ShoppingCart className="w-12 h-12 text-amber-600" />
+                  </div>
+                </div>
+                <p className="text-xl font-semibold text-gray-700 mb-2">{t('acquisitions.po.noPOs')}</p>
+                <p className="text-gray-500">{t('acquisitions.po.noPOs.desc')}</p>
+              </div>
+            ) : (
+              <div className="rounded-lg border border-gray-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-gray-50">
+                        <TableHead className="font-semibold">{t('acquisitions.po.table.poNumber')}</TableHead>
+                        <TableHead className="font-semibold">{t('acquisitions.po.table.vendor')}</TableHead>
+                        <TableHead className="font-semibold">{t('acquisitions.po.table.type')}</TableHead>
+                        <TableHead className="font-semibold">{t('acquisitions.po.table.status')}</TableHead>
+                        <TableHead className="font-semibold">{t('acquisitions.po.table.total')}</TableHead>
+                        <TableHead className="font-semibold text-end">{t('acquisitions.po.table.actions')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <AnimatePresence>
+                        {purchaseOrders.map((po, index) => (
+                          <motion.tr
+                            key={po.id}
+                            variants={item}
+                            initial="hidden"
+                            animate="show"
+                            transition={{ delay: index * 0.05 }}
+                            className="hover:bg-gray-50 transition-colors border-b"
+                          >
+                            <TableCell>
+                              <div className="font-medium text-gray-900 flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500" />
+                                {po.po_number}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-gray-600">{po.vendor_name}</TableCell>
+                            <TableCell className="text-gray-600">
+                              {t(`acquisitions.po.orderType.${po.order_type === 'one-time' ? 'oneTime' : 'ongoing'}`)}
+                            </TableCell>
+                            <TableCell>{getStatusBadge(po.workflow_status)}</TableCell>
+                            <TableCell className="font-medium text-gray-900">
+                              ${po.total_estimated_price.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-end">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleOpenModal('view', po.id)}
+                                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleOpenModal('edit', po.id)}
+                                  className="text-amber-600 hover:text-amber-800 hover:bg-amber-50"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => confirmDelete({ id: po.id, po_number: po.po_number })}
+                                  className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </motion.tr>
+                        ))}
+                      </AnimatePresence>
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      {renderModal()}
+      {/* Create/Edit/View Dialog */}
+      <Dialog open={!!modalMode} onOpenChange={handleCloseModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+              {modalTitle}
+            </DialogTitle>
+            <DialogDescription>
+              {modalMode === 'create'
+                ? 'Create a new purchase order'
+                : modalMode === 'edit'
+                ? 'Update purchase order details'
+                : 'View purchase order information'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="po_number">{t('acquisitions.po.form.poNumber')} *</Label>
+              <Input
+                id="po_number"
+                type="text"
+                value={formData.po_number}
+                onChange={(e) => setFormData({ ...formData, po_number: e.target.value })}
+                required
+                disabled={isViewMode}
+                className="h-11"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="vendor">{t('acquisitions.po.form.vendor')} *</Label>
+              <Select
+                value={formData.vendor_id}
+                onValueChange={(value) => setFormData({ ...formData, vendor_id: value })}
+                disabled={isViewMode}
+              >
+                <SelectTrigger id="vendor" className="h-11">
+                  <SelectValue placeholder={t('acquisitions.po.form.selectVendor')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {vendors.map((vendor) => (
+                    <SelectItem key={vendor.id} value={vendor.id}>
+                      {vendor.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="order_type">{t('acquisitions.po.form.orderType')} *</Label>
+              <Select
+                value={formData.order_type}
+                onValueChange={(value) => setFormData({ ...formData, order_type: value })}
+                disabled={isViewMode}
+              >
+                <SelectTrigger id="order_type" className="h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="one-time">{t('acquisitions.po.orderType.oneTime')}</SelectItem>
+                  <SelectItem value="ongoing">{t('acquisitions.po.orderType.ongoing')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="workflow_status">{t('acquisitions.po.form.status')} *</Label>
+              <Select
+                value={formData.workflow_status}
+                onValueChange={(value) => setFormData({ ...formData, workflow_status: value })}
+                disabled={isViewMode}
+              >
+                <SelectTrigger id="workflow_status" className="h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">{t('acquisitions.po.status.pending')}</SelectItem>
+                  <SelectItem value="open">{t('acquisitions.po.status.open')}</SelectItem>
+                  <SelectItem value="closed">{t('acquisitions.po.status.closed')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="total_price">{t('acquisitions.po.form.totalPrice')} *</Label>
+              <Input
+                id="total_price"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.total_estimated_price}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    total_estimated_price: parseFloat(e.target.value) || 0,
+                  })
+                }
+                required
+                disabled={isViewMode}
+                className="h-11"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">{t('acquisitions.po.form.notes')}</Label>
+              <textarea
+                id="notes"
+                value={formData.notes}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                rows={3}
+                disabled={isViewMode}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:bg-gray-100"
+              />
+            </div>
+
+            <DialogFooter className="gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={handleCloseModal}>
+                {isViewMode ? t('common.close') : t('common.cancel')}
+              </Button>
+              {!isViewMode && (
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
+                >
+                  {modalMode === 'create' ? t('common.create') : t('common.update')}
+                </Button>
+              )}
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-red-600" />
+              {t('acquisitions.po.deleteConfirm')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the purchase order{' '}
+              <span className="font-semibold">{poToDelete?.po_number}</span>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

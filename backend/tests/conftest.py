@@ -14,12 +14,13 @@ from app.main import app
 from app.db.base import Base
 from app.db.session import get_db
 from app.core.security import get_password_hash, create_access_token
-from app.models.user import User, Role, Permission
+from app.models.user import User
+from app.models.permission import Role, Permission
 from app.models.tenant import Tenant
 from app.models.inventory import Instance, Holding, Item, Location, Library
 from app.models.circulation import Loan, Request, LoanPolicy
-from app.models.course import Course, CourseReserve
-from app.models.acquisition import Vendor, PurchaseOrder, Fund
+from app.models.course import Course, Reserve
+from app.models.acquisition import Vendor, Order, Fund
 
 
 # Test database URL

@@ -1143,3 +1143,147 @@ async def delete_invoice(
 
     await db.delete(invoice)
     await db.commit()
+
+
+# ============================================================================
+# PURCHASE ORDER RECEIVING AND CANCELLATION (BUG-010 FIX)
+# ============================================================================
+
+@router.post("/purchase-orders/{po_id}/receive", response_model=dict)
+async def receive_purchase_order(
+    po_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_permission("acquisitions.receive")),
+    tenant_id: str = Depends(get_current_tenant),
+):
+    """
+    Receive (mark as received) a purchase order (BUG-010 FIX).
+
+    Updates the purchase order status to received and records receiving date.
+    """
+    result = await db.execute(
+        select(PurchaseOrder).where(
+            and_(
+                PurchaseOrder.id == po_id,
+                PurchaseOrder.tenant_id == UUID(tenant_id)
+            )
+        )
+    )
+    po = result.scalar_one_or_none()
+
+    if not po:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Purchase order not found"
+        )
+
+    if po.status == "Closed":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot receive a closed purchase order"
+        )
+
+    # Update status to received
+    po.status = "Closed"  # Mark as closed/received
+    po.notes = (po.notes or {})
+    if not isinstance(po.notes, dict):
+        po.notes = {}
+    po.notes['received_date'] = datetime.utcnow().isoformat()
+    po.notes['received_by'] = current_user.username
+
+    await db.commit()
+    await db.refresh(po)
+
+    # Log audit
+    from app.services.audit_service import AuditService
+    await AuditService.log_action(
+        db=db,
+        actor=current_user.id,
+        action="RECEIVE",
+        target=str(po.id),
+        resource_type="purchase_order",
+        details={"po_number": po.po_number, "vendor_id": str(po.vendor_id)},
+        tenant_id=UUID(tenant_id),
+    )
+
+    return {
+        "message": f"Purchase order {po.po_number} marked as received",
+        "po_id": str(po.id),
+        "po_number": po.po_number,
+        "status": po.status,
+        "received_date": po.notes.get('received_date')
+    }
+
+
+@router.post("/purchase-orders/{po_id}/cancel", response_model=dict)
+async def cancel_purchase_order(
+    po_id: UUID,
+    reason: str = Query(..., description="Reason for cancellation"),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_permission("acquisitions.update")),
+    tenant_id: str = Depends(get_current_tenant),
+):
+    """
+    Cancel a purchase order (BUG-010 FIX).
+
+    Updates the purchase order status to cancelled and records cancellation reason.
+    """
+    result = await db.execute(
+        select(PurchaseOrder).where(
+            and_(
+                PurchaseOrder.id == po_id,
+                PurchaseOrder.tenant_id == UUID(tenant_id)
+            )
+        )
+    )
+    po = result.scalar_one_or_none()
+
+    if not po:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Purchase order not found"
+        )
+
+    if po.status == "Closed":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot cancel a closed purchase order"
+        )
+
+    # Update status to cancelled
+    original_status = po.status
+    po.status = "Cancelled"
+    po.notes = (po.notes or {})
+    if not isinstance(po.notes, dict):
+        po.notes = {}
+    po.notes['cancelled_date'] = datetime.utcnow().isoformat()
+    po.notes['cancelled_by'] = current_user.username
+    po.notes['cancellation_reason'] = reason
+
+    await db.commit()
+    await db.refresh(po)
+
+    # Log audit
+    from app.services.audit_service import AuditService
+    await AuditService.log_action(
+        db=db,
+        actor=current_user.id,
+        action="CANCEL",
+        target=str(po.id),
+        resource_type="purchase_order",
+        details={
+            "po_number": po.po_number,
+            "original_status": original_status,
+            "cancellation_reason": reason
+        },
+        tenant_id=UUID(tenant_id),
+    )
+
+    return {
+        "message": f"Purchase order {po.po_number} cancelled",
+        "po_id": str(po.id),
+        "po_number": po.po_number,
+        "status": po.status,
+        "cancelled_date": po.notes.get('cancelled_date'),
+        "reason": reason
+    }

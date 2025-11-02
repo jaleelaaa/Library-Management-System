@@ -5,7 +5,7 @@ Based on FOLIO mod-users schema.
 
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Enum as SQLEnum, Table
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Enum as SQLEnum, Table, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 import uuid
@@ -44,8 +44,14 @@ class User(Base, TimestampMixin, TenantMixin):
     # Primary identifiers
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username = Column(String(255), unique=True, index=True, nullable=False)
-    email = Column(String(255), unique=True, index=True, nullable=False)
-    barcode = Column(String(255), unique=True, index=True)
+    email = Column(String(255), index=True, nullable=False)  # UNIQUE constraint via table args
+    barcode = Column(String(255), index=True)  # UNIQUE constraint via table args
+
+    # Table-level constraints for multi-tenancy
+    __table_args__ = (
+        UniqueConstraint('tenant_id', 'email', name='uq_users_email_tenant'),
+        UniqueConstraint('tenant_id', 'barcode', name='uq_users_barcode_tenant'),
+    )
 
     # User status
     active = Column(Boolean, default=True, nullable=False)

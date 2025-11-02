@@ -3,6 +3,7 @@ Core configuration settings for the FOLIO LMS application.
 Uses Pydantic Settings for environment variable management.
 """
 
+import json
 from typing import List, Union, Annotated
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BeforeValidator
@@ -10,8 +11,13 @@ from pydantic import BeforeValidator
 
 def parse_cors(v):
     """Parse CORS origins from string or list."""
-    if isinstance(v, str) and not v.startswith("["):
-        return [i.strip() for i in v.split(",")]
+    if isinstance(v, str):
+        if v.startswith("["):
+            # Parse JSON array
+            return json.loads(v)
+        else:
+            # Parse comma-separated string
+            return [i.strip() for i in v.split(",")]
     return v
 
 

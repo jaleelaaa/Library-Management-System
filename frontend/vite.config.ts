@@ -9,6 +9,12 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['framer-motion'],
+    esbuildOptions: {
+      target: 'es2020',
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 3000,

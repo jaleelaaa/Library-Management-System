@@ -525,3 +525,12 @@
 .transition-bounce {
   transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
+
+/* Animation Delays */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}

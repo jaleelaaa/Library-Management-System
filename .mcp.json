@@ -1,0 +1,15 @@
+{
+    "mcpServers": {
+      "shadcn": {
+        "command": "npx",
+        "args": ["-y", "@jpisnice/shadcn-ui-mcp-server"]
+      },
+      "shadcn-official": {
+        "transport": {
+          "type": "http",
+          "url": "https://www.shadcn.io/api/mcp"
+        },
+        "disabled": true
+      }
+    }
+  }

@@ -308,12 +308,14 @@ async def check_in_item(
 async def renew_loan(
     renew_data: RenewRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(require_permission("circulation.renew")),
+    current_user: User = Depends(get_current_user),
     tenant_id: str = Depends(get_current_tenant),
 ):
     """
     Renew a loan.
 
+    - Staff with circulation.renew can renew any loan
+    - Patrons with circulation.renew_own can only renew their own loans
     - Validates renewal eligibility
     - Extends due date
     - Increments renewal count
@@ -352,6 +354,29 @@ async def renew_loan(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No open loan found for this item"
         )
+
+    # Check permissions: staff can renew any loan, patrons can only renew their own
+    user_permissions = set()
+    for role in current_user.roles:
+        for perm in role.permissions:
+            user_permissions.add(perm.name)
+
+    has_staff_permission = "circulation.renew" in user_permissions
+    has_patron_permission = "circulation.renew_own" in user_permissions
+
+    if not has_staff_permission and not has_patron_permission:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No renewal permission. Required: circulation.renew or circulation.renew_own"
+        )
+
+    # If user only has patron permission, verify they own the loan
+    if has_patron_permission and not has_staff_permission:
+        if loan.user_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Can only renew own items"
+            )
 
     # Check renewal eligibility
     current_renewals = int(loan.renewal_count)
@@ -855,3 +880,167 @@ async def delete_loan_policy(
         details={},
         tenant_id=UUID(tenant_id),
     )
+
+
+# ============================================================================
+# ADDITIONAL CIRCULATION ENDPOINTS (BUG-010 FIX)
+# ============================================================================
+
+@router.post("/requests/{request_id}/fulfill", response_model=dict)
+async def fulfill_request(
+    request_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_permission("circulation.checkout")),
+    tenant_id: str = Depends(get_current_tenant),
+):
+    """
+    Fulfill a request/hold (BUG-010 FIX).
+
+    Marks the request as fulfilled and available for pickup.
+    """
+    request = await db.get(Request, request_id)
+
+    if not request or request.tenant_id != UUID(tenant_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Request not found"
+        )
+
+    if request.status != RequestStatus.OPEN:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot fulfill request with status {request.status}"
+        )
+
+    # Update request status
+    request.status = RequestStatus.AWAITING_PICKUP
+    request.fulfillment_date = datetime.utcnow()
+
+    await db.commit()
+    await db.refresh(request)
+
+    # Log audit
+    await AuditService.log_action(
+        db=db,
+        actor=current_user.username,
+        action="FULFILL",
+        target=str(request_id),
+        resource_type="request",
+        details={"requester_id": str(request.requester_id), "item_id": str(request.item_id)},
+        tenant_id=UUID(tenant_id),
+    )
+
+    return {
+        "message": "Request fulfilled successfully",
+        "request_id": str(request.id),
+        "status": request.status.value,
+        "fulfillment_date": request.fulfillment_date.isoformat()
+    }
+
+
+@router.get("/loans/overdue", response_model=PaginatedResponse[LoanResponse])
+async def list_overdue_loans(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_permission("circulation.view_all")),
+    tenant_id: str = Depends(get_current_tenant),
+):
+    """
+    Get all overdue loans (BUG-010 FIX).
+
+    Returns loans past their due date that haven't been returned.
+    """
+    today = datetime.utcnow().date()
+
+    query = select(Loan).where(
+        and_(
+            Loan.tenant_id == UUID(tenant_id),
+            Loan.status == LoanStatus.CHECKED_OUT,
+            Loan.due_date < today
+        )
+    ).order_by(Loan.due_date.asc())
+
+    # Paginate
+    from app.utils.pagination import paginate
+    result = await paginate(db, query, page, page_size)
+
+    # Convert to response format
+    loans = []
+    for loan in result.data:
+        loan_dict = LoanResponse.model_validate(loan).model_dump()
+
+        # Calculate days overdue
+        days_overdue = (today - loan.due_date).days
+        loan_dict['days_overdue'] = days_overdue
+
+        # Get user info
+        user = await db.get(User, loan.user_id)
+        if user:
+            loan_dict['user_barcode'] = user.barcode
+            loan_dict['user_name'] = f"{user.personal.get('firstName', '')} {user.personal.get('lastName', '')}"
+
+        # Get item info
+        item = await db.get(Item, loan.item_id)
+        if item:
+            loan_dict['item_barcode'] = item.barcode
+
+        loans.append(LoanResponse(**loan_dict))
+
+    return PaginatedResponse(data=loans, meta=result.meta)
+
+
+@router.post("/loans/{loan_id}/forgive-fine", response_model=dict)
+async def forgive_fine(
+    loan_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_permission("fees.waive")),
+    tenant_id: str = Depends(get_current_tenant),
+):
+    """
+    Forgive/waive fine for a loan (BUG-010 FIX).
+
+    Sets the fine to zero for the specified loan.
+    """
+    loan = await db.get(Loan, loan_id)
+
+    if not loan or loan.tenant_id != UUID(tenant_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Loan not found"
+        )
+
+    if not loan.fine_amount or loan.fine_amount <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No fine to forgive for this loan"
+        )
+
+    original_fine = loan.fine_amount
+    loan.fine_amount = 0.0
+    loan.fine_paid = True
+
+    await db.commit()
+    await db.refresh(loan)
+
+    # Log audit
+    await AuditService.log_action(
+        db=db,
+        actor=current_user.username,
+        action="FORGIVE_FINE",
+        target=str(loan_id),
+        resource_type="loan",
+        details={
+            "original_fine": float(original_fine),
+            "user_id": str(loan.user_id),
+            "forgiven_by": current_user.username
+        },
+        tenant_id=UUID(tenant_id),
+    )
+
+    return {
+        "message": f"Fine of ${original_fine:.2f} forgiven successfully",
+        "loan_id": str(loan.id),
+        "original_fine": float(original_fine),
+        "current_fine": float(loan.fine_amount)
+    }

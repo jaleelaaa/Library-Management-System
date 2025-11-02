@@ -37,116 +37,12 @@ async def load_seed_data():
         else:
             print("ℹ️  Default tenant already exists")
 
-        # Create roles and permissions if they don't exist
-        result = await db.execute(select(Role).where(Role.tenant_id == default_tenant.id))
-        existing_roles = result.scalars().all()
-
-        if not existing_roles:
-            # Define permissions
-            permissions_data = [
-                # Inventory permissions
-                ("inventory.create", "Create Inventory", "Create inventory records", "inventory", "create"),
-                ("inventory.read", "Read Inventory", "View inventory records", "inventory", "read"),
-                ("inventory.update", "Update Inventory", "Update inventory records", "inventory", "update"),
-                ("inventory.delete", "Delete Inventory", "Delete inventory records", "inventory", "delete"),
-
-                # User management permissions
-                ("users.create", "Create Users", "Create user accounts", "users", "create"),
-                ("users.read", "Read Users", "View user accounts", "users", "read"),
-                ("users.update", "Update Users", "Update user accounts", "users", "update"),
-                ("users.delete", "Delete Users", "Delete user accounts", "users", "delete"),
-
-                # Circulation permissions
-                ("circulation.checkout", "Checkout Items", "Check out items to users", "circulation", "checkout"),
-                ("circulation.checkin", "Checkin Items", "Check in items from users", "circulation", "checkin"),
-                ("circulation.renew", "Renew Items", "Renew checked out items", "circulation", "renew"),
-
-                # Reports permissions
-                ("reports.read", "View Reports", "View and generate reports", "reports", "read"),
-                ("reports.export", "Export Reports", "Export reports to files", "reports", "export"),
-
-                # Settings permissions
-                ("settings.read", "View Settings", "View system settings", "settings", "read"),
-                ("settings.update", "Update Settings", "Update system settings", "settings", "update"),
-
-                # Acquisitions permissions
-                ("acquisitions.create", "Create Acquisitions", "Create acquisition orders", "acquisitions", "create"),
-                ("acquisitions.read", "Read Acquisitions", "View acquisition orders", "acquisitions", "read"),
-                ("acquisitions.update", "Update Acquisitions", "Update acquisition orders", "acquisitions", "update"),
-                ("acquisitions.delete", "Delete Acquisitions", "Delete acquisition orders", "acquisitions", "delete"),
-
-                # Fees permissions
-                ("fees.create", "Create Fees", "Create fee records", "fees", "create"),
-                ("fees.read", "Read Fees", "View fee records", "fees", "read"),
-                ("fees.update", "Update Fees", "Update fee records", "fees", "update"),
-                ("fees.waive", "Waive Fees", "Waive user fees", "fees", "waive"),
-            ]
-
-            # Create permissions
-            permissions = {}
-            for perm_name, display_name, description, resource, action in permissions_data:
-                permission = Permission(
-                    id=uuid.uuid4(),
-                    name=perm_name,
-                    display_name=display_name,
-                    description=description,
-                    resource=resource,
-                    action=action,
-                    tenant_id=default_tenant.id,
-                )
-                db.add(permission)
-                permissions[perm_name] = permission
-
-            await db.commit()
-            print(f"✅ {len(permissions_data)} permissions created")
-
-            # Create roles
-            roles_data = [
-                ("admin", "Administrator", "Full system access", True, list(permissions.keys())),
-                ("librarian", "Librarian", "Library staff with full operational access", True, [
-                    "inventory.create", "inventory.read", "inventory.update",
-                    "circulation.checkout", "circulation.checkin", "circulation.renew",
-                    "users.read", "users.update",
-                    "acquisitions.create", "acquisitions.read", "acquisitions.update",
-                    "fees.read", "fees.update", "fees.waive",
-                    "reports.read", "reports.export",
-                ]),
-                ("circulation_desk", "Circulation Desk", "Circulation operations only", True, [
-                    "inventory.read",
-                    "circulation.checkout", "circulation.checkin", "circulation.renew",
-                    "users.read",
-                    "fees.read",
-                ]),
-                ("cataloger", "Cataloger", "Catalog management", True, [
-                    "inventory.create", "inventory.read", "inventory.update",
-                    "reports.read",
-                ]),
-                ("patron", "Patron", "Regular library patron", True, [
-                    "inventory.read",
-                ]),
-            ]
-
-            for role_name, display_name, description, is_system, permission_names in roles_data:
-                role = Role(
-                    id=uuid.uuid4(),
-                    name=role_name,
-                    display_name=display_name,
-                    description=description,
-                    is_system=is_system,
-                    tenant_id=default_tenant.id,
-                )
-
-                # Assign permissions to role
-                for perm_name in permission_names:
-                    if perm_name in permissions:
-                        role.permissions.append(permissions[perm_name])
-
-                db.add(role)
-
-            await db.commit()
-            print(f"✅ {len(roles_data)} roles created with permissions")
-        else:
-            print("ℹ️  Roles and permissions already exist")
+        # Import and run comprehensive role seeding
+        from app.db.seed_roles import seed_roles_and_permissions
+        print("\n" + "=" * 70)
+        print("INITIALIZING RBAC SYSTEM")
+        print("=" * 70)
+        await seed_roles_and_permissions(db, default_tenant.id)
 
         # Check if patron groups exist
         result = await db.execute(select(PatronGroup).where(PatronGroup.tenant_id == default_tenant.id))
@@ -212,45 +108,11 @@ async def load_seed_data():
         else:
             print("ℹ️  Admin user already exists")
 
-        # Assign admin role to admin user if not already assigned
-        result = await db.execute(select(Role).where(Role.name == "admin", Role.tenant_id == default_tenant.id))
-        admin_role = result.scalar_one_or_none()
-
-        if admin_role:
-            # Check if user already has this role (query the junction table directly)
-            from sqlalchemy import and_
-            from app.models.permission import user_roles
-            result = await db.execute(
-                select(user_roles).where(
-                    and_(
-                        user_roles.c.user_id == admin_user.id,
-                        user_roles.c.role_id == admin_role.id
-                    )
-                )
-            )
-            existing_assignment = result.first()
-
-            if not existing_assignment:
-                # Assign role using direct SQL insert to avoid lazy loading
-                await db.execute(
-                    user_roles.insert().values(user_id=admin_user.id, role_id=admin_role.id)
-                )
-                await db.commit()
-                print("✅ Admin role assigned to admin user")
-            else:
-                print("ℹ️  Admin user already has admin role")
-        else:
-            print("⚠️  Warning: Admin role not found, cannot assign to admin user")
-
         # Create a test patron user
         result = await db.execute(select(User).where(User.username == "patron"))
         patron_user = result.scalar_one_or_none()
 
         if patron_user is None:
-            # Get the patron role
-            result = await db.execute(select(Role).where(Role.name == "patron", Role.tenant_id == default_tenant.id))
-            patron_role = result.scalar_one_or_none()
-
             # Get undergraduate patron group
             result = await db.execute(select(PatronGroup).where(PatronGroup.group_name == "Undergraduate", PatronGroup.tenant_id == default_tenant.id))
             undergrad_group = result.scalar_one_or_none()
@@ -273,18 +135,11 @@ async def load_seed_data():
 
             db.add(patron_user)
             await db.commit()
-
-            # Assign patron role using direct SQL insert
-            if patron_role:
-                from app.models.permission import user_roles
-                await db.execute(
-                    user_roles.insert().values(user_id=patron_user.id, role_id=patron_role.id)
-                )
-                await db.commit()
-
             print("✅ Test patron user created")
         else:
             print("ℹ️  Test patron user already exists")
+
+        # Note: Role assignments are handled by seed_roles_and_permissions()
 
         # Check if library exists
         result = await db.execute(select(Library).where(Library.code == "MAIN"))

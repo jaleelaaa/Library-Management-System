@@ -19,7 +19,7 @@ from app.schemas.user import (
 )
 from app.schemas.common import PaginatedResponse, BulkOperationResponse, ErrorResponse
 from app.core.deps import get_current_user, get_current_tenant, require_permission
-from app.core.security import get_password_hash, verify_password
+from app.core.security import get_password_hash, verify_password, validate_password_strength
 from app.utils.pagination import paginate
 from app.services.audit_service import AuditService
 
@@ -76,7 +76,11 @@ async def list_users(
 
     # Eager load relationships to avoid lazy loading errors
     from sqlalchemy.orm import selectinload
-    query = query.options(selectinload(User.patron_group))
+    from app.models.permission import Role
+    query = query.options(
+        selectinload(User.patron_group),
+        selectinload(User.roles).selectinload(Role.permissions)
+    )
     query = query.order_by(User.created_date.desc())
 
     # Paginate
@@ -140,8 +144,31 @@ async def create_user(
                 detail="Patron group not found"
             )
 
+    # Verify roles if provided
+    role_ids = user_data.role_ids if user_data.role_ids else []
+    roles = []
+    if role_ids:
+        from app.models.permission import Role
+        roles_result = await db.execute(
+            select(Role).where(
+                and_(
+                    Role.id.in_(role_ids),
+                    Role.tenant_id == UUID(tenant_id)
+                )
+            )
+        )
+        roles = roles_result.scalars().all()
+        if len(roles) != len(role_ids):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="One or more roles not found"
+            )
+
+    # Validate password strength (BUG-008)
+    validate_password_strength(user_data.password)
+
     # Create user
-    user_dict = user_data.model_dump(exclude={'password', 'addresses'})
+    user_dict = user_data.model_dump(exclude={'password', 'addresses', 'role_ids'})
     user_dict['hashed_password'] = get_password_hash(user_data.password)
     user_dict['tenant_id'] = UUID(tenant_id)
     user_dict['created_by_user_id'] = current_user.id
@@ -153,16 +180,22 @@ async def create_user(
         address = Address(**addr_data.model_dump(), user_id=new_user.id)
         new_user.addresses.append(address)
 
+    # Add roles
+    if roles:
+        new_user.roles.extend(roles)
+
     db.add(new_user)
     await db.commit()
 
     # Refresh with eager loading of relationships
     from sqlalchemy.orm import selectinload
+    from app.models.permission import Role
     result = await db.execute(
         select(User)
         .options(
             selectinload(User.addresses),
-            selectinload(User.patron_group)
+            selectinload(User.patron_group),
+            selectinload(User.roles)
         )
         .where(User.id == new_user.id)
     )
@@ -196,7 +229,8 @@ async def get_user(
         select(User)
         .options(
             selectinload(User.addresses),
-            selectinload(User.patron_group)
+            selectinload(User.patron_group),
+            selectinload(User.roles)
         )
         .where(
             and_(
@@ -236,7 +270,8 @@ async def update_user(
         select(User)
         .options(
             selectinload(User.addresses),
-            selectinload(User.patron_group)
+            selectinload(User.patron_group),
+            selectinload(User.roles)
         )
         .where(
             and_(
@@ -254,7 +289,7 @@ async def update_user(
         )
 
     # Check for duplicate username/email if changed
-    update_data = user_data.model_dump(exclude_unset=True, exclude={'password'})
+    update_data = user_data.model_dump(exclude_unset=True, exclude={'password', 'role_ids'})
 
     if 'username' in update_data or 'email' in update_data or 'barcode' in update_data:
         existing = await db.execute(
@@ -294,7 +329,28 @@ async def update_user(
 
     # Update password if provided
     if user_data.password:
+        # Validate password strength (BUG-008)
+        validate_password_strength(user_data.password)
         update_data['hashed_password'] = get_password_hash(user_data.password)
+
+    # Update roles if provided
+    if user_data.role_ids is not None:
+        from app.models.permission import Role
+        roles_result = await db.execute(
+            select(Role).where(
+                and_(
+                    Role.id.in_(user_data.role_ids),
+                    Role.tenant_id == UUID(tenant_id)
+                )
+            )
+        )
+        roles = roles_result.scalars().all()
+        if len(roles) != len(user_data.role_ids):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="One or more roles not found"
+            )
+        user.roles = roles
 
     update_data['updated_by_user_id'] = current_user.id
 
@@ -403,6 +459,9 @@ async def bulk_create_users(
                 failure_count += 1
                 continue
 
+            # Validate password strength (BUG-008)
+            validate_password_strength(user_data.password)
+
             # Create user
             user_dict = user_data.model_dump(exclude={'password', 'addresses'})
             user_dict['hashed_password'] = get_password_hash(user_data.password)
@@ -467,6 +526,9 @@ async def change_password(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect password"
         )
+
+    # Validate new password strength (BUG-008)
+    validate_password_strength(password_data.new_password)
 
     # Update password
     user.hashed_password = get_password_hash(password_data.new_password)
@@ -730,3 +792,120 @@ async def delete_department(
 
     await db.delete(dept)
     await db.commit()
+
+
+# ============================================================================
+# USER ACCOUNT MANAGEMENT (BUG-010 FIX)
+# ============================================================================
+
+@router.post("/{user_id}/suspend", status_code=status.HTTP_200_OK)
+async def suspend_user(
+    user_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_permission("users.update")),
+    tenant_id: str = Depends(get_current_tenant),
+):
+    """
+    Suspend a user account.
+
+    Sets the user's active status to False, preventing login and circulation activities.
+    """
+    result = await db.execute(
+        select(User).where(
+            and_(
+                User.id == user_id,
+                User.tenant_id == UUID(tenant_id)
+            )
+        )
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    # Prevent suspending yourself
+    if user.id == current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot suspend your own account"
+        )
+
+    # Suspend the user
+    user.active = False
+    user.updated_by_user_id = current_user.id
+
+    await db.commit()
+    await db.refresh(user)
+
+    # Log audit
+    await AuditService.log_action(
+        db=db,
+        actor=current_user.id,
+        action="SUSPEND",
+        target=str(user.id),
+        resource_type="user",
+        details={"username": user.username},
+        tenant_id=UUID(tenant_id),
+    )
+
+    return {
+        "message": f"User {user.username} has been suspended",
+        "user_id": str(user.id),
+        "active": user.active
+    }
+
+
+@router.post("/{user_id}/unsuspend", status_code=status.HTTP_200_OK)
+async def unsuspend_user(
+    user_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_permission("users.update")),
+    tenant_id: str = Depends(get_current_tenant),
+):
+    """
+    Unsuspend (reactivate) a user account.
+
+    Sets the user's active status to True, allowing login and circulation activities.
+    """
+    result = await db.execute(
+        select(User).where(
+            and_(
+                User.id == user_id,
+                User.tenant_id == UUID(tenant_id)
+            )
+        )
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    # Unsuspend the user
+    user.active = True
+    user.updated_by_user_id = current_user.id
+
+    await db.commit()
+    await db.refresh(user)
+
+    # Log audit
+    await AuditService.log_action(
+        db=db,
+        actor=current_user.id,
+        action="UNSUSPEND",
+        target=str(user.id),
+        resource_type="user",
+        details={"username": user.username},
+        tenant_id=UUID(tenant_id),
+    )
+
+    return {
+        "message": f"User {user.username} has been unsuspended",
+        "user_id": str(user.id),
+        "active": user.active
+    }

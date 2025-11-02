@@ -24,6 +24,7 @@ from app.api.v1 import (
     search,
     notifications,
     reports,
+    audit_logs,
 )
 
 
@@ -190,6 +191,12 @@ app.include_router(
     reports.router,
     prefix=f"{settings.API_V1_PREFIX}/reports",
     tags=["Reports"],
+)
+
+app.include_router(
+    audit_logs.router,
+    prefix=f"{settings.API_V1_PREFIX}",
+    tags=["Audit Logs"],
 )
 
 

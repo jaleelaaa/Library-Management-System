@@ -4,6 +4,7 @@ Security utilities for authentication and authorization.
 
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
+import re
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
@@ -65,4 +66,48 @@ def verify_token_type(payload: Dict[str, Any], expected_type: str) -> None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Invalid token type. Expected {expected_type}, got {token_type}",
+        )
+
+
+def validate_password_strength(password: str) -> None:
+    """
+    Validate password meets security requirements.
+
+    Requirements (BUG-008):
+    - Minimum 8 characters
+    - At least one uppercase letter
+    - At least one lowercase letter
+    - At least one number
+    - At least one special character
+
+    Args:
+        password: The password to validate
+
+    Raises:
+        HTTPException: If password doesn't meet requirements
+    """
+    errors = []
+
+    if len(password) < 8:
+        errors.append("Password must be at least 8 characters long")
+
+    if not re.search(r"[A-Z]", password):
+        errors.append("Password must contain at least one uppercase letter")
+
+    if not re.search(r"[a-z]", password):
+        errors.append("Password must contain at least one lowercase letter")
+
+    if not re.search(r"\d", password):
+        errors.append("Password must contain at least one number")
+
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-+=\[\]\\\/;'`~]", password):
+        errors.append("Password must contain at least one special character (!@#$%^&*(),.?\":{}|<>_-+=[]\\\/;'`~)")
+
+    if errors:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "message": "Password does not meet security requirements",
+                "errors": errors
+            }
         )

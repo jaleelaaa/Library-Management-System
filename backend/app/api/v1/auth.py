@@ -7,12 +7,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from pydantic import BaseModel
 
 from app.db.session import get_db
 from app.core.security import verify_password, create_access_token, create_refresh_token
 from app.core.config import settings
+from app.core.deps import get_current_user
 from app.models.user import User
+from app.schemas.user import UserResponse
 
 router = APIRouter()
 
@@ -102,3 +105,34 @@ async def refresh_token(
         access_token=new_access_token,
         refresh_token=new_refresh_token,
     )
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_current_user_profile(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get current authenticated user's profile.
+
+    Returns complete user information including roles, addresses, and patron group.
+    """
+    # Refresh user with all relationships loaded (including role permissions)
+    from app.models.permission import Role
+    result = await db.execute(
+        select(User)
+        .options(
+            selectinload(User.roles).selectinload(Role.permissions),
+            selectinload(User.addresses),
+            selectinload(User.patron_group)
+        )
+        .where(User.id == current_user.id)
+    )
+    user = result.scalar_one()
+
+    # Build response with patron group name
+    user_dict = UserResponse.model_validate(user).model_dump()
+    if user.patron_group:
+        user_dict['patron_group_name'] = user.patron_group.group_name
+
+    return UserResponse(**user_dict)

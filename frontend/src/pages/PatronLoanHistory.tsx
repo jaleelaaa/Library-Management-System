@@ -59,10 +59,10 @@ const PatronLoanHistory = () => {
   const handleRenew = async (itemBarcode: string) => {
     const result = await dispatch(renewLoan({ item_barcode: itemBarcode }))
     if (renewLoan.fulfilled.match(result)) {
-      toast.success('Item renewed successfully!')
+      toast.success(t('loans.renewSuccess'))
       handleRefresh()
     } else {
-      toast.error(result.payload as string || 'Failed to renew item')
+      toast.error(result.payload as string || t('loans.error.renewFailed'))
     }
   }
 

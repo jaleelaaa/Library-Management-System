@@ -8,10 +8,45 @@ import {
   deleteRole,
   setSelectedRole
 } from '../store/slices/rolesSlice'
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiEye } from 'react-icons/fi'
+import { Shield, Plus, Edit, Trash2, X, Eye, CheckCircle2, AlertCircle } from 'lucide-react'
 import type { RoleCreate, Permission } from '../types/role'
 import { useLanguage } from '../contexts/LanguageContext'
 import PermissionGate from '../components/auth/PermissionGate'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const Roles = () => {
   const dispatch = useAppDispatch()
@@ -20,6 +55,8 @@ const Roles = () => {
 
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create')
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [roleToDelete, setRoleToDelete] = useState<string | null>(null)
 
   // Group permissions by resource
   const groupedPermissions = permissions.reduce((acc, perm) => {
@@ -72,10 +109,17 @@ const Roles = () => {
     setShowModal(true)
   }
 
-  const handleDelete = async (roleId: string) => {
-    if (window.confirm(t('roles.deleteConfirm'))) {
-      await dispatch(deleteRole(roleId))
+  const confirmDelete = (roleId: string) => {
+    setRoleToDelete(roleId)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDelete = async () => {
+    if (roleToDelete) {
+      await dispatch(deleteRole(roleToDelete))
       await dispatch(fetchRoles())
+      setDeleteDialogOpen(false)
+      setRoleToDelete(null)
     }
   }
 
@@ -131,261 +175,375 @@ const Roles = () => {
     }
   }
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  }
+
+  const item = {
+    hidden: { opacity: 0, x: -20 },
+    show: { opacity: 1, x: 0 }
+  }
+
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-6 space-y-6">
+      {/* Header with gradient */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('roles.title')}</h1>
-          <p className="text-gray-600 mt-1">{t('roles.subtitle')}</p>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl">
+              <Shield className="w-8 h-8 text-white" />
+            </div>
+            {t('roles.title')}
+          </h1>
+          <p className="text-gray-600 mt-2">{t('roles.subtitle')}</p>
         </div>
         <PermissionGate permission="roles.create">
-          <button
-            onClick={openCreateModal}
-            className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <FiPlus size={20} />
-            {t('roles.addNew')}
-          </button>
+            <Button
+              onClick={openCreateModal}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl"
+            >
+              <Plus className="w-5 h-5 me-2" />
+              {t('roles.addNew')}
+            </Button>
+          </motion.div>
         </PermissionGate>
-      </div>
+      </motion.div>
 
-      <div className="bg-white shadow-md rounded-lg">
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">{t('common.loading')}</p>
-          </div>
-        ) : roles.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            <p className="text-xl mb-2">{t('roles.noRoles')}</p>
-            <p>{t('roles.noRoles.desc')}</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('roles.roleName')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('roles.description')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('roles.permissions')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('roles.systemRole')}
-                  </th>
-                  <th className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('roles.actions')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {roles.map((role) => (
-                  <tr key={role.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-gray-900">{role.display_name}</div>
-                      <div className="text-sm text-gray-500">{role.name}</div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-600">
-                      {role.description || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">
-                        {t('roles.permissionCount').replace('{count}', role.permission_count.toString())}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {role.is_system ? (
-                        <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
-                          {t('roles.system')}
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">
-                          {t('roles.customRole')}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => openViewModal(role)}
-                          className="text-blue-600 hover:text-blue-800"
-                          title={t('common.view')}
-                        >
-                          <FiEye size={18} />
-                        </button>
-                        {!role.is_system && (
-                          <>
-                            <PermissionGate permission="roles.update">
-                              <button
-                                onClick={() => openEditModal(role)}
-                                className="text-yellow-600 hover:text-yellow-800"
-                                title={t('common.edit')}
-                              >
-                                <FiEdit2 size={18} />
-                              </button>
-                            </PermissionGate>
-                            <PermissionGate permission="roles.delete">
-                              <button
-                                onClick={() => handleDelete(role.id)}
-                                className="text-red-600 hover:text-red-800"
-                                title={t('common.delete')}
-                              >
-                                <FiTrash2 size={18} />
-                              </button>
-                            </PermissionGate>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
+      {/* Roles Table */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Card className="shadow-md border-0">
+          <CardContent className="pt-6">
+            {loading ? (
+              <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-4 w-[250px]" />
+                      <Skeleton className="h-4 w-[200px]" />
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Create/Edit Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center px-6 py-4 border-b sticky top-0 bg-white">
-              <h2 className="text-2xl font-bold">
-                {modalMode === 'create' ? t('roles.createRole') : modalMode === 'edit' ? t('roles.editRole') : t('roles.viewRole')}
-              </h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-700">
-                <FiX size={24} />
-              </button>
-            </div>
-
-            {modalMode === 'view' && selectedRole ? (
-              <div className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('roles.roleName')}</label>
-                  <p className="text-gray-900">{selectedRole.display_name}</p>
+              </div>
+            ) : roles.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="flex justify-center mb-4">
+                  <div className="p-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full">
+                    <Shield className="w-12 h-12 text-purple-600" />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('roles.description')}</label>
-                  <p className="text-gray-900">{selectedRole.description || '-'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('roles.systemRole')}</label>
-                  <p className="text-gray-900">{selectedRole.is_system ? t('common.yes') : t('common.no')}</p>
-                </div>
-                <div className="flex justify-end gap-3 pt-4 border-t">
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-                  >
-                    {t('common.close')}
-                  </button>
-                  {!selectedRole.is_system && (
-                    <PermissionGate permission="roles.update">
-                      <button
-                        onClick={() => openEditModal(selectedRole)}
-                        className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md"
-                      >
-                        {t('roles.editRole')}
-                      </button>
-                    </PermissionGate>
-                  )}
-                </div>
+                <p className="text-xl font-semibold text-gray-700 mb-2">{t('roles.noRoles')}</p>
+                <p className="text-gray-500">{t('roles.noRoles.desc')}</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('roles.form.roleNameInternal')} *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder={t('roles.form.roleNamePlaceholder')}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('roles.form.displayName')} *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.display_name}
-                      onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-                      placeholder={t('roles.form.displayNamePlaceholder')}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('roles.description')}</label>
-                    <textarea
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">{t('roles.permissions')}</h3>
-                  <div className="space-y-4 max-h-96 overflow-y-auto border p-4 rounded-md">
-                    {Object.entries(groupedPermissions).map(([resource, perms]) => (
-                      <div key={resource} className="border-b pb-4 last:border-b-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-gray-900 capitalize">{resource}</h4>
-                          <button
-                            type="button"
-                            onClick={() => toggleAllInResource(resource, perms)}
-                            className="text-sm text-primary-600 hover:text-primary-700"
-                          >
-                            {perms.every(p => formData.permission_ids?.includes(p.id)) ? t('roles.deselectAll') : t('roles.selectAll')}
-                          </button>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                          {perms.map(perm => (
-                            <label key={perm.id} className="flex items-center cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={formData.permission_ids?.includes(perm.id)}
-                                onChange={() => togglePermission(perm.id)}
-                                className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                              />
-                              <span className="ms-2 text-sm text-gray-700">{perm.display_name}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-3 pt-4 border-t">
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-                  >
-                    {t('common.cancel')}
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md"
-                  >
-                    {modalMode === 'create' ? t('roles.createRole') : t('roles.updateRole')}
-                  </button>
-                </div>
-              </form>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="font-semibold">{t('roles.roleName')}</TableHead>
+                      <TableHead className="font-semibold">{t('roles.description')}</TableHead>
+                      <TableHead className="font-semibold">{t('roles.permissions')}</TableHead>
+                      <TableHead className="font-semibold">{t('roles.systemRole')}</TableHead>
+                      <TableHead className="font-semibold text-end">{t('roles.actions')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <AnimatePresence>
+                      {roles.map((role, index) => (
+                        <motion.tr
+                          key={role.id}
+                          variants={item}
+                          initial="hidden"
+                          animate="show"
+                          transition={{ delay: index * 0.05 }}
+                          className="hover:bg-gray-50 transition-colors border-b"
+                        >
+                          <TableCell>
+                            <div>
+                              <div className="font-medium text-gray-900">{role.display_name}</div>
+                              <div className="text-sm text-gray-500">{role.name}</div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-600 max-w-xs truncate">
+                            {role.description || '-'}
+                          </TableCell>
+                          <TableCell>
+                            <Badge className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-200">
+                              <CheckCircle2 className="w-3 h-3 me-1" />
+                              {t('roles.permissionCount').replace('{count}', role.permission_count.toString())}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {role.is_system ? (
+                              <Badge className="bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 border-amber-200">
+                                <AlertCircle className="w-3 h-3 me-1" />
+                                {t('roles.system')}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-gray-600">
+                                {t('roles.customRole')}
+                              </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-end">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => openViewModal(role)}
+                                className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              {!role.is_system && (
+                                <>
+                                  <PermissionGate permission="roles.update">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => openEditModal(role)}
+                                      className="text-purple-600 hover:text-purple-800 hover:bg-purple-50"
+                                    >
+                                      <Edit className="w-4 h-4" />
+                                    </Button>
+                                  </PermissionGate>
+                                  <PermissionGate permission="roles.delete">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => confirmDelete(role.id)}
+                                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </PermissionGate>
+                                </>
+                              )}
+                            </div>
+                          </TableCell>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </TableBody>
+                </Table>
+              </div>
             )}
-          </div>
-        </div>
-      )}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Create/Edit/View Dialog */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              {modalMode === 'create' ? t('roles.createRole') : modalMode === 'edit' ? t('roles.editRole') : t('roles.viewRole')}
+            </DialogTitle>
+            <DialogDescription>
+              {modalMode === 'create' && 'Create a new role with custom permissions'}
+              {modalMode === 'edit' && 'Update role details and permissions'}
+              {modalMode === 'view' && 'View role details and assigned permissions'}
+            </DialogDescription>
+          </DialogHeader>
+
+          {modalMode === 'view' && selectedRole ? (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">{t('roles.roleName')}</Label>
+                <p className="text-gray-900 font-semibold">{selectedRole.display_name}</p>
+              </div>
+              <Separator />
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">{t('roles.description')}</Label>
+                <p className="text-gray-900">{selectedRole.description || '-'}</p>
+              </div>
+              <Separator />
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">{t('roles.systemRole')}</Label>
+                <p className="text-gray-900">{selectedRole.is_system ? t('common.yes') : t('common.no')}</p>
+              </div>
+              <DialogFooter className="gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowModal(false)}
+                >
+                  {t('common.close')}
+                </Button>
+                {!selectedRole.is_system && (
+                  <PermissionGate permission="roles.update">
+                    <Button
+                      onClick={() => openEditModal(selectedRole)}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                    >
+                      {t('roles.editRole')}
+                    </Button>
+                  </PermissionGate>
+                )}
+              </DialogFooter>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">{t('roles.form.roleNameInternal')} *</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder={t('roles.form.roleNamePlaceholder')}
+                    className="h-11"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="display_name">{t('roles.form.displayName')} *</Label>
+                  <Input
+                    id="display_name"
+                    type="text"
+                    required
+                    value={formData.display_name}
+                    onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
+                    placeholder={t('roles.form.displayNamePlaceholder')}
+                    className="h-11"
+                  />
+                </div>
+
+                <div className="md:col-span-2 space-y-2">
+                  <Label htmlFor="description">{t('roles.description')}</Label>
+                  <textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-lg font-semibold">{t('roles.permissions')}</Label>
+                  <Badge className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700">
+                    {formData.permission_ids?.length || 0} selected
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 max-h-96 overflow-y-auto pe-2">
+                  {Object.entries(groupedPermissions).map(([resource, perms]) => {
+                    const allSelected = perms.every(p => formData.permission_ids?.includes(p.id))
+                    return (
+                      <motion.div
+                        key={resource}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <Card className="border-purple-200 hover:border-purple-300 transition-colors">
+                          <CardContent className="pt-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-semibold text-gray-900 capitalize flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500" />
+                                {resource}
+                              </h4>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => toggleAllInResource(resource, perms)}
+                                className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                              >
+                                {allSelected ? t('roles.deselectAll') : t('roles.selectAll')}
+                              </Button>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                              {perms.map(perm => (
+                                <div key={perm.id} className="flex items-center space-x-2">
+                                  <Checkbox
+                                    id={perm.id}
+                                    checked={formData.permission_ids?.includes(perm.id)}
+                                    onCheckedChange={() => togglePermission(perm.id)}
+                                  />
+                                  <Label
+                                    htmlFor={perm.id}
+                                    className="text-sm font-normal cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                  >
+                                    {perm.display_name}
+                                  </Label>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <DialogFooter className="gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowModal(false)}
+                >
+                  {t('common.cancel')}
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                >
+                  {modalMode === 'create' ? t('roles.createRole') : t('roles.updateRole')}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-red-600" />
+              {t('roles.deleteConfirm')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the role and remove all associated permissions.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

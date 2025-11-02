@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from app.db.session import get_db
-from app.core.deps import get_current_user, require_permission
+from app.core.deps import get_current_user, get_current_tenant, require_permission
 from app.models.user import User
 from app.models.inventory import Instance, Holding, Item, Location, Library
 from app.schemas.inventory import (
@@ -490,6 +490,137 @@ async def delete_item(
 
     await db.delete(item)
     await db.commit()
+
+
+@router.post("/items/bulk-import", response_model=dict, status_code=status.HTTP_201_CREATED)
+async def bulk_import_items(
+    items_data: List[ItemCreate],
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_permission("inventory.create")),
+    tenant_id: str = Depends(get_current_tenant),
+):
+    """
+    Bulk import items (BUG-010 FIX).
+
+    Validates all items before importing to prevent duplicates.
+    Returns detailed report of success/failures.
+    """
+    from app.schemas.common import ErrorResponse
+
+    success_count = 0
+    failure_count = 0
+    errors = []
+    imported_ids = []
+
+    # First pass: Validate all barcodes for duplicates
+    barcodes_in_batch = [item.barcode for item in items_data if item.barcode]
+
+    # Check for duplicates within the import batch
+    duplicate_barcodes = set([bc for bc in barcodes_in_batch if barcodes_in_batch.count(bc) > 1])
+    if duplicate_barcodes:
+        return {
+            "success_count": 0,
+            "failure_count": len(items_data),
+            "errors": [{
+                "code": "DUPLICATE_IN_BATCH",
+                "message": f"Duplicate barcodes found in import file: {', '.join(duplicate_barcodes)}",
+                "details": {"barcodes": list(duplicate_barcodes)}
+            }],
+            "imported_ids": []
+        }
+
+    # Check for duplicates against existing database records
+    if barcodes_in_batch:
+        existing_result = await db.execute(
+            select(Item.barcode).where(
+                and_(
+                    Item.barcode.in_(barcodes_in_batch),
+                    Item.tenant_id == UUID(tenant_id)
+                )
+            )
+        )
+        existing_barcodes = set([row[0] for row in existing_result])
+        if existing_barcodes:
+            return {
+                "success_count": 0,
+                "failure_count": len(items_data),
+                "errors": [{
+                    "code": "DUPLICATE_IN_DATABASE",
+                    "message": f"Barcodes already exist in database: {', '.join(existing_barcodes)}",
+                    "details": {"barcodes": list(existing_barcodes)}
+                }],
+                "imported_ids": []
+            }
+
+    # Second pass: Import all items
+    for idx, item_data in enumerate(items_data):
+        try:
+            # Verify holding exists
+            holding = await db.get(Holding, item_data.holding_id)
+            if not holding:
+                errors.append({
+                    "code": "INVALID_HOLDING",
+                    "message": f"Item at index {idx}: holding_id not found",
+                    "details": {"index": idx, "holding_id": str(item_data.holding_id)}
+                })
+                failure_count += 1
+                continue
+
+            # Create item
+            item_dict = item_data.model_dump(exclude={'electronic_access', 'notes'})
+            item_dict['tenant_id'] = UUID(tenant_id)
+
+            new_item = Item(**item_dict)
+
+            # Add electronic access
+            if item_data.electronic_access:
+                from app.models.inventory import ElectronicAccess
+                for ea_data in item_data.electronic_access:
+                    ea = ElectronicAccess(**ea_data.model_dump(), item_id=new_item.id)
+                    new_item.electronic_access.append(ea)
+
+            # Add notes
+            if item_data.notes:
+                from app.models.inventory import ItemNote
+                for note_data in item_data.notes:
+                    note = ItemNote(**note_data.model_dump(), item_id=new_item.id)
+                    new_item.notes.append(note)
+
+            db.add(new_item)
+            await db.flush()
+
+            imported_ids.append(str(new_item.id))
+            success_count += 1
+
+        except Exception as e:
+            errors.append({
+                "code": "IMPORT_ERROR",
+                "message": f"Item at index {idx}: {str(e)}",
+                "details": {"index": idx, "error": str(e)}
+            })
+            failure_count += 1
+
+    await db.commit()
+
+    # Log audit
+    from app.services.audit_service import AuditService
+    await AuditService.log_action(
+        db=db,
+        actor=current_user.id,
+        action="BULK_IMPORT",
+        target="items",
+        resource_type="inventory",
+        details={"success_count": success_count, "failure_count": failure_count},
+        tenant_id=UUID(tenant_id),
+    )
+
+    return {
+        "success_count": success_count,
+        "failure_count": failure_count,
+        "errors": errors,
+        "imported_ids": imported_ids,
+        "message": f"Bulk import completed: {success_count} succeeded, {failure_count} failed"
+    }
 
 
 # ===========================

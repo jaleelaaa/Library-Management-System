@@ -4,7 +4,7 @@ Based on FOLIO mod-inventory schema.
 """
 
 from datetime import datetime
-from sqlalchemy import Column, String, Boolean, Integer, ForeignKey, JSON, Text, Enum as SQLEnum
+from sqlalchemy import Column, String, Boolean, Integer, ForeignKey, JSON, Text, Enum as SQLEnum, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import uuid
@@ -181,9 +181,14 @@ class Item(Base, TimestampMixin, UserTrackingMixin, TenantMixin):
     holding_id = Column(UUID(as_uuid=True), ForeignKey("holdings.id"), nullable=False, index=True)
 
     # Item identifiers
-    barcode = Column(String(255), unique=True, index=True)
+    barcode = Column(String(255), index=True)  # UNIQUE constraint via table args
     accession_number = Column(String(255))
     item_identifier = Column(String(255))
+
+    # Table-level constraints for multi-tenancy
+    __table_args__ = (
+        UniqueConstraint('tenant_id', 'barcode', name='uq_items_barcode_tenant'),
+    )
 
     # Status
     status = Column(SQLEnum(ItemStatus), default=ItemStatus.AVAILABLE, nullable=False, index=True)

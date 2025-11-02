@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { useAppSelector } from '../../store/hooks'
 import { usePermissions } from '../../contexts/PermissionContext'
+import { useLanguage } from '../../contexts/LanguageContext'
 import {
   FiHome,
   FiBook,
@@ -21,7 +22,7 @@ import { useMemo } from 'react'
 // Define menu item type with optional permission requirements
 interface MenuItem {
   path: string
-  label: string
+  labelKey: string
   icon: any
   requiredPermission?: string
   anyPermission?: string[]
@@ -31,85 +32,85 @@ interface MenuItem {
 const staffMenuItems: MenuItem[] = [
   {
     path: '/dashboard',
-    label: 'Dashboard',
+    labelKey: 'nav.dashboard',
     icon: FiHome
     // No permission needed - all users can access dashboard
   },
   {
     path: '/search',
-    label: 'Search',
+    labelKey: 'nav.search',
     icon: FiSearch
     // No permission needed - all users can search
   },
   {
     path: '/books',
-    label: 'Books',
+    labelKey: 'nav.books',
     icon: FiBookOpen
     // No permission needed - catalog viewing
   },
   {
     path: '/inventory',
-    label: 'Inventory',
+    labelKey: 'nav.inventory',
     icon: FiBook,
     requiredPermission: 'inventory.read'
   },
   {
     path: '/users',
-    label: 'Users',
+    labelKey: 'nav.users',
     icon: FiUsers,
     requiredPermission: 'users.read'
   },
   {
     path: '/roles',
-    label: 'Roles & Permissions',
+    labelKey: 'nav.roles',
     icon: FiShield,
     requiredPermission: 'roles.read'
   },
   {
     path: '/patron-groups',
-    label: 'Patron Groups',
+    labelKey: 'nav.patronGroups',
     icon: FiUsers,
     requiredPermission: 'patron_groups.read'
   },
   {
     path: '/circulation',
-    label: 'Circulation',
+    labelKey: 'nav.circulation',
     icon: FiRefreshCw,
     anyPermission: ['circulation.checkout', 'circulation.checkin', 'circulation.view_all', 'circulation.view_own']
   },
   {
     path: '/acquisitions',
-    label: 'Acquisitions',
+    labelKey: 'nav.acquisitions',
     icon: FiShoppingCart,
     requiredPermission: 'acquisitions.read'
   },
   {
     path: '/courses',
-    label: 'Courses',
+    labelKey: 'nav.courses',
     icon: FiBookOpen,
     anyPermission: ['courses.read', 'courses.manage']
   },
   {
     path: '/fees',
-    label: 'Fees & Fines',
+    labelKey: 'nav.fees',
     icon: FiDollarSign,
     anyPermission: ['fees.read', 'fees.manage', 'fees.waive']
   },
   {
     path: '/reports',
-    label: 'Reports',
+    labelKey: 'nav.reports',
     icon: FiBarChart2,
     requiredPermission: 'reports.view'
   },
   {
     path: '/audit-logs',
-    label: 'Audit Logs',
+    labelKey: 'nav.auditLogs',
     icon: FiFileText,
     requiredPermission: 'audit.read'
   },
   {
     path: '/settings',
-    label: 'Settings',
+    labelKey: 'nav.settings',
     icon: FiSettings,
     requiredPermission: 'settings.manage'
   },
@@ -119,28 +120,28 @@ const staffMenuItems: MenuItem[] = [
 const patronMenuItems: MenuItem[] = [
   {
     path: '/dashboard',
-    label: 'Dashboard',
+    labelKey: 'nav.dashboard',
     icon: FiHome
   },
   {
     path: '/search',
-    label: 'Search',
+    labelKey: 'nav.search',
     icon: FiSearch
   },
   {
     path: '/books',
-    label: 'Books',
+    labelKey: 'nav.books',
     icon: FiBookOpen
   },
   {
     path: '/my-loans',
-    label: 'My Loans',
+    labelKey: 'nav.myLoans',
     icon: FiClock,
     requiredPermission: 'circulation.view_own'
   },
   {
     path: '/settings',
-    label: 'Settings',
+    labelKey: 'nav.settings',
     icon: FiSettings
     // No permission needed for personal settings
   },
@@ -149,6 +150,7 @@ const patronMenuItems: MenuItem[] = [
 const Sidebar = () => {
   const { user } = useAppSelector((state) => state.auth)
   const { hasPermission, hasAnyPermission } = usePermissions()
+  const { t } = useLanguage()
 
   // Determine base menu items based on user type
   const baseMenuItems = user?.user_type === 'patron' ? patronMenuItems : staffMenuItems
@@ -191,7 +193,7 @@ const Sidebar = () => {
             }
           >
             <item.icon size={20} />
-            <span>{item.label}</span>
+            <span>{t(item.labelKey)}</span>
           </NavLink>
         ))}
       </nav>
