@@ -1,15 +1,27 @@
 {
-    "mcpServers": {
-      "shadcn": {
-        "command": "npx",
-        "args": ["-y", "@jpisnice/shadcn-ui-mcp-server"]
+  "mcpServers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["-y", "@jpisnice/shadcn-ui-mcp-server"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "E:\\Library-Management Project\\lbs-enhance\\Library-Management-System"
+      ]
+    },
+    "shadcn-official": {
+      "transport": {
+        "type": "http",
+        "url": "https://www.shadcn.io/api/mcp"
       },
-      "shadcn-official": {
-        "transport": {
-          "type": "http",
-          "url": "https://www.shadcn.io/api/mcp"
-        },
-        "disabled": true
-      }
+      "disabled": true
     }
   }
+}

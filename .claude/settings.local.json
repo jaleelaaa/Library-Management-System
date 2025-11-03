@@ -51,7 +51,14 @@
       "Bash(cmd.exe //c rd //s //q \"C:\\Users\\ABDUL JALEEL\\AppData\\Local\\ms-playwright\\mcp-chrome-3422182\")",
       "Bash(docker-compose stop:*)",
       "Bash(findstr:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(dir:*)",
+      "Bash(del temp_tree.txt)",
+      "Bash(npm outdated:*)",
+      "Bash(npm --version:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx vite build)"
     ],
     "deny": [],
     "ask": []
